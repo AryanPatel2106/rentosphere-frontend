@@ -20,7 +20,7 @@ function Navbar(props) {
           </div>
 
           <h1 className="text-xl font-bold tracking-wide text-gray-800">
-            Rentospher
+            Rentosphere
           </h1>
         </div>
 
