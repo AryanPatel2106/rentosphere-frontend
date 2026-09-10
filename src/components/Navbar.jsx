@@ -12,7 +12,7 @@ function Navbar(props) {
   const isLoggedIn = !!user;
 
   return (
-    <header className="w-full border-b border-gray-200 bg-white shadow-sm">
+    <header className="relative w-full border-b border-gray-200 bg-white shadow-sm">
       <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-3 lg:px-6">
         <div className="flex cursor-pointer items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#009587]">
