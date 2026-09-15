@@ -20,7 +20,6 @@ import FAQ from "./pages/supporting pages/FAQ";
 import PrivacyPolicy from "./pages/supporting pages/PrivacyPolicy";
 import Terms from "./pages/supporting pages/Terms";
 import ContactUs from "./pages/supporting pages/ContactUs";
-import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -28,7 +27,6 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/search" element={<SearchResults />} />
-        <Route path="/properties" element={<SearchResults />} />
 
         {/* Quick Links */}
         <Route path="/about" element={<AboutUs />} />
@@ -38,9 +36,6 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<ContactUs />} />
-
-        {/* Fallback 404 Route */}
-        <Route path="*" element={<NotFound />} />
       </Route>
 
       <Route path="/reset-password" element={<ResetPassword />} />

@@ -22,7 +22,6 @@ import {
   FaArrowDownWideShort,
   FaSliders,
   FaCircleCheck,
-  FaShareNodes,
 } from "react-icons/fa6";
 
 const DEFAULT_PROPERTY_IMAGE =
@@ -96,9 +95,7 @@ function SearchResults() {
   const [selectedLocalities, setSelectedLocalities] = useState(initialLocality);
 
   // Filter states (initialized from URL params or state passed from dashboard)
-  const [keyword, setKeyword] = useState(
-    searchParams.get("search") || searchParams.get("q") || ""
-  );
+  const [keyword, setKeyword] = useState(searchParams.get("search") || "");
   const [bhkType, setBhkType] = useState(
     searchParams.get("bhkType") || state?.bhkType || "All"
   );
@@ -142,7 +139,7 @@ function SearchResults() {
   const [ownerLoading, setOwnerLoading] = useState(false);
   const [ownerData, setOwnerData] = useState(null);
 
-  // Shortlist state (stored in localStorage)
+  // Shortlist state (stored in localStorage + synced with backend)
   const [shortlists, setShortlists] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("rentosphere_shortlists") || "[]");
@@ -151,18 +148,23 @@ function SearchResults() {
     }
   });
 
-  const [copiedId, setCopiedId] = useState(null);
+  useEffect(() => {
+    const fetchShortlists = async () => {
+      try {
+        const res = await api.get("/property/shortlists");
+        if (res.data?.data) {
+          const ids = res.data.data.map((p) => (typeof p === "string" ? p : p._id));
+          setShortlists(ids);
+          localStorage.setItem("rentosphere_shortlists", JSON.stringify(ids));
+        }
+      } catch (err) {
+        // user not logged in or offline, continue with localStorage
+      }
+    };
+    fetchShortlists();
+  }, []);
 
-  const handleShareProperty = (property) => {
-    const url = `${window.location.origin}/search?q=${encodeURIComponent(
-      property.title || property._id
-    )}`;
-    navigator.clipboard.writeText(url);
-    setCopiedId(property._id);
-    setTimeout(() => setCopiedId(null), 2500);
-  };
-
-  const toggleShortlist = (propertyId) => {
+  const toggleShortlist = async (propertyId) => {
     setShortlists((prev) => {
       const next = prev.includes(propertyId)
         ? prev.filter((id) => id !== propertyId)
@@ -174,6 +176,58 @@ function SearchResults() {
       }
       return next;
     });
+
+    try {
+      await api.post(`/property/shortlist/${propertyId}`);
+    } catch (err) {
+      console.warn("Could not sync shortlist with server:", err.message);
+    }
+  };
+
+  // Rental Request Modal State
+  const [rentalModalProperty, setRentalModalProperty] = useState(null);
+  const [moveInDate, setMoveInDate] = useState("");
+  const [rentalMessage, setRentalMessage] = useState("");
+  const [rentalSubmitting, setRentalSubmitting] = useState(false);
+  const [rentalSuccess, setRentalSuccess] = useState(false);
+  const [rentalError, setRentalError] = useState("");
+
+  const handleOpenRentalModal = (property) => {
+    setRentalModalProperty(property);
+    setMoveInDate("");
+    setRentalMessage(
+      `Hi, I am interested in renting your ${property.BHKType || ""} ${
+        property.propertyType || "property"
+      } located at ${property.locality?.text || property.locality?.label || "this location"}.`
+    );
+    setRentalSuccess(false);
+    setRentalError("");
+  };
+
+  const handleSubmitRentalRequest = async (e) => {
+    e.preventDefault();
+    if (!rentalModalProperty) return;
+    setRentalSubmitting(true);
+    setRentalError("");
+    try {
+      await api.post("/property/rental-request", {
+        propertyId: rentalModalProperty._id,
+        moveInDate: moveInDate || null,
+        message: rentalMessage,
+      });
+      setRentalSuccess(true);
+      setTimeout(() => {
+        setRentalModalProperty(null);
+        setRentalSuccess(false);
+      }, 2000);
+    } catch (err) {
+      setRentalError(
+        err.response?.data?.message ||
+          "Failed to submit rental request. Please ensure you are logged in."
+      );
+    } finally {
+      setRentalSubmitting(false);
+    }
   };
 
   const sentinelRef = useRef(null);
@@ -1198,15 +1252,22 @@ function SearchResults() {
                           <button
                             type="button"
                             onClick={() => handleGetOwnerDetails(property)}
-                            className="bg-red-500 px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-red-600"
+                            className="bg-red-500 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-red-600"
                           >
                             <FaPhone className="mr-1.5 inline text-[11px]" />
                             Get Owner Details
                           </button>
                           <button
                             type="button"
+                            onClick={() => handleOpenRentalModal(property)}
+                            className="bg-[#009587] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#007f73]"
+                          >
+                            Request to Rent
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => toggleShortlist(property._id)}
-                            className={`border px-4 py-2.5 text-xs font-medium transition ${
+                            className={`border px-3.5 py-2.5 text-xs font-medium transition ${
                               isShortlisted
                                 ? "border-red-400 bg-red-50 text-red-600"
                                 : "border-gray-300 text-gray-600 hover:bg-gray-100"
@@ -1218,15 +1279,6 @@ function SearchResults() {
                               }`}
                             />
                             {isShortlisted ? "Shortlisted" : "Shortlist"}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleShareProperty(property)}
-                            className="relative border border-gray-300 px-3.5 py-2.5 text-xs font-medium text-gray-600 transition hover:bg-gray-100"
-                            title="Copy link to share"
-                          >
-                            <FaShareNodes className="mr-1.5 inline text-gray-500" />
-                            {copiedId === property._id ? "Copied!" : "Share"}
                           </button>
                         </div>
                       </div>
@@ -1375,6 +1427,113 @@ function SearchResults() {
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Rental Request Application Modal ───────────────────────────────── */}
+      {rentalModalProperty && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="relative w-full max-w-lg border border-gray-200 bg-white p-6 shadow-2xl">
+            <button
+              type="button"
+              onClick={() => {
+                setRentalModalProperty(null);
+                setRentalError("");
+              }}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 text-sm"
+            >
+              <FaXmark />
+            </button>
+
+            <div className="flex items-center gap-2 text-[#009587] mb-2">
+              <span className="bg-[#009587] text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                Rental Application
+              </span>
+            </div>
+
+            <h3 className="text-lg font-bold text-gray-800">
+              Apply to Rent this Property
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {rentalModalProperty.title} • {rentalModalProperty.locality?.text || rentalModalProperty.locality?.label}
+            </p>
+
+            <div className="mt-4 grid grid-cols-2 gap-3 border border-gray-200 bg-gray-50 p-3 text-xs">
+              <div>
+                <span className="text-gray-500">Monthly Rent:</span>
+                <p className="text-base font-bold text-[#009587]">
+                  {formatRent(rentalModalProperty.rent)}/mo
+                </p>
+              </div>
+              <div>
+                <span className="text-gray-500">Security Deposit:</span>
+                <p className="text-base font-bold text-gray-800">
+                  ₹{(rentalModalProperty.deposit || 0).toLocaleString("en-IN")}
+                </p>
+              </div>
+            </div>
+
+            {rentalSuccess ? (
+              <div className="mt-6 border border-teal-200 bg-teal-50 p-6 text-center text-teal-800">
+                <FaCircleCheck className="mx-auto text-3xl text-[#009587] mb-2" />
+                <h4 className="text-sm font-bold">Application Sent Successfully!</h4>
+                <p className="text-xs text-teal-700 mt-1">
+                  The property owner has received your request. Once accepted, the property will be booked for you.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitRentalRequest} className="mt-4 space-y-4">
+                {rentalError && (
+                  <div className="border border-red-200 bg-red-50 p-3 text-xs text-red-600">
+                    {rentalError}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Preferred Move-in Date
+                  </label>
+                  <input
+                    type="date"
+                    value={moveInDate}
+                    onChange={(e) => setMoveInDate(e.target.value)}
+                    className="w-full border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#009587]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Message to Owner
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={rentalMessage}
+                    onChange={(e) => setRentalMessage(e.target.value)}
+                    placeholder="Tell the owner about your occupation, family size, or move-in timeline..."
+                    className="w-full border border-gray-300 p-3 text-xs outline-none focus:border-[#009587]"
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setRentalModalProperty(null)}
+                    className="flex-1 border border-gray-300 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={rentalSubmitting}
+                    className="flex-1 bg-[#009587] py-2.5 text-xs font-semibold text-white transition hover:bg-[#007f73] disabled:opacity-50"
+                  >
+                    {rentalSubmitting ? "Submitting..." : "Send Application"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
