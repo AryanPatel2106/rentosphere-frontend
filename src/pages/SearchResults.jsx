@@ -22,6 +22,7 @@ import {
   FaArrowDownWideShort,
   FaSliders,
   FaCircleCheck,
+  FaShareNodes,
 } from "react-icons/fa6";
 
 const DEFAULT_PROPERTY_IMAGE =
@@ -95,7 +96,9 @@ function SearchResults() {
   const [selectedLocalities, setSelectedLocalities] = useState(initialLocality);
 
   // Filter states (initialized from URL params or state passed from dashboard)
-  const [keyword, setKeyword] = useState(searchParams.get("search") || "");
+  const [keyword, setKeyword] = useState(
+    searchParams.get("search") || searchParams.get("q") || ""
+  );
   const [bhkType, setBhkType] = useState(
     searchParams.get("bhkType") || state?.bhkType || "All"
   );
@@ -147,6 +150,17 @@ function SearchResults() {
       return [];
     }
   });
+
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleShareProperty = (property) => {
+    const url = `${window.location.origin}/search?q=${encodeURIComponent(
+      property.title || property._id
+    )}`;
+    navigator.clipboard.writeText(url);
+    setCopiedId(property._id);
+    setTimeout(() => setCopiedId(null), 2500);
+  };
 
   const toggleShortlist = (propertyId) => {
     setShortlists((prev) => {
@@ -1204,6 +1218,15 @@ function SearchResults() {
                               }`}
                             />
                             {isShortlisted ? "Shortlisted" : "Shortlist"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleShareProperty(property)}
+                            className="relative border border-gray-300 px-3.5 py-2.5 text-xs font-medium text-gray-600 transition hover:bg-gray-100"
+                            title="Copy link to share"
+                          >
+                            <FaShareNodes className="mr-1.5 inline text-gray-500" />
+                            {copiedId === property._id ? "Copied!" : "Share"}
                           </button>
                         </div>
                       </div>
