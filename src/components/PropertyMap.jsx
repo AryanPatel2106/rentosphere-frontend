@@ -264,22 +264,31 @@ function PropertyMap({
 
       marker.addListener("click", () => {
         onSelectProperty(property);
+        const rentText = property.rent ? `₹${property.rent.toLocaleString("en-IN")}/mo` : "Rent on Request";
+        const photoHtml = property.photos && property.photos.length > 0
+          ? `<img src="${property.photos[0]}" alt="${property.title}" style="width:100%;height:100px;object-fit:cover;margin-bottom:6px" />`
+          : "";
         googleInfoWindowRef.current.setContent(`
-          <div style="padding:6px;font-family:inherit;max-width:240px">
-            <div style="font-size:11px;font-weight:700;color:#009587;text-transform:uppercase">
-              ${property.BHKType || "Apartment"} • ${property.Furnishing || "Unfurnished"}
+          <div style="padding:4px;font-family:inherit;max-width:240px">
+            ${photoHtml}
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:14px;font-weight:700;color:#009587">${rentText}</span>
+              <span style="font-size:10px;font-weight:600;background:#e6f4f1;color:#009587;padding:1px 6px">${property.BHKType || "Apartment"}</span>
             </div>
-            <div style="font-size:13px;font-weight:700;color:#1f2937;margin:4px 0">
+            <div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:3px;line-height:1.3">
               ${property.title}
             </div>
             <div style="font-size:11px;color:#6b7280;margin-bottom:6px">
               📍 ${property.locality?.label || property.locality?.text || ""}
             </div>
-            ${
-              distanceText
-                ? `<span style="background:#009587;color:#fff;font-size:10px;font-weight:700;padding:2px 8px">📍 ${distanceText}</span>`
-                : ""
-            }
+            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+              <span style="font-size:10px;background:#f3f4f6;padding:2px 6px;color:#4b5563">${property.Furnishing || "Unfurnished"}</span>
+              ${
+                distanceText
+                  ? `<span style="background:#009587;color:#fff;font-size:10px;font-weight:700;padding:2px 6px">📍 ${distanceText}</span>`
+                  : ""
+              }
+            </div>
           </div>
         `);
         googleInfoWindowRef.current.open(map, marker);
@@ -417,34 +426,45 @@ function PropertyMap({
       const isSelected = selectedProperty?._id === property._id;
       const distanceText = formatDistance(property.distance);
 
+      const rentDisplay = property.rent ? `₹${Math.round(property.rent / 1000)}k` : "";
+      const rentFull = property.rent ? `₹${property.rent.toLocaleString("en-IN")}/mo` : "Rent on Request";
+      const photoHtml = property.photos && property.photos.length > 0
+        ? `<img src="${property.photos[0]}" alt="${property.title}" style="width:100%;height:100px;object-fit:cover;margin-bottom:6px" />`
+        : "";
+
       const icon = L.divIcon({
         className: "",
         html: `<div style="background:${
           isSelected ? "#ef4444" : "#009587"
         };color:#fff;padding:3px 8px;font-size:11px;font-weight:700;border:1.5px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.3);white-space:nowrap;cursor:pointer">${
-          index + 1
-        }. ${property.BHKType || "Rental"}</div>`,
-        iconSize: [90, 26],
-        iconAnchor: [45, 26],
+          rentDisplay ? `${rentDisplay} • ` : ""
+        }${property.BHKType || "Rental"}</div>`,
+        iconSize: [95, 26],
+        iconAnchor: [48, 26],
       });
 
       const m = L.marker(position, { icon }).addTo(map);
       m.bindPopup(`
         <div style="padding:4px;max-width:240px">
-          <div style="font-size:11px;font-weight:700;color:#009587;text-transform:uppercase">${
-            property.BHKType || "Apartment"
-          } • ${property.Furnishing || "Unfurnished"}</div>
-          <div style="font-size:13px;font-weight:700;color:#1f2937;margin:4px 0">${
+          ${photoHtml}
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:700;color:#009587">${rentFull}</span>
+            <span style="font-size:10px;font-weight:600;background:#e6f4f1;color:#009587;padding:1px 6px">${property.BHKType || "Apartment"}</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:3px;line-height:1.3">${
             property.title
           }</div>
           <div style="font-size:11px;color:#6b7280;margin-bottom:6px">📍 ${
             property.locality?.label || property.locality?.text || ""
           }</div>
-          ${
-            distanceText
-              ? `<span style="background:#009587;color:#fff;font-size:10px;font-weight:700;padding:2px 8px">📍 ${distanceText}</span>`
-              : ""
-          }
+          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:10px;background:#f3f4f6;padding:2px 6px;color:#4b5563">${property.Furnishing || "Unfurnished"}</span>
+            ${
+              distanceText
+                ? `<span style="background:#009587;color:#fff;font-size:10px;font-weight:700;padding:2px 6px">📍 ${distanceText}</span>`
+                : ""
+            }
+          </div>
         </div>
       `);
       m.on("click", () => onSelectProperty(property));

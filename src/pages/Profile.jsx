@@ -447,67 +447,87 @@ export default function Profile() {
                 </div>
               ) : (
                 <div className="space-y-5">
-                  {userProperties.map((_, index) => (
-                    <div key={`dummy-property-${index}`} className="border border-gray-300 bg-white">
+                  {userProperties.map((property, index) => (
+                    <div key={property._id || `user-prop-${index}`} className="border border-gray-300 bg-white">
                       <div className="border-b border-gray-300 px-4 py-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="bg-teal-50 border border-teal-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#009587]">
+                            {property.propertyType || "Apartment"}
+                          </span>
+                          <span className="bg-gray-100 px-2 py-0.5 text-[10px] text-gray-600">
+                            {property.BHKType} • {property.Furnishing}
+                          </span>
+                        </div>
                         <h3 className="text-[17px] font-semibold leading-6 text-gray-800">
-                          3 BHK Flat In VIT Chennai - Listing {index + 1}
+                          {property.title}
                         </h3>
-                        <p className="mt-1 text-[14px] text-gray-600">
-                          Vandalur - Kelambakkam Road, Near VIT Academic Block
-                          <button className="ml-2 underline hover:text-black">Explore Nearby</button>
+                        <p className="mt-1 text-[13px] text-gray-600">
+                          📍 {property.locality?.text || property.locality?.label || "Location specified"}
                         </p>
                       </div>
 
                       <div className="grid border-b border-gray-300 sm:grid-cols-3">
                         <div className="border-b border-gray-300 px-4 py-3 text-center sm:border-b-0 sm:border-r">
-                          <p className="text-[20px] font-semibold text-gray-800">Rs 71 Lacs</p>
-                          <p className="mt-0.5 text-[14px] text-gray-600">Rs 4,057 per sq.ft.</p>
+                          <p className="text-[20px] font-semibold text-[#009587]">
+                            ₹{property.rent ? property.rent.toLocaleString("en-IN") : "—"}/mo
+                          </p>
+                          <p className="mt-0.5 text-[12px] text-gray-500">Monthly Rent</p>
                         </div>
                         <div className="border-b border-gray-300 px-4 py-3 text-center sm:border-b-0 sm:border-r">
-                          <p className="text-[20px] font-semibold text-gray-800">Rs 40,693/Month</p>
-                          <p className="mt-0.5 text-[14px] text-gray-600">Estimated EMI</p>
+                          <p className="text-[20px] font-semibold text-gray-800">
+                            ₹{property.deposit ? property.deposit.toLocaleString("en-IN") : "0"}
+                          </p>
+                          <p className="mt-0.5 text-[12px] text-gray-500">Security Deposit</p>
                         </div>
                         <div className="px-4 py-3 text-center">
-                          <p className="text-[20px] font-semibold text-gray-800">1,750 sqft</p>
-                          <p className="mt-0.5 text-[14px] text-gray-600">Builtup</p>
+                          <p className="text-[20px] font-semibold text-gray-800">
+                            {property.builtUpArea ? `${property.builtUpArea} sqft` : "—"}
+                          </p>
+                          <p className="mt-0.5 text-[12px] text-gray-500">Builtup Area</p>
                         </div>
                       </div>
 
                       <div className="p-4">
                         <div className="grid gap-3 lg:grid-cols-[220px_1fr]">
-                          <div className="h-40 border border-gray-300 bg-gray-100 text-center text-sm leading-[160px] text-gray-500">
-                            Property Image
+                          <div className="h-40 border border-gray-200 bg-gray-100 overflow-hidden">
+                            {property.photos && property.photos.length > 0 ? (
+                              <img
+                                src={property.photos[0]}
+                                alt={property.title}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-xs text-gray-400">
+                                Property Image
+                              </div>
+                            )}
                           </div>
 
                           <div className="flex flex-col gap-3">
                             <div className="grid border border-gray-300 sm:grid-cols-2">
                               <div className="border-b border-gray-300 px-4 py-2 sm:border-b sm:border-r">
-                                <p className="text-[18px] font-semibold text-gray-800">South</p>
-                                <p className="text-[14px] text-gray-600">Facing</p>
+                                <p className="text-[16px] font-semibold text-gray-800">{property.BHKType || "—"}</p>
+                                <p className="text-[12px] text-gray-500">BHK Type</p>
                               </div>
                               <div className="border-b border-gray-300 px-4 py-2 sm:border-b">
-                                <p className="text-[18px] font-semibold text-gray-800">3 BHK</p>
-                                <p className="text-[14px] text-gray-600">Apartment Type</p>
+                                <p className="text-[16px] font-semibold text-gray-800">{property.Furnishing || "—"}</p>
+                                <p className="text-[12px] text-gray-500">Furnishing</p>
                               </div>
                               <div className="border-b border-gray-300 px-4 py-2 sm:border-b-0 sm:border-r">
-                                <p className="text-[18px] font-semibold text-gray-800">2</p>
-                                <p className="text-[14px] text-gray-600">Bathrooms</p>
+                                <p className="text-[16px] font-semibold text-gray-800">{property.bathrooms || 1}</p>
+                                <p className="text-[12px] text-gray-500">Bathrooms</p>
                               </div>
                               <div className="px-4 py-2">
-                                <p className="text-[18px] font-semibold text-gray-800">Car</p>
-                                <p className="text-[14px] text-gray-600">Parking</p>
+                                <p className="text-[16px] font-semibold text-gray-800">
+                                  {property.Parking ? "Available" : "No"}
+                                </p>
+                                <p className="text-[12px] text-gray-500">Parking</p>
                               </div>
                             </div>
 
-                            <div className="flex gap-2">
-                              <button className="flex-1 bg-red-500 px-4 py-2 text-[16px] font-semibold text-white transition-colors hover:bg-red-600">
-                                Get Owner Details
-                              </button>
-                              <button className="w-12 border border-gray-300 text-lg text-gray-600 hover:bg-gray-100">
-                                ♡
-                              </button>
-                            </div>
+                            <p className="text-xs text-gray-600 line-clamp-2">
+                              {property.description || "No description provided."}
+                            </p>
                           </div>
                         </div>
                       </div>

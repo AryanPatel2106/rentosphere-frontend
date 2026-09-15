@@ -8,6 +8,8 @@ function Dashboard() {
   const [filters, setFilters] = useState({
     localities: [],
     bhkType: "",
+    minRent: "",
+    maxRent: "",
     furnishing: "",
     tenantType: "",
     availability: "",

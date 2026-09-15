@@ -62,7 +62,6 @@ function SearchSection({
                 <div className="flex flex-wrap items-center gap-4 border-t px-4 py-3">
 
                     {/* BHK */}
-
                     <select
                         value={filters.bhkType}
                         onChange={(e) =>
@@ -71,24 +70,55 @@ function SearchSection({
                                 bhkType: e.target.value
                             }))
                         }
-                        className="w-36 border px-3 py-2 text-sm outline-none"
+                        className="w-32 border px-3 py-2 text-sm outline-none"
                     >
                         <option value="">BHK Type</option>
+                        <option value="1RK">1 RK</option>
+                        <option value="1BHK">1 BHK</option>
+                        <option value="2BHK">2 BHK</option>
+                        <option value="3BHK">3 BHK</option>
+                        <option value="4BHK">4 BHK</option>
+                    </select>
 
-                        <option value="1 RK">1 RK</option>
-
-                        <option value="1 BHK">1 BHK</option>
-
-                        <option value="2 BHK">2 BHK</option>
-
-                        <option value="3 BHK">3 BHK</option>
-
-                        <option value="4 BHK">4 BHK</option>
-
+                    {/* Budget */}
+                    <select
+                        value={
+                            filters.minRent === "" && filters.maxRent === ""
+                                ? ""
+                                : filters.maxRent === "20000"
+                                ? "under_20k"
+                                : filters.minRent === "20000" && filters.maxRent === "35000"
+                                ? "20k_35k"
+                                : filters.minRent === "35000" && filters.maxRent === "50000"
+                                ? "35k_50k"
+                                : filters.minRent === "50000"
+                                ? "above_50k"
+                                : ""
+                        }
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === "under_20k") {
+                                setFilters((prev) => ({ ...prev, minRent: "", maxRent: "20000" }));
+                            } else if (val === "20k_35k") {
+                                setFilters((prev) => ({ ...prev, minRent: "20000", maxRent: "35000" }));
+                            } else if (val === "35k_50k") {
+                                setFilters((prev) => ({ ...prev, minRent: "35000", maxRent: "50000" }));
+                            } else if (val === "above_50k") {
+                                setFilters((prev) => ({ ...prev, minRent: "50000", maxRent: "" }));
+                            } else {
+                                setFilters((prev) => ({ ...prev, minRent: "", maxRent: "" }));
+                            }
+                        }}
+                        className="w-36 border px-3 py-2 text-sm outline-none"
+                    >
+                        <option value="">Budget</option>
+                        <option value="under_20k">&lt; ₹20,000</option>
+                        <option value="20k_35k">₹20k - ₹35k</option>
+                        <option value="35k_50k">₹35k - ₹50k</option>
+                        <option value="above_50k">₹50,000+</option>
                     </select>
 
                     {/* Furnishing */}
-
                     <select
                         value={filters.furnishing}
                         onChange={(e) =>
@@ -97,26 +127,15 @@ function SearchSection({
                                 furnishing: e.target.value
                             }))
                         }
-                        className="w-44 border px-3 py-2 text-sm outline-none"
+                        className="w-40 border px-3 py-2 text-sm outline-none"
                     >
                         <option value="">Furnishing</option>
-
-                        <option value="Fully Furnished">
-                            Fully Furnished
-                        </option>
-
-                        <option value="Semi Furnished">
-                            Semi Furnished
-                        </option>
-
-                        <option value="Unfurnished">
-                            Unfurnished
-                        </option>
-
+                        <option value="Fully Furnished">Fully Furnished</option>
+                        <option value="Semi-Furnished">Semi-Furnished</option>
+                        <option value="Unfurnished">Unfurnished</option>
                     </select>
 
-                                        {/* Tenant Type */}
-
+                    {/* Tenant Type */}
                     <select
                         value={filters.tenantType}
                         onChange={(e) =>
@@ -125,18 +144,13 @@ function SearchSection({
                                 tenantType: e.target.value
                             }))
                         }
-                        className="w-44 border px-3 py-2 text-sm outline-none"
+                        className="w-36 border px-3 py-2 text-sm outline-none"
                     >
                         <option value="">Tenant Type</option>
-
-                        <option value="Family">Family</option>
-
-                        <option value="Bachelor">Bachelor</option>
-
-                        <option value="Company">Company</option>
-
                         <option value="Anyone">Anyone</option>
-
+                        <option value="Family">Family</option>
+                        <option value="Bachelors">Bachelors</option>
+                        <option value="Company">Company</option>
                     </select>
 
                     {/* Availability */}
