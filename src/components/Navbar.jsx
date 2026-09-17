@@ -22,6 +22,7 @@ function Navbar(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const { user, logout } = useAuth() || {};
   const desktopMenuRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
