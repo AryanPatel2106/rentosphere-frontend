@@ -19,6 +19,8 @@ function AuthProvider({ children }) {
 
       return currentUser;
     } catch {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("token");
       setUser(null);
 
       return null;
@@ -29,12 +31,18 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     getCurrentUser();
-  }, [user, setUser]);
+  }, []);
 
   const logout = async () => {
-    await api.post("/auth/logout");
-
-    setUser(null);
+    try {
+      await api.post("/auth/logout");
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("token");
+      setUser(null);
+    }
   };
 
   const updateTwoFactorStatus = (isTwoFactorEnabled) => {

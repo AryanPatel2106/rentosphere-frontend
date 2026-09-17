@@ -12,7 +12,7 @@ function Login({ isOpen, onClose, setShowSignup }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser } = useAuth();
+  const { setUser, getCurrentUser } = useAuth();
 
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [forgotMsg, setForgotMsg] = useState({ text: "", isError: false });
@@ -28,8 +28,16 @@ function Login({ isOpen, onClose, setShowSignup }) {
     try {
       const response = await api.post("/auth/login", { email, password });
       if (response.status === 200) {
+        const data = response.data?.data;
+        if (data?.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+        }
+        if (data?.user) {
+          setUser(data.user);
+        } else if (getCurrentUser) {
+          await getCurrentUser();
+        }
         onClose();
-        setUser(response.data.data);
       }
     } catch (err) {
       console.error("Error during login:", err);
