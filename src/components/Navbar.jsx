@@ -22,8 +22,8 @@ function Navbar(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const { user, logout } = useAuth();
-  const menuRef = useRef(null);
+  const desktopMenuRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const isLoggedIn = !!user;
 
@@ -35,7 +35,11 @@ function Navbar(props) {
   // Handle click outside and Escape key to close menu
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      const inDesktop =
+        desktopMenuRef.current && desktopMenuRef.current.contains(event.target);
+      const inMobile =
+        mobileMenuRef.current && mobileMenuRef.current.contains(event.target);
+      if (!inDesktop && !inMobile) {
         setMenuIsOpen(false);
       }
     };
@@ -60,8 +64,8 @@ function Navbar(props) {
   }, [menuIsOpen]);
 
   const handleNavigate = (path) => {
-    navigate(path);
     setMenuIsOpen(false);
+    navigate(path);
   };
 
   const handleLogout = async () => {
@@ -158,7 +162,7 @@ function Navbar(props) {
           )}
 
           {/* Top-Right Menu Trigger */}
-          <div className="relative" ref={menuRef}>
+          <div className="relative" ref={desktopMenuRef}>
             <button
               type="button"
               onClick={() => setMenuIsOpen(!menuIsOpen)}
@@ -243,48 +247,54 @@ function Navbar(props) {
                       </div>
 
                       <button
+                        type="button"
                         onClick={() => handleNavigate("/profile?tab=basic")}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                       >
                         <FaUser className="text-gray-400 text-xs w-4" />
                         <span>My Profile & Account</span>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => handleNavigate("/profile?tab=shortlists")}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                       >
                         <FaHeart className="text-red-500 text-xs w-4" />
                         <span>Saved Properties</span>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => handleNavigate("/profile?tab=properties")}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                       >
                         <FaHouse className="text-gray-400 text-xs w-4" />
                         <span>My Listed Properties</span>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => handleNavigate("/profile?tab=interested")}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                       >
                         <FaFileLines className="text-amber-500 text-xs w-4" />
                         <span>Rental Applications</span>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => handleNavigate("/profile?tab=rented")}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                       >
                         <FaHouseUser className="text-[#009587] text-xs w-4" />
                         <span>Active Tenancies</span>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => handleNavigate("/profile?tab=payments")}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                       >
                         <FaCreditCard className="text-blue-500 text-xs w-4" />
                         <span>Rent Payments & Receipts</span>
@@ -299,31 +309,34 @@ function Navbar(props) {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/search")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                     >
                       <FaMagnifyingGlass className="text-[#009587] text-xs w-4" />
                       <span>Search Rental Properties</span>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => {
                         if (isLoggedIn) {
                           handleNavigate("/post-property");
                         } else {
                           setMenuIsOpen(false);
-                          props.setShowSignup(true);
+                          if (props.setShowSignup) props.setShowSignup(true);
                         }
                       }}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                     >
                       <FaPlus className="text-[#009587] text-xs w-4" />
                       <span>Post Property (Zero Brokerage)</span>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/pay-fee")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                     >
                       <FaCreditCard className="text-[#009587] text-xs w-4" />
                       <span>Pay Rent Online (Razorpay)</span>
@@ -337,24 +350,27 @@ function Navbar(props) {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/about")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                     >
                       <FaHouse className="text-gray-400 text-xs w-4" />
                       <span>About Rentosphere</span>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/contact")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                     >
                       <FaPhone className="text-gray-400 text-xs w-4" />
                       <span>Contact Support</span>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/faq")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 hover:text-[#009587] transition cursor-pointer"
                     >
                       <FaCircleQuestion className="text-gray-400 text-xs w-4" />
                       <span>Frequently Asked Questions</span>
@@ -365,8 +381,9 @@ function Navbar(props) {
                   {isLoggedIn && (
                     <div className="pt-1">
                       <button
+                        type="button"
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-semibold text-gray-600 hover:bg-red-50 hover:text-red-700 transition"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-semibold text-gray-600 hover:bg-red-50 hover:text-red-700 transition cursor-pointer"
                       >
                         <FaRightFromBracket className="text-red-500 text-xs w-4" />
                         <span>Log Out</span>
@@ -380,7 +397,7 @@ function Navbar(props) {
         </div>
 
         {/* ── Mobile Hamburger Button ──────────────────────────────────── */}
-        <div className="flex items-center gap-2 lg:hidden" ref={menuRef}>
+        <div className="flex items-center gap-2 lg:hidden" ref={mobileMenuRef}>
           <button
             onClick={() => navigate("/pay-fee")}
             className="border border-gray-300 bg-white p-2 text-gray-700 hover:bg-gray-50"
@@ -454,43 +471,49 @@ function Navbar(props) {
                       My Account
                     </div>
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/profile?tab=basic")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                     >
                       <FaUser className="text-gray-400 text-xs w-4" />
                       <span>My Profile & Account</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/profile?tab=shortlists")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                     >
                       <FaHeart className="text-red-500 text-xs w-4" />
                       <span>Saved Properties</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/profile?tab=properties")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                     >
                       <FaHouse className="text-gray-400 text-xs w-4" />
                       <span>My Listed Properties</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/profile?tab=interested")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                     >
                       <FaFileLines className="text-amber-500 text-xs w-4" />
                       <span>Rental Applications</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/profile?tab=rented")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                     >
                       <FaHouseUser className="text-[#009587] text-xs w-4" />
                       <span>Active Tenancies</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleNavigate("/profile?tab=payments")}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                     >
                       <FaCreditCard className="text-blue-500 text-xs w-4" />
                       <span>Rent Payments & Receipts</span>
@@ -503,29 +526,32 @@ function Navbar(props) {
                     Explore
                   </div>
                   <button
+                    type="button"
                     onClick={() => handleNavigate("/search")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
                     <FaMagnifyingGlass className="text-[#009587] text-xs w-4" />
                     <span>Search Properties</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       if (isLoggedIn) {
                         handleNavigate("/post-property");
                       } else {
                         setMenuIsOpen(false);
-                        props.setShowSignup(true);
+                        if (props.setShowSignup) props.setShowSignup(true);
                       }
                     }}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
                     <FaPlus className="text-[#009587] text-xs w-4" />
                     <span>Post Property Free</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleNavigate("/pay-fee")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
                     <FaCreditCard className="text-[#009587] text-xs w-4" />
                     <span>Pay Rent Online</span>
@@ -537,22 +563,25 @@ function Navbar(props) {
                     Support
                   </div>
                   <button
+                    type="button"
                     onClick={() => handleNavigate("/about")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
                     <FaHouse className="text-gray-400 text-xs w-4" />
                     <span>About Us</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleNavigate("/contact")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
                     <FaPhone className="text-gray-400 text-xs w-4" />
                     <span>Contact Support</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleNavigate("/faq")}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                   >
                     <FaCircleQuestion className="text-gray-400 text-xs w-4" />
                     <span>FAQ</span>
@@ -562,8 +591,9 @@ function Navbar(props) {
                 {isLoggedIn && (
                   <div className="py-2">
                     <button
+                      type="button"
                       onClick={handleLogout}
-                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-semibold text-red-600 hover:bg-red-50"
+                      className="flex w-full items-center gap-3 px-4 py-2.5 text-left font-semibold text-red-600 hover:bg-red-50 cursor-pointer"
                     >
                       <FaRightFromBracket className="text-red-500 text-xs w-4" />
                       <span>Log Out</span>
