@@ -58,7 +58,7 @@ function AboutUs() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((v) => (
               <div key={v.title} className="flex flex-col items-center text-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#009587]">
+                <div className="flex h-12 w-12 items-center justify-center bg-[#009587]">
                   {v.icon}
                 </div>
                 <h3 className="font-semibold text-gray-800">{v.title}</h3>
@@ -77,10 +77,10 @@ function AboutUs() {
             <img
               src={PROFILE_IMAGE}
               alt="Aryan Patel"
-              className="h-20 w-20 shrink-0 rounded-full object-cover object-top border-2 border-[#009587]"
+              className="h-20 w-20 shrink-0 object-cover object-top border-2 border-[#009587]"
             />
           ) : (
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#009587] text-white text-xl font-bold">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-[#009587] text-white text-xl font-bold">
               AP
             </div>
           )}

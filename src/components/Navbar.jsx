@@ -14,8 +14,11 @@ function Navbar(props) {
   return (
     <header className="relative w-full border-b border-gray-200 bg-white shadow-sm">
       <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-3 lg:px-6">
-        <div className="flex cursor-pointer items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#009587]">
+        <div
+          className="flex cursor-pointer items-center gap-2"
+          onClick={() => navigate("/")}
+        >
+          <div className="flex h-8 w-8 items-center justify-center bg-[#009587]">
             <FaHouse className="text-sm text-white" />
           </div>
 
@@ -26,13 +29,11 @@ function Navbar(props) {
 
         <div className="hidden items-center lg:flex">
           <button
-            className="flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-100"
-            onClick={() => {
-              isLoggedIn ? navigate("/pay-fee") : props.setShowSignup(true);
-            }}
+            className="flex items-center gap-1.5 border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-100 transition"
+            onClick={() => navigate("/pay-fee")}
           >
-            <FaRegCreditCard />
-            <span className="text-xs">Pay Tuition Fee</span>
+            <FaRegCreditCard className="text-[#009587]" />
+            <span className="text-xs font-medium text-gray-700">Pay Rent</span>
           </button>
 
           <button
@@ -104,10 +105,11 @@ function Navbar(props) {
           <button
             className="w-full px-5 py-3 text-left text-sm hover:bg-gray-100"
             onClick={() => {
-              isLoggedIn ? navigate("/pay-fee") : props.setShowSignup(true);
+              navigate("/pay-fee");
+              setMenuIsOpen(false);
             }}
           >
-            Pay Tuition Fee
+            Pay Rent
           </button>
 
           <button

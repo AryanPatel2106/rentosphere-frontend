@@ -20,6 +20,7 @@ import FAQ from "./pages/supporting pages/FAQ";
 import PrivacyPolicy from "./pages/supporting pages/PrivacyPolicy";
 import Terms from "./pages/supporting pages/Terms";
 import ContactUs from "./pages/supporting pages/ContactUs";
+import PayRent from "./pages/PayRent";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/pay-fee" element={<PayRent />} />
+        <Route path="/pay-rent" element={<PayRent />} />
 
         {/* Quick Links */}
         <Route path="/about" element={<AboutUs />} />
@@ -50,6 +53,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/post-property" element={<PostProperty />} />
       </Route>
+
+      {/* Catch-all fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

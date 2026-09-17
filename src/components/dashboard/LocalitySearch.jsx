@@ -159,8 +159,8 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                             onFocus={() => {
                                 if (suggestions.length) setShowDropdown(true);
                             }}
-                            placeholder="Search locality..."
-                            className="min-w-[150px] flex-1 py-2 text-sm text-gray-700 outline-none"
+                            placeholder="Search locality, landmark, or area (e.g. Koramangala, Whitefield)..."
+                            className="min-w-[180px] flex-1 py-2 text-sm text-gray-700 outline-none"
                         />
                     )}
 
@@ -198,8 +198,8 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                         onFocus={() => {
                             if (suggestions.length) setShowDropdown(true);
                         }}
-                        placeholder="Search locality..."
-                        className="min-w-[150px] flex-1 py-2 text-sm outline-none"
+                        placeholder="Search locality, landmark, or sector (e.g. Koramangala, Whitefield)..."
+                        className="min-w-[200px] flex-1 py-2 text-sm outline-none"
                     />
                 </div>
             )}

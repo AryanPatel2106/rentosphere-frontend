@@ -45,7 +45,7 @@ function ContactUs() {
 
           <div className="space-y-4 mt-4">
             <div className="flex items-center gap-4 border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#009587]/10">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-gray-100">
                 <FaEnvelope className="text-[#009587]" />
               </div>
               <div>
@@ -55,7 +55,7 @@ function ContactUs() {
             </div>
 
             <div className="flex items-center gap-4 border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#009587]/10">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-gray-100">
                 <FaPhone className="text-[#009587]" />
               </div>
               <div>
@@ -65,7 +65,7 @@ function ContactUs() {
             </div>
 
             <div className="flex items-center gap-4 border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#009587]/10">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-gray-100">
                 <FaLocationDot className="text-[#009587]" />
               </div>
               <div>

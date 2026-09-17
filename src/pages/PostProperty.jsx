@@ -5,6 +5,7 @@ import {
   FaCamera,
   FaCircleCheck,
   FaCircleInfo,
+  FaCircleExclamation,
   FaIndianRupeeSign,
   FaPlus,
   FaTrash,
@@ -17,6 +18,7 @@ import {
 } from "react-icons/fa6";
 import LocalitySearch from "../components/dashboard/LocalitySearch";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "../utils/errorHandler";
 
 const steps = [
   {
@@ -180,12 +182,13 @@ function PostProperty() {
 
     try {
       setLoading(true);
+      setError(null);
       await api.post("/property", propertyDetails);
       setLoading(false);
       navigate("/profile", { state: { openSection: "properties" } });
     } catch (err) {
       console.error("Property creation error:", err);
-      setError(err.response?.data?.message || err.message || "Failed to post property.");
+      setError(getErrorMessage(err, "Failed to post property. Please check your details."));
       setLoading(false);
     }
   };
@@ -211,9 +214,9 @@ function PostProperty() {
         <div className="grid gap-6 sm:grid-cols-3">
           {steps.map((step, index) => (
             <div key={step.title} className="flex flex-col items-center gap-3 text-center">
-              <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-[#009587]">
+              <div className="relative flex h-12 w-12 items-center justify-center bg-[#009587]">
                 {step.icon}
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gray-800 text-[10px] font-bold text-white">
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center bg-gray-800 text-[10px] font-bold text-white">
                   {index + 1}
                 </span>
               </div>
@@ -627,8 +630,12 @@ function PostProperty() {
 
             {/* Error Message */}
             {error && (
-              <div className="border border-red-200 bg-red-50 p-3 text-xs text-red-600">
-                {error}
+              <div className="border border-red-300 bg-red-50 p-3.5 text-xs text-red-700 flex items-start gap-2.5">
+                <FaCircleExclamation className="text-red-600 text-sm mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <span className="font-bold">Error: </span>
+                  {error}
+                </div>
               </div>
             )}
 

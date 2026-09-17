@@ -17,10 +17,13 @@ import {
   FaCalendarDays,
   FaBed,
   FaBath,
-  FaShieldHalved
+  FaShieldHalved,
+  FaCircleExclamation,
 } from "react-icons/fa6";
 import api from "../services/api";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { getErrorMessage } from "../utils/errorHandler";
+import { openRazorpayCheckout } from "../utils/razorpay";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -34,10 +37,12 @@ const AVAILABILITY_OPTIONS = ["Immediate", "Within 15 Days", "Within 30 Days", "
 
 export default function Profile() {
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Active Tab State
   // "basic" | "shortlists" | "properties" | "interested" | "rented" | "payments"
   const [activeTab, setActiveTab] = useState("basic");
+  const [globalError, setGlobalError] = useState("");
 
   // Profile data
   const [profile, setProfile] = useState({
@@ -101,11 +106,13 @@ export default function Profile() {
       setProfile(response.data.data);
     } catch (error) {
       console.error("Error fetching profile data:", error);
+      setGlobalError(getErrorMessage(error, "Failed to load profile data."));
     }
   };
 
   const updateProfileData = async () => {
     try {
+      setGlobalError("");
       const response = await api.put("/auth/update-current-user", profile);
       if (response.data.data?.emailChanged) {
         setEmailChanged(true);
@@ -114,6 +121,7 @@ export default function Profile() {
       setEditMode(false);
     } catch (error) {
       console.error("Error updating profile data:", error);
+      setGlobalError(getErrorMessage(error, "Failed to update profile details."));
     }
   };
 
@@ -124,10 +132,12 @@ export default function Profile() {
     };
     setProfile(updatedProfile);
     try {
+      setGlobalError("");
       const response = await api.put("/auth/update-current-user", updatedProfile);
       setProfile(response.data.data);
     } catch (error) {
       console.error("Error updating WhatsApp preference:", error);
+      setGlobalError(getErrorMessage(error, "Failed to update WhatsApp preference."));
       setProfile(profile);
     }
   };
@@ -150,7 +160,7 @@ export default function Profile() {
       }, 1500);
     } catch (error) {
       setPasswordMsg({
-        text: error.response?.data?.message || "Error changing password",
+        text: getErrorMessage(error, "Error changing password."),
         error: true,
       });
     }
@@ -158,6 +168,7 @@ export default function Profile() {
 
   const handleEmailChange = async () => {
     try {
+      setGlobalError("");
       const response = await api.put("/auth/update-user-email", {
         email: profile.email,
         token: otp,
@@ -169,6 +180,7 @@ export default function Profile() {
       }
     } catch (error) {
       console.error("Error changing email:", error);
+      setGlobalError(getErrorMessage(error, "Failed to verify email token."));
     }
   };
 
@@ -235,10 +247,22 @@ export default function Profile() {
 
   useEffect(() => {
     getProfileData();
-    if (location.state?.openSection) {
+    const queryTab = searchParams.get("tab");
+    if (
+      queryTab &&
+      ["basic", "shortlists", "properties", "interested", "rented", "payments"].includes(queryTab)
+    ) {
+      setActiveTab(queryTab);
+    } else if (location.state?.openSection) {
       setActiveTab(location.state.openSection);
     }
-  }, [location.state]);
+  }, [location.state, searchParams]);
+
+  const handleSelectTab = (tab) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+    setGlobalError("");
+  };
 
   useEffect(() => {
     if (activeTab === "properties") fetchUserProperties();
@@ -251,6 +275,7 @@ export default function Profile() {
   // ── Shortlist Actions ───────────────────────────────────────────────────
   const handleRemoveShortlist = async (propertyId) => {
     try {
+      setGlobalError("");
       await api.post(`/property/shortlist/${propertyId}`);
       setShortlists((prev) => prev.filter((p) => p._id !== propertyId));
       try {
@@ -264,6 +289,7 @@ export default function Profile() {
       }
     } catch (err) {
       console.error("Error removing shortlist:", err);
+      setGlobalError(getErrorMessage(err, "Failed to remove property from shortlist."));
     }
   };
 
@@ -280,6 +306,7 @@ export default function Profile() {
     e.preventDefault();
     if (!rentalModalProperty) return;
     setRentalSubmitting(true);
+    setGlobalError("");
     try {
       await api.post("/property/rental-request", {
         propertyId: rentalModalProperty._id,
@@ -292,7 +319,7 @@ export default function Profile() {
         setRentalSuccessMsg("");
       }, 2000);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to submit rental request");
+      setGlobalError(getErrorMessage(err, "Failed to submit rental request."));
     } finally {
       setRentalSubmitting(false);
     }
@@ -322,12 +349,13 @@ export default function Profile() {
     e.preventDefault();
     if (!editModalProperty) return;
     setEditSaving(true);
+    setGlobalError("");
     try {
       await api.put(`/property/${editModalProperty._id}`, editFormData);
       setEditModalProperty(null);
       fetchUserProperties();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update property details");
+      setGlobalError(getErrorMessage(err, "Failed to update property details."));
     } finally {
       setEditSaving(false);
     }
@@ -337,11 +365,12 @@ export default function Profile() {
     if (!window.confirm("Are you sure you want to deactivate and remove this property listing?")) {
       return;
     }
+    setGlobalError("");
     try {
       await api.delete(`/property/${propertyId}`);
       fetchUserProperties();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete property");
+      setGlobalError(getErrorMessage(err, "Failed to delete property."));
     }
   };
 
@@ -354,21 +383,22 @@ export default function Profile() {
     ) {
       return;
     }
+    setGlobalError("");
     try {
       await api.put(`/property/rental-request/${requestId}/accept`);
-      alert("Application accepted! Property is now rented and delisted from search.");
       fetchOwnerRequests();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to accept application");
+      setGlobalError(getErrorMessage(err, "Failed to accept application."));
     }
   };
 
   const handleRejectRequest = async (requestId) => {
+    setGlobalError("");
     try {
       await api.put(`/property/rental-request/${requestId}/reject`);
       fetchOwnerRequests();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to reject application");
+      setGlobalError(getErrorMessage(err, "Failed to reject application."));
     }
   };
 
@@ -386,6 +416,7 @@ export default function Profile() {
     e.preventDefault();
     if (!offlinePaymentModal?.rentalRequest?._id) return;
     setOfflineSubmitting(true);
+    setGlobalError("");
     try {
       await api.post(
         `/property/rental-request/${offlinePaymentModal.rentalRequest._id}/record-payment`,
@@ -400,7 +431,7 @@ export default function Profile() {
       setOfflinePaymentModal(null);
       fetchActiveRented();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to record offline payment");
+      setGlobalError(getErrorMessage(err, "Failed to record offline payment."));
     } finally {
       setOfflineSubmitting(false);
     }
@@ -414,12 +445,12 @@ export default function Profile() {
     ) {
       return;
     }
+    setGlobalError("");
     try {
       await api.put(`/property/${propertyId}/end-lease`);
-      alert("Lease ended! Property is active again and returned to search listings.");
       fetchActiveRented();
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to end lease");
+      setGlobalError(getErrorMessage(err, "Failed to end lease."));
     }
   };
 
@@ -436,9 +467,10 @@ export default function Profile() {
   const handleSimulateRazorpayPayment = async () => {
     if (!razorpayModal?.request) return;
     setRazorpayStep("processing");
+    setGlobalError("");
 
     try {
-      // Step 1: Create simulated order
+      // Step 1: Create order on backend
       const orderRes = await api.post("/property/payment/create-order", {
         requestId: razorpayModal.request._id,
         amount: razorpayModal.request.monthlyRent,
@@ -446,33 +478,48 @@ export default function Profile() {
         year: payYear,
       });
 
-      const orderData = orderRes.data.data;
+      const orderData = orderRes.data?.data;
 
-      // Simulated network processing delay
-      await new Promise((resolve) => setTimeout(resolve, 1400));
+      // Step 2: Open standard Razorpay Checkout SDK
+      await openRazorpayCheckout({
+        orderData,
+        user: profile,
+        onSuccess: async (rzpResponse) => {
+          try {
+            // Step 3: Verify payment on backend
+            await api.post("/property/payment/verify", {
+              requestId: razorpayModal.request._id,
+              orderId: rzpResponse.razorpay_order_id,
+              paymentId: rzpResponse.razorpay_payment_id,
+              amount: razorpayModal.request.monthlyRent,
+              month: payMonth,
+              year: payYear,
+              method: "online",
+            });
 
-      // Step 2: Verify simulated payment
-      const paymentId = `pay_sim_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      const verifyRes = await api.post("/property/payment/verify", {
-        requestId: razorpayModal.request._id,
-        orderId: orderData?.id || `order_sim_${Date.now()}`,
-        paymentId: paymentId,
-        amount: razorpayModal.request.monthlyRent,
-        month: payMonth,
-        year: payYear,
-        method: "online",
+            setRazorpayTxn({
+              paymentId: rzpResponse.razorpay_payment_id,
+              amount: razorpayModal.request.monthlyRent,
+              month: MONTH_NAMES[payMonth - 1],
+              year: payYear,
+            });
+            setRazorpayStep("success");
+            fetchTenantRequests();
+          } catch (verifyErr) {
+            setGlobalError(getErrorMessage(verifyErr, "Payment verification failed."));
+            setRazorpayStep("confirm");
+          }
+        },
+        onFailure: (errMsg) => {
+          setGlobalError(typeof errMsg === "string" ? errMsg : "Payment failed or cancelled.");
+          setRazorpayStep("confirm");
+        },
+        onDismiss: () => {
+          setRazorpayStep("confirm");
+        },
       });
-
-      setRazorpayTxn({
-        paymentId,
-        amount: razorpayModal.request.monthlyRent,
-        month: MONTH_NAMES[payMonth - 1],
-        year: payYear,
-      });
-      setRazorpayStep("success");
-      fetchTenantRequests();
     } catch (err) {
-      alert(err.response?.data?.message || "Error simulating Razorpay payment");
+      setGlobalError(getErrorMessage(err, "Error initiating Razorpay payment."));
       setRazorpayStep("confirm");
     }
   };
@@ -487,20 +534,20 @@ export default function Profile() {
             <p className="text-xs text-gray-500 mt-0.5">{profile.email || "Manage your rentals"}</p>
           </div>
 
-          <div className="flex flex-col text-[14px]">
+          <div className="flex flex-col text-sm">
             <button
-              onClick={() => setActiveTab("basic")}
+              onClick={() => handleSelectTab("basic")}
               className={`flex items-center gap-3 px-6 py-4 text-left font-medium transition ${
                 activeTab === "basic"
                   ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <span>Basic Profile</span>
+              <span>My Profile & Account</span>
             </button>
 
             <button
-              onClick={() => setActiveTab("shortlists")}
+              onClick={() => handleSelectTab("shortlists")}
               className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
                 activeTab === "shortlists"
                   ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
@@ -509,49 +556,49 @@ export default function Profile() {
             >
               <div className="flex items-center gap-2">
                 <FaHeart className="text-red-500 text-xs" />
-                <span>Your Shortlists</span>
+                <span>Saved Properties</span>
               </div>
               {shortlists.length > 0 && (
-                <span className="bg-red-100 text-red-700 px-2 py-0.5 text-[11px] font-bold">
+                <span className="bg-red-100 text-red-700 px-2 py-0.5 text-xs font-bold">
                   {shortlists.length}
                 </span>
               )}
             </button>
 
             <button
-              onClick={() => setActiveTab("properties")}
+              onClick={() => handleSelectTab("properties")}
               className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
                 activeTab === "properties"
                   ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <span>Your Properties</span>
+              <span>My Listed Properties</span>
               {userProperties.length > 0 && (
-                <span className="bg-gray-200 text-gray-800 px-2 py-0.5 text-[11px] font-bold">
+                <span className="bg-gray-200 text-gray-800 px-2 py-0.5 text-xs font-bold">
                   {userProperties.length}
                 </span>
               )}
             </button>
 
             <button
-              onClick={() => setActiveTab("interested")}
+              onClick={() => handleSelectTab("interested")}
               className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
                 activeTab === "interested"
                   ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <span>Interested in Properties</span>
+              <span>Rental Applications</span>
               {ownerRequests.filter((r) => r.status === "pending").length > 0 && (
-                <span className="bg-amber-100 text-amber-800 px-2 py-0.5 text-[11px] font-bold">
+                <span className="bg-amber-100 text-amber-800 px-2 py-0.5 text-xs font-bold">
                   {ownerRequests.filter((r) => r.status === "pending").length} new
                 </span>
               )}
             </button>
 
             <button
-              onClick={() => setActiveTab("rented")}
+              onClick={() => handleSelectTab("rented")}
               className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
                 activeTab === "rented"
                   ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
@@ -560,17 +607,17 @@ export default function Profile() {
             >
               <div className="flex items-center gap-2">
                 <FaHouseUser className="text-[#009587] text-xs" />
-                <span>Active Rented Properties</span>
+                <span>Active Tenancies</span>
               </div>
               {activeRented.length > 0 && (
-                <span className="bg-teal-100 text-[#009587] px-2 py-0.5 text-[11px] font-bold">
+                <span className="bg-teal-100 text-[#009587] px-2 py-0.5 text-xs font-bold">
                   {activeRented.length}
                 </span>
               )}
             </button>
 
             <button
-              onClick={() => setActiveTab("payments")}
+              onClick={() => handleSelectTab("payments")}
               className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
                 activeTab === "payments"
                   ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
@@ -579,7 +626,7 @@ export default function Profile() {
             >
               <div className="flex items-center gap-2">
                 <FaCreditCard className="text-blue-500 text-xs" />
-                <span>Your Payments & Rent</span>
+                <span>Rent Payments & Receipts</span>
               </div>
             </button>
           </div>
@@ -587,6 +634,24 @@ export default function Profile() {
 
         {/* ── Main Content Area ─────────────────────────────────────────── */}
         <div className="flex-1 lg:h-full lg:overflow-y-auto">
+          {/* Visible Error Banner */}
+          {globalError && (
+            <div className="m-6 border border-red-300 bg-red-50 p-4 text-xs text-red-700">
+              <div className="flex items-start gap-3">
+                <FaCircleExclamation className="mt-0.5 text-base text-red-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-bold text-red-800 uppercase tracking-wide">Notice</h4>
+                  <p className="mt-0.5">{globalError}</p>
+                </div>
+                <button
+                  onClick={() => setGlobalError("")}
+                  className="text-xs text-red-500 hover:text-red-700 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
           {/* TAB 1: BASIC PROFILE */}
           {activeTab === "basic" && (
             <div>
@@ -659,13 +724,13 @@ export default function Profile() {
                   <div className="flex gap-3">
                     <button
                       onClick={changePassword}
-                      className="bg-red-500 px-6 py-2.5 text-xs font-semibold text-white hover:bg-red-600"
+                      className="bg-[#009587] px-6 py-2.5 text-xs font-semibold text-white hover:bg-[#007d70] transition"
                     >
                       Update Password
                     </button>
                     <button
                       onClick={() => setIsChangePasswordOpen(false)}
-                      className="border border-gray-300 px-6 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
+                      className="border border-gray-300 px-6 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
                     >
                       Cancel
                     </button>
@@ -686,7 +751,7 @@ export default function Profile() {
                   />
                   <button
                     onClick={handleEmailChange}
-                    className="bg-red-500 px-6 py-2.5 text-xs font-semibold text-white hover:bg-red-600"
+                    className="bg-[#009587] px-6 py-2.5 text-xs font-semibold text-white hover:bg-[#007d70] transition"
                   >
                     Verify & Save Email
                   </button>
@@ -795,8 +860,16 @@ export default function Profile() {
                 ) : shortlists.length === 0 ? (
                   <div className="border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
                     <FaHeart className="mx-auto text-3xl text-gray-300 mb-2" />
-                    <p className="text-sm font-medium text-gray-700">No properties in your shortlists yet.</p>
-                    <p className="text-xs text-gray-500 mt-1">Browse search listings and click the heart icon to save.</p>
+                    <p className="text-sm font-semibold text-gray-800">No properties in your saved list yet.</p>
+                    <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+                      Save properties you like to compare rent, deposits, amenities, and send rental requests directly.
+                    </p>
+                    <a
+                      href="/search"
+                      className="mt-4 inline-block bg-[#009587] px-5 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition"
+                    >
+                      Browse Rental Properties
+                    </a>
                   </div>
                 ) : (
                   <div className="grid gap-5">
@@ -821,10 +894,10 @@ export default function Profile() {
                           </div>
                           <div className="space-y-1.5 flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="bg-teal-50 border border-teal-200 px-2 py-0.5 text-[10px] font-bold text-[#009587]">
+                              <span className="bg-teal-50 border border-teal-200 px-2 py-0.5 text-xs font-semibold text-[#009587]">
                                 {property.propertyType || "Apartment"}
                               </span>
-                              <span className="text-[11px] font-semibold text-gray-700">
+                              <span className="text-xs font-semibold text-gray-700">
                                 {property.BHKType} • {property.Furnishing}
                               </span>
                             </div>
@@ -850,16 +923,16 @@ export default function Profile() {
                           <button
                             type="button"
                             onClick={() => handleOpenRentalRequest(property)}
-                            className="flex-1 md:flex-initial bg-[#009587] px-4 py-2 text-xs font-semibold text-white hover:bg-[#007f73]"
+                            className="flex-1 md:flex-initial bg-[#009587] px-4 py-2 text-xs font-semibold text-white hover:bg-[#007f73] transition"
                           >
                             Request to Rent
                           </button>
                           <button
                             type="button"
                             onClick={() => handleRemoveShortlist(property._id)}
-                            className="flex-1 md:flex-initial border border-red-300 text-red-600 px-4 py-2 text-xs font-semibold hover:bg-red-50 flex items-center justify-center gap-1.5"
+                            className="flex-1 md:flex-initial border border-red-300 text-red-600 px-4 py-2 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
                           >
-                            <FaTrash className="text-[10px]" /> Remove
+                            <FaTrash className="text-xs" /> Remove
                           </button>
                         </div>
                       </div>
@@ -893,8 +966,16 @@ export default function Profile() {
                   </div>
                 ) : userProperties.length === 0 ? (
                   <div className="border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
-                    <p className="text-sm font-medium text-gray-700">No properties listed yet.</p>
-                    <p className="text-xs text-gray-500 mt-1">Post a property to connect with verified tenants.</p>
+                    <p className="text-sm font-semibold text-gray-800">No properties listed yet.</p>
+                    <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
+                      List your home, flat, or PG to connect with verified tenants with zero brokerage and instant digital agreements.
+                    </p>
+                    <a
+                      href="/post-property"
+                      className="mt-4 inline-block bg-[#009587] px-5 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition"
+                    >
+                      + Post Property Free
+                    </a>
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -903,7 +984,7 @@ export default function Profile() {
                         <div className="border-b border-gray-200 px-5 py-4 flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
                             <span
-                              className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                              className={`px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
                                 property.status === "rented"
                                   ? "bg-purple-100 text-purple-800 border border-purple-200"
                                   : property.status === "active"
@@ -913,7 +994,7 @@ export default function Profile() {
                             >
                               {property.status === "rented" ? "● Booked / Rented" : `● ${property.status}`}
                             </span>
-                            <span className="bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600 font-medium">
+                            <span className="bg-gray-100 px-2 py-0.5 text-xs text-gray-600 font-medium">
                               {property.BHKType} • {property.Furnishing}
                             </span>
                           </div>
@@ -922,16 +1003,16 @@ export default function Profile() {
                             <button
                               type="button"
                               onClick={() => handleOpenEditModal(property)}
-                              className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-1.5"
+                              className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5"
                             >
-                              <FaPen className="text-[10px] text-blue-600" /> Edit Details
+                              <FaPen className="text-xs text-teal-700" /> Edit Details
                             </button>
                             <button
                               type="button"
                               onClick={() => handleDeleteProperty(property._id)}
-                              className="border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center gap-1"
+                              className="border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition flex items-center gap-1"
                             >
-                              <FaTrash className="text-[10px]" /> Deactivate
+                              <FaTrash className="text-xs" /> Deactivate
                             </button>
                           </div>
                         </div>
@@ -1040,7 +1121,7 @@ export default function Profile() {
                           </div>
 
                           <span
-                            className={`px-3 py-1 text-[11px] font-bold uppercase ${
+                            className={`px-3 py-1 text-xs font-bold uppercase ${
                               request.status === "accepted"
                                 ? "bg-green-100 text-green-800 border border-green-300"
                                 : request.status === "rejected"
@@ -1143,7 +1224,7 @@ export default function Profile() {
                           <div className="border-b border-gray-200 px-5 py-4 flex flex-wrap items-center justify-between gap-3 bg-teal-50/50">
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-0.5 text-[10px] font-bold uppercase">
+                                <span className="bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-0.5 text-xs font-bold uppercase">
                                   Occupied / Rented
                                 </span>
                                 <h3 className="text-base font-bold text-gray-800">{prop.title}</h3>
@@ -1240,14 +1321,14 @@ export default function Profile() {
                                           {pmt.method}
                                         </td>
                                         <td className="p-2.5">
-                                          <span className="bg-green-100 text-green-800 px-2 py-0.5 text-[10px] font-bold">
+                                          <span className="bg-green-100 text-green-800 px-2 py-0.5 text-xs font-bold">
                                             PAID
                                           </span>
                                         </td>
-                                        <td className="p-2.5 font-mono text-gray-500 text-[11px]">
+                                        <td className="p-2.5 font-mono text-gray-500 text-xs">
                                           {pmt.transactionId || "—"}
                                         </td>
-                                        <td className="p-2.5 text-gray-500 text-[11px]">
+                                        <td className="p-2.5 text-gray-500 text-xs">
                                           {pmt.notes || "—"}
                                         </td>
                                       </tr>
@@ -1301,7 +1382,7 @@ export default function Profile() {
                             <div>
                               <div className="flex items-center gap-2">
                                 <span
-                                  className={`px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                                  className={`px-2.5 py-0.5 text-xs font-bold uppercase ${
                                     isAccepted
                                       ? "bg-green-100 text-green-800 border border-green-300"
                                       : request.status === "rejected"
@@ -1398,14 +1479,14 @@ export default function Profile() {
                                             {p.method}
                                           </td>
                                           <td className="p-2.5">
-                                            <span className="bg-green-100 text-green-800 px-2 py-0.5 text-[10px] font-bold">
+                                            <span className="bg-green-100 text-green-800 px-2 py-0.5 text-xs font-bold">
                                               PAID
                                             </span>
                                           </td>
-                                          <td className="p-2.5 font-mono text-gray-500 text-[11px]">
+                                          <td className="p-2.5 font-mono text-gray-500 text-xs">
                                             {p.transactionId || "—"}
                                           </td>
-                                          <td className="p-2.5 text-gray-500 text-[11px]">
+                                          <td className="p-2.5 text-gray-500 text-xs">
                                             {p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "—"}
                                           </td>
                                         </tr>
@@ -1632,7 +1713,7 @@ export default function Profile() {
 
             <div className="flex items-center gap-2 text-[#009587] mb-1">
               <FaMoneyBillWave className="text-base" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">
+              <span className="text-xs font-bold uppercase tracking-wider">
                 Owner Payment Entry
               </span>
             </div>
@@ -1732,27 +1813,27 @@ export default function Profile() {
       {/* ── MODAL: RAZORPAY SIMULATED PAYMENT (TENANT) ───────────────────── */}
       {razorpayModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-4">
-          <div className="relative w-full max-w-md overflow-hidden rounded-md border border-gray-200 bg-white shadow-2xl">
+          <div className="relative w-full max-w-md border border-gray-300 bg-white shadow-xl">
             {/* Authentic Razorpay Header */}
-            <div className="bg-[#072654] px-6 py-4 text-white">
+            <div className="bg-[#009587] px-6 py-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-bold tracking-wide">Rentosphere Housing</h4>
-                  <p className="text-[11px] text-blue-200">Rent Payment Gateway</p>
+                  <p className="text-xs text-teal-100">Rent Payment Gateway</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] uppercase tracking-wider text-blue-200">Amount</span>
+                  <span className="text-xs uppercase tracking-wider text-teal-100">Amount</span>
                   <p className="text-lg font-extrabold text-white">
                     ₹{(razorpayModal.request.monthlyRent || 0).toLocaleString("en-IN")}
                   </p>
                 </div>
               </div>
-              <div className="mt-2 flex items-center justify-between text-[10px] text-blue-300 border-t border-blue-900/60 pt-2">
+              <div className="mt-2 flex items-center justify-between text-xs text-teal-100 border-t border-teal-600 pt-2">
                 <span className="flex items-center gap-1">
-                  <FaShieldHalved className="text-green-400" /> Razorpay Trusted Business
+                  <FaShieldHalved className="text-white" /> Razorpay Trusted Business
                 </span>
-                <span className="font-mono bg-blue-950 px-1.5 py-0.5 rounded text-[9px]">
-                  TEST SIMULATION
+                <span className="font-medium bg-teal-800 px-2 py-0.5 text-xs text-teal-100">
+                  Instant Confirmation
                 </span>
               </div>
             </div>
@@ -1760,25 +1841,25 @@ export default function Profile() {
             <div className="p-6">
               {razorpayStep === "processing" ? (
                 <div className="py-10 text-center space-y-3">
-                  <FaSpinner className="mx-auto text-4xl text-[#3395FF] animate-spin" />
-                  <h4 className="text-sm font-bold text-gray-800">Processing Razorpay Transaction…</h4>
-                  <p className="text-xs text-gray-500">Contacting bank simulation gateway. Please do not refresh.</p>
+                  <FaSpinner className="mx-auto text-3xl text-[#009587] animate-spin" />
+                  <h4 className="text-sm font-bold text-gray-800">Processing Payment Securely…</h4>
+                  <p className="text-xs text-gray-500">Connecting to secure payment gateway. Please do not refresh.</p>
                 </div>
               ) : razorpayStep === "success" ? (
                 <div className="py-6 text-center space-y-3">
-                  <FaCircleCheck className="mx-auto text-5xl text-emerald-500" />
+                  <FaCircleCheck className="mx-auto text-4xl text-[#009587]" />
                   <h4 className="text-base font-bold text-gray-800">Payment Successful!</h4>
                   <p className="text-xs text-gray-600">
                     Rent of ₹{razorpayTxn?.amount?.toLocaleString("en-IN")} for {razorpayTxn?.month} {razorpayTxn?.year} recorded.
                   </p>
-                  <div className="border border-gray-200 bg-gray-50 p-2.5 font-mono text-[11px] text-gray-600 text-left space-y-1">
+                  <div className="border border-gray-200 bg-gray-50 p-2.5 font-mono text-xs text-gray-600 text-left space-y-1">
                     <div>Ref ID: {razorpayTxn?.paymentId}</div>
                     <div>Status: Captured (Success)</div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setRazorpayModal(null)}
-                    className="w-full bg-[#072654] py-2.5 text-xs font-semibold text-white hover:bg-blue-950"
+                    className="w-full bg-[#009587] py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition"
                   >
                     Close & View Receipt
                   </button>
@@ -1791,7 +1872,7 @@ export default function Profile() {
                       <select
                         value={payMonth}
                         onChange={(e) => setPayMonth(Number(e.target.value))}
-                        className="w-full border border-gray-300 p-2 outline-none focus:border-blue-600"
+                        className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                       >
                         {MONTH_NAMES.map((name, i) => (
                           <option key={name} value={i + 1}>
@@ -1806,7 +1887,7 @@ export default function Profile() {
                         type="number"
                         value={payYear}
                         onChange={(e) => setPayYear(Number(e.target.value))}
-                        className="w-full border border-gray-300 p-2 outline-none focus:border-blue-600"
+                        className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                       />
                     </div>
                   </div>
@@ -1819,9 +1900,9 @@ export default function Profile() {
                       <button
                         type="button"
                         onClick={() => setPayMethod("upi")}
-                        className={`border p-2.5 text-center font-medium rounded ${
+                        className={`border p-2.5 text-center text-xs font-medium transition ${
                           payMethod === "upi"
-                            ? "border-blue-600 bg-blue-50 text-blue-800"
+                            ? "border-[#009587] bg-teal-50 text-[#009587] font-bold"
                             : "border-gray-200 text-gray-600 hover:bg-gray-50"
                         }`}
                       >
@@ -1830,9 +1911,9 @@ export default function Profile() {
                       <button
                         type="button"
                         onClick={() => setPayMethod("card")}
-                        className={`border p-2.5 text-center font-medium rounded ${
+                        className={`border p-2.5 text-center text-xs font-medium transition ${
                           payMethod === "card"
-                            ? "border-blue-600 bg-blue-50 text-blue-800"
+                            ? "border-[#009587] bg-teal-50 text-[#009587] font-bold"
                             : "border-gray-200 text-gray-600 hover:bg-gray-50"
                         }`}
                       >
@@ -1841,9 +1922,9 @@ export default function Profile() {
                       <button
                         type="button"
                         onClick={() => setPayMethod("netbanking")}
-                        className={`border p-2.5 text-center font-medium rounded ${
+                        className={`border p-2.5 text-center text-xs font-medium transition ${
                           payMethod === "netbanking"
-                            ? "border-blue-600 bg-blue-50 text-blue-800"
+                            ? "border-[#009587] bg-teal-50 text-[#009587] font-bold"
                             : "border-gray-200 text-gray-600 hover:bg-gray-50"
                         }`}
                       >
@@ -1852,10 +1933,12 @@ export default function Profile() {
                     </div>
                   </div>
 
-                  <div className="border border-blue-100 bg-blue-50/70 p-3 text-[11px] text-blue-900 rounded space-y-1">
-                    <p className="font-semibold">Simulated Razorpay Sandbox</p>
-                    <p className="text-blue-700">
-                      Clicking below will simulate full 2-step Razorpay order generation & instant signature verification.
+                  <div className="border border-teal-100 bg-teal-50/50 p-3 text-xs text-gray-700 space-y-1">
+                    <p className="font-semibold text-teal-900 flex items-center gap-1.5">
+                      <FaShieldHalved className="text-[#009587]" /> Razorpay 256-bit SSL Secure Checkout
+                    </p>
+                    <p className="text-gray-600 leading-relaxed">
+                      Instant rent receipt with landlord details generated immediately upon confirmation. HRA tax compliant.
                     </p>
                   </div>
 
@@ -1863,14 +1946,14 @@ export default function Profile() {
                     <button
                       type="button"
                       onClick={() => setRazorpayModal(null)}
-                      className="flex-1 border border-gray-300 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded"
+                      className="flex-1 border border-gray-300 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 transition"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSimulateRazorpayPayment}
-                      className="flex-1 bg-[#3395FF] py-2.5 text-xs font-bold text-white hover:bg-blue-600 shadow rounded flex items-center justify-center gap-1.5"
+                      className="flex-1 bg-[#009587] py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition flex items-center justify-center gap-1.5"
                     >
                       <span>Pay ₹{(razorpayModal.request.monthlyRent || 0).toLocaleString("en-IN")}</span>
                     </button>

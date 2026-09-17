@@ -22,7 +22,9 @@ import {
   FaArrowDownWideShort,
   FaSliders,
   FaCircleCheck,
+  FaCircleExclamation,
 } from "react-icons/fa6";
+import { getErrorMessage } from "../utils/errorHandler";
 
 const DEFAULT_PROPERTY_IMAGE =
   "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80";
@@ -363,7 +365,7 @@ function SearchResults() {
         setTotal(data.total || 0);
       } catch (err) {
         console.error("Failed to fetch properties:", err);
-        setError("Failed to load properties. Please try again.");
+        setError(getErrorMessage(err, "Failed to load properties. Please try again."));
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -659,7 +661,7 @@ function SearchResults() {
               <FaSliders className="text-xs" />
               <span>Filters</span>
               {activeFilterCount > 0 && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#009587] text-[10px] font-bold text-white">
+                <span className="flex h-4 w-4 items-center justify-center bg-[#009587] text-[10px] font-bold text-white">
                   {activeFilterCount}
                 </span>
               )}
@@ -935,8 +937,18 @@ function SearchResults() {
       {/* ── Main Content Area ────────────────────────────────────────────── */}
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {error && (
-          <div className="mb-6 border border-red-300 bg-red-50 p-4 text-sm text-red-600">
-            {error}
+          <div className="mb-6 border border-red-300 bg-red-50 p-4 text-xs text-red-700 flex items-start gap-3">
+            <FaCircleExclamation className="text-red-600 text-base mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <h4 className="font-bold text-red-800 uppercase tracking-wide">Notice</h4>
+              <p className="mt-0.5">{error}</p>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="text-xs text-red-500 hover:text-red-700 font-bold"
+            >
+              ✕
+            </button>
           </div>
         )}
 
@@ -1252,9 +1264,9 @@ function SearchResults() {
                           <button
                             type="button"
                             onClick={() => handleGetOwnerDetails(property)}
-                            className="bg-red-500 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-red-600"
+                            className="border border-[#009587] bg-white px-4 py-2.5 text-xs font-semibold text-[#009587] transition hover:bg-teal-50"
                           >
-                            <FaPhone className="mr-1.5 inline text-[11px]" />
+                            <FaPhone className="mr-1.5 inline text-xs" />
                             Get Owner Details
                           </button>
                           <button
@@ -1407,7 +1419,7 @@ function SearchResults() {
                   <div className="flex gap-2 pt-2">
                     <a
                       href={`tel:${ownerData?.mobileNumber || "+919876543210"}`}
-                      className="flex-1 flex items-center justify-center gap-1.5 bg-red-500 py-2.5 text-xs font-semibold text-white transition hover:bg-red-600"
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-[#009587] py-2.5 text-xs font-semibold text-white transition hover:bg-[#007d70]"
                     >
                       <FaPhone className="text-xs" /> Call Owner
                     </a>
@@ -1421,7 +1433,7 @@ function SearchResults() {
                     </a>
                   </div>
 
-                  <p className="text-[11px] text-gray-400 text-center mt-2">
+                  <p className="text-xs text-gray-500 text-center mt-2">
                     💡 Tip: Never transfer token deposit without visiting the property and verifying documents.
                   </p>
                 </>

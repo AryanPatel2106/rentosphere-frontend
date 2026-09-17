@@ -60,7 +60,7 @@ export default function ResetPassword() {
         
                         <button
                           type="submit"
-                          className="mt-6 w-full bg-red-500 py-3 font-medium text-white transition hover:bg-red-600"
+                          className="mt-6 w-full bg-[#009587] py-3 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70]"
                         >
                           Reset Password
                         </button>

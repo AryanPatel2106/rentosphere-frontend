@@ -38,9 +38,9 @@ function PostProperty() {
         <div className="grid gap-8 sm:grid-cols-3">
           {steps.map((s, i) => (
             <div key={s.title} className="flex flex-col items-center text-center gap-4">
-              <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#009587]">
+              <div className="relative flex h-12 w-12 items-center justify-center bg-[#009587]">
                 {s.icon}
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 text-xs font-bold text-white">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center bg-gray-800 text-[10px] font-bold text-white">
                   {i + 1}
                 </span>
               </div>
@@ -53,7 +53,7 @@ function PostProperty() {
 
       {/* Coming Soon Form */}
       <section className="mx-auto max-w-2xl px-6 pb-16">
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="border border-gray-300 bg-white p-8">
           <div className="flex items-center gap-2 mb-6">
             <FaCircleInfo className="text-[#009587]" />
             <p className="text-sm text-gray-500">
@@ -68,14 +68,14 @@ function PostProperty() {
                 <input
                   disabled
                   placeholder={`Enter ${label.toLowerCase()}`}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-400 cursor-not-allowed outline-none"
+                  className="w-full border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-400 cursor-not-allowed outline-none"
                 />
               </div>
             ))}
 
             <button
               disabled
-              className="mt-2 w-full rounded-lg bg-[#009587] px-4 py-3 text-sm font-semibold text-white opacity-50 cursor-not-allowed"
+              className="mt-2 w-full bg-[#009587] px-4 py-3 text-sm font-semibold text-white opacity-50 cursor-not-allowed"
             >
               Submit Listing (Coming Soon)
             </button>

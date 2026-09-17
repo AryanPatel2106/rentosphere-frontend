@@ -24,8 +24,8 @@ function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#009587]">
-                <FaHouse className="text-xl text-white" />
+              <div className="flex h-10 w-10 items-center justify-center bg-[#009587]">
+                <FaHouse className="text-lg text-white" />
               </div>
 
               <h2 className="text-2xl font-bold text-gray-800">Rentosphere</h2>
@@ -42,16 +42,16 @@ function Footer() {
                 href="https://github.com/AryanPatel2106"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
               >
                 <FaGithub />
               </a>
 
               <a
-                href="https://www.linkedin.com/in/aryan-patel-9b24a0331/"
+                href="https://linkendin.com/in/aryan-patel-9b24a0331/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
               >
                 <FaLinkedinIn />
               </a>
@@ -60,7 +60,7 @@ function Footer() {
                 href="https://x.com/Aryanpatel0621"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
               >
                 <FaXTwitter />
               </a>
@@ -69,7 +69,7 @@ function Footer() {
                 href="https://dl220ysk3c4k.cloudfront.net"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center border border-gray-300 text-gray-600 transition hover:bg-[#009587] hover:text-white"
               >
                 <FaUser />
               </a>
