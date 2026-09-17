@@ -50,9 +50,7 @@ export const openRazorpayCheckout = async ({
   const isRealRazorpay =
     Boolean(configuredKey) &&
     configuredKey !== "rzp_test_RentosphereSimKey" &&
-    (configuredKey.startsWith("rzp_test_") || configuredKey.startsWith("rzp_live_")) &&
-    !orderData?.isSimulated &&
-    !orderData?.id?.startsWith("order_sim_");
+    (configuredKey.startsWith("rzp_test_") || configuredKey.startsWith("rzp_live_"));
 
   if (isRealRazorpay) {
     try {
@@ -66,7 +64,6 @@ export const openRazorpayCheckout = async ({
           description:
             orderData.description ||
             `Rent payment ${orderData.notes?.month ? `for Month ${orderData.notes.month}/${orderData.notes.year}` : ""}`,
-          order_id: orderData.id,
           prefill: {
             name: user?.fullName || "Tenant",
             email: user?.email || "",
@@ -77,7 +74,12 @@ export const openRazorpayCheckout = async ({
             color: "#009587",
           },
           handler: function (response) {
-            if (onSuccess) onSuccess(response);
+            if (onSuccess) {
+              onSuccess({
+                ...response,
+                razorpay_order_id: response.razorpay_order_id || orderData.id,
+              });
+            }
           },
           modal: {
             ondismiss: function () {
@@ -85,6 +87,16 @@ export const openRazorpayCheckout = async ({
             },
           },
         };
+
+        // Only attach order_id if it's a real order created via Razorpay Orders API
+        if (
+          orderData.id &&
+          orderData.id.startsWith("order_") &&
+          !orderData.id.startsWith("order_sim_") &&
+          !orderData.isSimulated
+        ) {
+          options.order_id = orderData.id;
+        }
 
         const rzp = new window.Razorpay(options);
         rzp.on("payment.failed", function (response) {
