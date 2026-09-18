@@ -24,6 +24,16 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December"
 ];
 
+const getLocalityDisplay = (property) => {
+  if (!property) return "Location";
+  const loc = property.locality;
+  if (typeof loc === "string") return loc;
+  if (loc && typeof loc === "object") {
+    return loc.text || loc.label || loc.city || property.city || "Location";
+  }
+  return property.city || "Location";
+};
+
 export default function PayRent(props) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -454,7 +464,7 @@ export default function PayRent(props) {
                             {r.property?.title || "Property"}
                           </h4>
                           <p className="text-xs text-gray-500 mt-0.5">
-                            {r.property?.locality || r.property?.city || "Location"}
+                            {getLocalityDisplay(r.property)}
                           </p>
                           <div className="mt-2 flex items-center justify-between text-xs">
                             <span className="font-bold text-[#009587]">
@@ -488,8 +498,7 @@ export default function PayRent(props) {
                             {selectedRental.property?.title || "Rental Property"}
                           </h2>
                           <p className="text-xs text-gray-500 mt-1">
-                            {selectedRental.property?.locality && `${selectedRental.property.locality}, `}
-                            {selectedRental.property?.city || ""}
+                            {getLocalityDisplay(selectedRental.property)}
                           </p>
                         </div>
                         <div className="sm:text-right">
