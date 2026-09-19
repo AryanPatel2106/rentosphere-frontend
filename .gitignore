@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# iOS build artifacts
+build/
+DerivedData/
+*.xcarchive
+*.ipa
+.build/
