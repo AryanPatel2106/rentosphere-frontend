@@ -85,22 +85,22 @@ function Navbar(props) {
     user?.fullName || (user?.email ? user.email.split("@")[0] : "My Account");
 
   return (
-    <header className="relative w-full border-b border-gray-200 bg-white/98 backdrop-blur-md shadow-xs">
+    <header className="relative w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md shadow-xs">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-3 sm:px-6">
         {/* ── Brand Logo ───────────────────────────────────────────────── */}
         <div
           className="flex cursor-pointer items-center gap-2.5 select-none"
           onClick={() => navigate("/")}
         >
-          <div className="flex h-8 w-8 items-center justify-center bg-[#009587] text-white">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-600 text-white shadow-xs">
             <FaHouse className="text-sm" />
           </div>
 
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-gray-900 leading-none">
+            <h1 className="text-lg font-bold tracking-tight text-slate-900 leading-none">
               Rentosphere
             </h1>
-            <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mt-0.5">
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mt-0.5">
               Zero Brokerage Rentals
             </p>
           </div>
@@ -111,9 +111,9 @@ function Navbar(props) {
           {/* Pay Rent Quick Action */}
           <button
             onClick={() => navigate("/pay-fee")}
-            className="flex items-center gap-2 border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition shadow-xs"
           >
-            <FaCreditCard className="text-[#009587] text-xs" />
+            <FaCreditCard className="text-teal-600 text-xs" />
             <span>Pay Rent</span>
           </button>
 
@@ -124,7 +124,7 @@ function Navbar(props) {
                 ? navigate("/post-property")
                 : props.setShowSignup(true);
             }}
-            className="flex items-center gap-1.5 bg-[#009587] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition"
+            className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition shadow-xs"
           >
             <FaPlus className="text-xs" />
             <span>Post Property Free</span>
@@ -134,13 +134,13 @@ function Navbar(props) {
           {isLoggedIn ? (
             <button
               onClick={() => handleNavigate("/profile")}
-              className="flex items-center gap-2 border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-800 hover:border-teal-300 hover:bg-teal-50/50 transition"
+              className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-800 hover:border-teal-300 hover:bg-teal-50/50 transition shadow-xs"
               title="Go to Account Dashboard"
             >
-              <div className="flex h-6 w-6 items-center justify-center bg-[#009587] text-white text-xs font-bold">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-600 text-white text-xs font-bold">
                 {userInitial}
               </div>
-              <span className="max-w-[120px] truncate font-semibold text-gray-800">
+              <span className="max-w-[120px] truncate font-semibold text-slate-800">
                 {displayName}
               </span>
             </button>
@@ -148,14 +148,14 @@ function Navbar(props) {
             <div className="flex items-center gap-2 border-l border-gray-200 pl-2">
               <button
                 onClick={() => props.setShowLogin(true)}
-                className="px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:text-[#009587] transition"
+                className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-teal-700 transition"
               >
                 Log In
               </button>
 
               <button
                 onClick={() => props.setShowSignup(true)}
-                className="border border-[#009587] bg-white px-3 py-1.5 text-xs font-semibold text-[#009587] hover:bg-teal-50 transition"
+                className="rounded-full border border-teal-600 bg-white px-3.5 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-50 transition shadow-xs"
               >
                 Sign Up
               </button>
@@ -167,10 +167,10 @@ function Navbar(props) {
             <button
               type="button"
               onClick={() => setMenuIsOpen(!menuIsOpen)}
-              className={`flex items-center gap-2 border px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition ${
+              className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition ${
                 menuIsOpen
-                  ? "border-[#009587] bg-teal-50 text-[#009587]"
-                  : "border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50"
+                  ? "border-teal-600 bg-teal-50 text-teal-700"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
               }`}
               aria-expanded={menuIsOpen}
               aria-label="Toggle navigation menu"
@@ -186,22 +186,22 @@ function Navbar(props) {
 
             {/* ── Desktop Dropdown Menu ───────────────────────────────── */}
             {menuIsOpen && (
-              <div className="absolute right-0 top-full mt-2 w-80 border border-gray-300 bg-white shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-slate-200/80 bg-white shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
                 {/* User Header / Guest Banner */}
                 {isLoggedIn ? (
-                  <div className="border-b border-gray-200 bg-gray-50/80 p-4">
+                  <div className="border-b border-slate-100 bg-slate-50/80 p-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center bg-[#009587] text-white text-base font-bold flex-shrink-0">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 text-white text-base font-bold flex-shrink-0">
                         {userInitial}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-gray-900 truncate">
+                        <p className="text-xs font-bold text-slate-900 truncate">
                           {displayName}
                         </p>
-                        <p className="text-xs text-gray-500 truncate mt-0.5">
+                        <p className="text-xs text-slate-500 truncate mt-0.5">
                           {user?.email || "Signed in"}
                         </p>
-                        <span className="inline-block mt-1 bg-teal-100 text-[#009587] border border-teal-200 px-1.5 py-0.2 text-[10px] font-bold uppercase">
+                        <span className="inline-block mt-1 bg-teal-50 text-teal-700 border border-teal-200/60 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase">
                           Active Account
                         </span>
                       </div>
@@ -402,7 +402,7 @@ function Navbar(props) {
           {isLoggedIn ? (
             <button
               onClick={() => navigate("/profile")}
-              className="flex h-8 w-8 items-center justify-center bg-[#009587] text-white text-xs font-bold transition active:scale-95"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-600 text-white text-xs font-bold transition active:scale-95 shadow-xs"
               title="My Account"
             >
               {userInitial}
@@ -410,7 +410,7 @@ function Navbar(props) {
           ) : (
             <button
               onClick={() => props.setShowLogin(true)}
-              className="border border-[#009587] bg-white px-2.5 py-1 text-xs font-semibold text-[#009587] active:bg-teal-50"
+              className="rounded-full border border-teal-600 bg-white px-3 py-1 text-xs font-semibold text-teal-700 active:bg-teal-50 shadow-xs"
             >
               Log In
             </button>
@@ -418,10 +418,10 @@ function Navbar(props) {
 
           <button
             onClick={() => setMenuIsOpen(!menuIsOpen)}
-            className={`flex h-8 w-8 items-center justify-center border text-xs transition ${
+            className={`flex h-8 w-8 items-center justify-center rounded-xl border text-xs transition ${
               menuIsOpen
-                ? "border-[#009587] bg-teal-50 text-[#009587]"
-                : "border-gray-300 bg-white text-gray-700 active:bg-gray-50"
+                ? "border-teal-600 bg-teal-50 text-teal-700"
+                : "border-slate-200 bg-white text-slate-700 active:bg-slate-50"
             }`}
             aria-label="Toggle menu"
           >
@@ -430,33 +430,33 @@ function Navbar(props) {
 
           {/* ── Mobile Dropdown Menu ───────────────────────────────────── */}
           {menuIsOpen && (
-            <div className="absolute left-0 right-0 top-full border-b border-gray-300 bg-white shadow-2xl z-50 max-h-[calc(100vh-60px)] overflow-y-auto">
+            <div className="absolute left-0 right-0 top-full border-b border-slate-200/80 bg-white shadow-2xl z-50 max-h-[calc(100vh-60px)] overflow-y-auto rounded-b-2xl">
               {/* User Header / Guest Banner */}
               {isLoggedIn ? (
-                <div className="border-b border-gray-200 bg-gray-50 p-4">
+                <div className="border-b border-slate-100 bg-slate-50 p-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center bg-[#009587] text-white font-bold">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 text-white font-bold shadow-xs">
                       {userInitial}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold text-gray-900 truncate">
+                      <p className="text-xs font-bold text-slate-900 truncate">
                         {displayName}
                       </p>
-                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                      <p className="text-xs text-slate-500 truncate">{user?.email}</p>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="border-b border-gray-200 bg-gray-50 p-4">
-                  <p className="text-xs font-bold text-gray-900">Welcome to Rentosphere</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Find verified rentals with zero brokerage.</p>
+                <div className="border-b border-slate-100 bg-slate-50 p-4">
+                  <p className="text-xs font-bold text-slate-900">Welcome to Rentosphere</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Find verified rentals with zero brokerage.</p>
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <button
                       onClick={() => {
                         setMenuIsOpen(false);
                         props.setShowLogin(true);
                       }}
-                      className="bg-[#009587] py-2 text-xs font-bold uppercase text-white hover:bg-[#007d70]"
+                      className="rounded-xl bg-teal-600 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 shadow-xs"
                     >
                       Log In
                     </button>
@@ -465,7 +465,7 @@ function Navbar(props) {
                         setMenuIsOpen(false);
                         props.setShowSignup(true);
                       }}
-                      className="border border-gray-300 bg-white py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100"
+                      className="rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 shadow-xs"
                     >
                       Sign Up
                     </button>

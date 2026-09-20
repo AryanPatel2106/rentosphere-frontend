@@ -179,14 +179,14 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                     {selected.map((item) => (
                         <div
                             key={item.placeId}
-                            className="flex items-center gap-1 bg-[#009587] px-2.5 py-1 text-xs sm:text-sm text-white max-w-[180px] sm:max-w-[240px]"
+                            className="flex items-center gap-1.5 rounded-full bg-teal-50 border border-teal-200/80 px-3 py-1 text-xs sm:text-sm text-teal-800 font-medium max-w-[180px] sm:max-w-[240px] shadow-xs"
                         >
                             <span className="truncate">{item.label}</span>
 
                             <button
                                 type="button"
                                 onClick={() => removeLocality(item.placeId)}
-                                className="ml-0.5 hover:text-gray-200 shrink-0"
+                                className="ml-0.5 text-teal-600 hover:text-teal-900 font-bold shrink-0"
                             >
                                 ×
                             </button>
@@ -200,14 +200,14 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                             if (suggestions.length) setShowDropdown(true);
                         }}
                         placeholder="Search locality, landmark, or sector (e.g. Koramangala, Whitefield)..."
-                        className="min-w-[120px] flex-1 py-2 text-base sm:text-sm text-gray-700 outline-none"
+                        className="min-w-[120px] flex-1 py-2 text-base sm:text-sm text-slate-700 outline-none"
                     />
                 </div>
             )}
 
             {showDropdown && (
 
-                <div className="absolute left-0 right-0 top-full z-50 max-h-72 overflow-y-auto border bg-white shadow">
+                <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-2xl border border-slate-200/80 bg-white shadow-xl">
 
                     {loading && (
 

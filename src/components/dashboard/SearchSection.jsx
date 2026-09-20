@@ -146,11 +146,11 @@ function SearchSection() {
 
   return (
     <section className="mt-6 flex justify-center px-4">
-      <div className="w-full max-w-5xl border border-gray-300 bg-white shadow-md">
+      <div className="w-full max-w-5xl rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
         {/* Top Search Inputs Row */}
-        <div className="flex flex-col border-b border-gray-200 md:flex-row">
+        <div className="flex flex-col border-b border-slate-100 md:flex-row">
           {/* Locality Autocomplete Search */}
-          <div className="flex-1 border-b border-gray-200 md:border-b-0 md:border-r">
+          <div className="flex-1 border-b border-slate-100 md:border-b-0 md:border-r">
             <LocalitySearch
               selected={localities}
               setSelected={setLocalities}
@@ -158,15 +158,15 @@ function SearchSection() {
           </div>
 
           {/* Keyword Search Input */}
-          <div className="relative flex flex-1 items-center px-4 py-2.5 border-b border-gray-200 md:border-b-0 md:border-r">
-            <FaMagnifyingGlass className="text-gray-400 mr-2 flex-shrink-0 text-sm" />
+          <div className="relative flex flex-1 items-center px-4 py-2.5 border-b border-slate-100 md:border-b-0 md:border-r">
+            <FaMagnifyingGlass className="text-slate-400 mr-2 flex-shrink-0 text-sm" />
             <input
               type="text"
               placeholder="Search apartment, society, or landmark (e.g. Prestige, Brigade)..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full text-base sm:text-sm text-gray-800 placeholder-gray-400 outline-none"
+              className="w-full text-base sm:text-sm text-slate-800 placeholder-slate-400 outline-none"
             />
           </div>
 
@@ -174,7 +174,7 @@ function SearchSection() {
           <button
             type="button"
             onClick={handleSearch}
-            className="flex items-center justify-center gap-2 bg-[#009587] py-3.5 px-8 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70] md:w-48"
+            className="flex items-center justify-center gap-2 bg-teal-600 py-3.5 px-8 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-teal-700 md:w-48 shadow-xs"
           >
             <FaMagnifyingGlass className="text-xs" />
             <span>Search</span>
@@ -182,21 +182,21 @@ function SearchSection() {
         </div>
 
         {/* Middle Row: BHK Pills & Budget Presets */}
-        <div className="border-b border-gray-200 bg-gray-50/70 px-4 sm:px-5 py-3 space-y-3">
+        <div className="border-b border-slate-100 bg-slate-50/70 px-4 sm:px-5 py-3 space-y-3">
           {/* BHK Type Selector */}
           <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none">
-            <span className="text-xs font-semibold text-gray-600 mr-1 flex items-center gap-1.5 shrink-0">
-              <FaBed className="text-xs text-gray-500" /> BHK:
+            <span className="text-xs font-semibold text-slate-600 mr-1 flex items-center gap-1.5 shrink-0">
+              <FaBed className="text-xs text-slate-400" /> BHK:
             </span>
             {BHK_OPTIONS.map((opt) => (
               <button
                 key={opt}
                 type="button"
                 onClick={() => setBhkType(opt)}
-                className={`shrink-0 px-3 py-1.5 text-xs font-medium transition ${
+                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition ${
                   bhkType === opt
-                    ? "bg-[#009587] text-white font-semibold"
-                    : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                    ? "bg-teal-600 text-white font-semibold shadow-xs"
+                    : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                 }`}
               >
                 {opt}
@@ -208,7 +208,7 @@ function SearchSection() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
             {/* Quick Budget Chips */}
             <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none flex-1">
-              <span className="text-xs font-semibold text-gray-600 mr-1 shrink-0">
+              <span className="text-xs font-semibold text-slate-600 mr-1 shrink-0">
                 Budget:
               </span>
               {BUDGET_PRESETS.map((preset) => {
@@ -219,10 +219,10 @@ function SearchSection() {
                     key={preset.label}
                     type="button"
                     onClick={() => handleBudgetPreset(preset)}
-                    className={`shrink-0 px-3 py-1.5 text-xs font-medium transition ${
+                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition ${
                       isSelected
-                        ? "bg-[#009587] text-white font-semibold"
-                        : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                        ? "bg-teal-600 text-white font-semibold shadow-xs"
+                        : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                     }`}
                   >
                     {preset.label}
@@ -232,22 +232,22 @@ function SearchSection() {
             </div>
 
             {/* Custom Min / Max Rent Inputs */}
-            <div className="flex items-center gap-1.5 text-xs shrink-0 pt-1 sm:pt-0 sm:border-l sm:border-gray-200 sm:pl-3">
-              <span className="text-xs text-gray-500 font-medium sm:hidden">Custom:</span>
+            <div className="flex items-center gap-1.5 text-xs shrink-0 pt-1 sm:pt-0 sm:border-l sm:border-slate-200 sm:pl-3">
+              <span className="text-xs text-slate-500 font-medium sm:hidden">Custom:</span>
               <input
                 type="number"
                 placeholder="Min ₹"
                 value={minRent}
                 onChange={(e) => setMinRent(e.target.value)}
-                className="flex-1 sm:w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
+                className="flex-1 sm:w-24 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-slate-800 focus:border-teal-600 focus:ring-1 focus:ring-teal-600/20"
               />
-              <span className="text-gray-400 font-bold">-</span>
+              <span className="text-slate-400 font-bold">-</span>
               <input
                 type="number"
                 placeholder="Max ₹"
                 value={maxRent}
                 onChange={(e) => setMaxRent(e.target.value)}
-                className="flex-1 sm:w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
+                className="flex-1 sm:w-24 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-slate-800 focus:border-teal-600 focus:ring-1 focus:ring-teal-600/20"
               />
             </div>
           </div>
@@ -258,13 +258,13 @@ function SearchSection() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
             {/* Property Type */}
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Property Type
               </label>
               <select
                 value={propertyType}
                 onChange={(e) => setPropertyType(e.target.value)}
-                className="w-full border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm text-gray-800 outline-none focus:border-[#009587]"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs sm:text-sm text-slate-800 outline-none focus:border-teal-600 focus:bg-white focus:ring-1 focus:ring-teal-600/20"
               >
                 {PROPERTY_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -276,13 +276,13 @@ function SearchSection() {
 
             {/* Furnishing */}
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Furnishing Status
               </label>
               <select
                 value={furnishing}
                 onChange={(e) => setFurnishing(e.target.value)}
-                className="w-full border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm text-gray-800 outline-none focus:border-[#009587]"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs sm:text-sm text-slate-800 outline-none focus:border-teal-600 focus:bg-white focus:ring-1 focus:ring-teal-600/20"
               >
                 {FURNISHING_OPTIONS.map((f) => (
                   <option key={f} value={f}>
@@ -294,13 +294,13 @@ function SearchSection() {
 
             {/* Preferred Tenant */}
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Preferred Tenant
               </label>
               <select
                 value={tenantType}
                 onChange={(e) => setTenantType(e.target.value)}
-                className="w-full border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm text-gray-800 outline-none focus:border-[#009587]"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs sm:text-sm text-slate-800 outline-none focus:border-teal-600 focus:bg-white focus:ring-1 focus:ring-teal-600/20"
               >
                 {TENANT_OPTIONS.map((tn) => (
                   <option key={tn} value={tn}>
@@ -312,13 +312,13 @@ function SearchSection() {
 
             {/* Availability */}
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Move-in Timeline
               </label>
               <select
                 value={availability}
                 onChange={(e) => setAvailability(e.target.value)}
-                className="w-full border border-gray-300 bg-white px-3 py-2 text-xs sm:text-sm text-gray-800 outline-none focus:border-[#009587]"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs sm:text-sm text-slate-800 outline-none focus:border-teal-600 focus:bg-white focus:ring-1 focus:ring-teal-600/20"
               >
                 {AVAILABILITY_OPTIONS.map((a) => (
                   <option key={a} value={a}>
@@ -330,27 +330,27 @@ function SearchSection() {
           </div>
 
           {/* Bottom Amenities & Quick Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-3.5 mt-3.5 border-t border-gray-100 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3.5 mt-3.5 border-t border-slate-100 text-xs">
             <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-700 hover:text-gray-900">
+              <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700 hover:text-slate-900">
                 <input
                   type="checkbox"
                   checked={parking}
                   onChange={(e) => setParking(e.target.checked)}
-                  className="accent-[#009587] h-3.5 w-3.5"
+                  className="accent-teal-600 h-3.5 w-3.5 rounded"
                 />
-                <FaCar className="text-gray-400 text-xs" />
+                <FaCar className="text-slate-400 text-xs" />
                 <span className="text-xs sm:text-sm">Reserved Parking</span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-700 hover:text-gray-900">
+              <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-700 hover:text-slate-900">
                 <input
                   type="checkbox"
                   checked={petFriendly}
                   onChange={(e) => setPetFriendly(e.target.checked)}
-                  className="accent-[#009587] h-3.5 w-3.5"
+                  className="accent-teal-600 h-3.5 w-3.5 rounded"
                 />
-                <FaPaw className="text-gray-400 text-xs" />
+                <FaPaw className="text-slate-400 text-xs" />
                 <span className="text-xs sm:text-sm">Pet Friendly</span>
               </label>
             </div>
@@ -358,7 +358,7 @@ function SearchSection() {
             <button
               type="button"
               onClick={handleReset}
-              className="text-gray-500 hover:text-gray-800 flex items-center gap-1.5 text-xs font-semibold transition"
+              className="text-slate-500 hover:text-slate-800 flex items-center gap-1.5 text-xs font-semibold transition"
             >
               <FaRotateLeft className="text-[11px]" /> Reset All Filters
             </button>

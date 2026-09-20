@@ -93,49 +93,61 @@ function Signup({ isOpen, onClose, setShowLogin }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4">
-      <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
+      <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 text-xl text-gray-500 hover:text-black p-1"
+          className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition"
           aria-label="Close"
         >
-          <IoClose />
+          <IoClose className="text-lg" />
         </button>
 
         <div className="grid md:grid-cols-2">
-          <div className="hidden flex-col justify-center bg-gray-50 p-8 md:p-10 md:flex">
-            <div className="flex h-16 w-16 items-center justify-center bg-[#009587]">
-              <FaHouse className="text-3xl text-white" />
+          <div className="hidden flex-col justify-center bg-slate-50/80 p-8 md:p-10 md:flex border-r border-slate-100">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-xs">
+              <FaHouse className="text-2xl text-white" />
             </div>
 
-            <h2 className="mt-8 text-2xl font-bold text-gray-800">
+            <h2 className="mt-8 text-2xl font-bold tracking-tight text-slate-900">
               Join Rentosphere
             </h2>
 
-            <ul className="mt-6 space-y-3 text-sm text-gray-600">
-              <li className="flex items-center gap-2">✓ 100% Verified Rental Listings</li>
-              <li className="flex items-center gap-2">✓ Direct Owner Connect — Zero Brokerage</li>
-              <li className="flex items-center gap-2">✓ Instant HRA Tax Rent Receipts</li>
-              <li className="flex items-center gap-2">✓ Track Rental Requests & Payments</li>
+            <ul className="mt-6 space-y-3 text-xs sm:text-sm text-slate-600 font-medium">
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
+                <span>100% Verified Rental Listings</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
+                <span>Direct Owner Connect — Zero Brokerage</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
+                <span>Instant HRA Tax Rent Receipts</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
+                <span>Track Rental Requests & Payments</span>
+              </li>
             </ul>
           </div>
 
-          <div className="flex flex-col justify-center p-5 sm:p-8 md:p-10">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+          <div className="flex flex-col justify-center p-6 sm:p-8 md:p-10">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
               Create Account
             </h2>
 
             {error && (
-              <div className="mt-4 flex items-start gap-2 border border-red-200 bg-red-50 p-3 text-xs text-red-700">
-                <FaTriangleExclamation className="mt-0.5 flex-shrink-0 text-red-500" />
+              <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700">
+                <FaTriangleExclamation className="mt-0.5 flex-shrink-0 text-rose-500" />
                 <span className="leading-relaxed">{error}</span>
               </div>
             )}
 
             {isRegistering && (
               <>
-                <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">
+                <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500">
                   Enter your email address to get started
                 </p>
 
@@ -143,7 +155,7 @@ function Signup({ isOpen, onClose, setShowLogin }) {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 sm:py-3 text-sm text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
@@ -155,7 +167,7 @@ function Signup({ isOpen, onClose, setShowLogin }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#009587] py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70] disabled:opacity-60 flex items-center justify-center gap-2"
+                    className="w-full rounded-xl bg-teal-600 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-teal-700 disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
                   >
                     {loading && <FaSpinner className="animate-spin text-sm" />}
                     <span>{loading ? "Sending verification..." : "Continue"}</span>
@@ -166,15 +178,15 @@ function Signup({ isOpen, onClose, setShowLogin }) {
 
             {isVerifyingEmail && (
               <>
-                <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">
-                  A verification code has been sent to {email}.
+                <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500">
+                  A verification code has been sent to <span className="font-semibold text-slate-800">{email}</span>.
                 </p>
 
                 <form className="mt-6 space-y-4" onSubmit={handleVerifyEmail}>
                   <input
                     type="text"
                     placeholder="Enter verification code / token"
-                    className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 sm:py-3 text-sm text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
                     value={token}
                     onChange={(e) => {
                       setToken(e.target.value);
@@ -186,7 +198,7 @@ function Signup({ isOpen, onClose, setShowLogin }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#009587] py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70] disabled:opacity-60 flex items-center justify-center gap-2"
+                    className="w-full rounded-xl bg-teal-600 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-teal-700 disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
                   >
                     {loading && <FaSpinner className="animate-spin text-sm" />}
                     <span>{loading ? "Verifying..." : "Verify Email"}</span>
@@ -197,7 +209,7 @@ function Signup({ isOpen, onClose, setShowLogin }) {
 
             {isSettingPassword && (
               <>
-                <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">
+                <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500">
                   Set your password to complete registration.
                 </p>
 
@@ -205,7 +217,7 @@ function Signup({ isOpen, onClose, setShowLogin }) {
                   <input
                     type="password"
                     placeholder="Enter your password"
-                    className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 sm:py-3 text-sm text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -216,7 +228,7 @@ function Signup({ isOpen, onClose, setShowLogin }) {
                   <input
                     type="password"
                     placeholder="Confirm your password"
-                    className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 sm:py-3 text-sm text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
                     value={confirmPassword}
                     onChange={(e) => {
                       setConfirmPassword(e.target.value);
@@ -227,7 +239,7 @@ function Signup({ isOpen, onClose, setShowLogin }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-[#009587] py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70] disabled:opacity-60 flex items-center justify-center gap-2"
+                    className="w-full rounded-xl bg-teal-600 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-teal-700 disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
                   >
                     {loading && <FaSpinner className="animate-spin text-sm" />}
                     <span>{loading ? "Creating account..." : "Set Password"}</span>
@@ -236,16 +248,16 @@ function Signup({ isOpen, onClose, setShowLogin }) {
               </>
             )}
 
-            <p className="mt-6 text-center text-xs text-gray-500">
+            <p className="mt-6 text-center text-xs text-slate-500">
               By continuing, you agree to our{" "}
-              <span className="font-semibold">Terms & Conditions</span>
+              <span className="font-semibold text-slate-700">Terms & Conditions</span>
             </p>
 
-            <p className="mt-6 text-center text-sm">
+            <p className="mt-4 text-center text-xs sm:text-sm text-slate-600">
               Already have an account?{" "}
               <button
                 type="button"
-                className="font-semibold text-[#009587] hover:underline"
+                className="font-semibold text-teal-600 hover:text-teal-700 hover:underline"
                 onClick={() => {
                   onClose();
                   setShowLogin(true);
