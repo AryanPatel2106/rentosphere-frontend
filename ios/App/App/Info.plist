@@ -72,5 +72,7 @@
 	<string>Rentosphere requires camera access to take and upload photos of your property listings.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Rentosphere requires photo library access to upload property listing images.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
