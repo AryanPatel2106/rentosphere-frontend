@@ -85,7 +85,7 @@ function Navbar(props) {
     user?.fullName || (user?.email ? user.email.split("@")[0] : "My Account");
 
   return (
-    <header className="relative w-full border-b border-gray-200 bg-white shadow-sm">
+    <header className="relative w-full border-b border-gray-200 bg-white/98 backdrop-blur-md shadow-xs">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-3 sm:px-6">
         {/* ── Brand Logo ───────────────────────────────────────────────── */}
         <div
@@ -397,26 +397,35 @@ function Navbar(props) {
           </div>
         </div>
 
-        {/* ── Mobile Hamburger Button ──────────────────────────────────── */}
+        {/* ── Mobile Header Actions ──────────────────────────────────── */}
         <div className="flex items-center gap-2 lg:hidden" ref={mobileMenuRef}>
-          <button
-            onClick={() => navigate("/pay-fee")}
-            className="border border-gray-300 bg-white p-2 text-gray-700 hover:bg-gray-50"
-            title="Pay Rent"
-          >
-            <FaCreditCard className="text-xs text-[#009587]" />
-          </button>
+          {isLoggedIn ? (
+            <button
+              onClick={() => navigate("/profile")}
+              className="flex h-8 w-8 items-center justify-center bg-[#009587] text-white text-xs font-bold transition active:scale-95"
+              title="My Account"
+            >
+              {userInitial}
+            </button>
+          ) : (
+            <button
+              onClick={() => props.setShowLogin(true)}
+              className="border border-[#009587] bg-white px-2.5 py-1 text-xs font-semibold text-[#009587] active:bg-teal-50"
+            >
+              Log In
+            </button>
+          )}
 
           <button
             onClick={() => setMenuIsOpen(!menuIsOpen)}
-            className={`flex h-9 w-9 items-center justify-center border text-sm transition ${
+            className={`flex h-8 w-8 items-center justify-center border text-xs transition ${
               menuIsOpen
                 ? "border-[#009587] bg-teal-50 text-[#009587]"
-                : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                : "border-gray-300 bg-white text-gray-700 active:bg-gray-50"
             }`}
             aria-label="Toggle menu"
           >
-            {menuIsOpen ? <FaXmark className="text-base" /> : <FaBars className="text-sm" />}
+            {menuIsOpen ? <FaXmark className="text-sm" /> : <FaBars className="text-xs" />}
           </button>
 
           {/* ── Mobile Dropdown Menu ───────────────────────────────────── */}

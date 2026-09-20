@@ -166,7 +166,7 @@ function SearchSection() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full text-sm text-gray-800 placeholder-gray-400 outline-none"
+              className="w-full text-base sm:text-sm text-gray-800 placeholder-gray-400 outline-none"
             />
           </div>
 
@@ -235,7 +235,7 @@ function SearchSection() {
                 placeholder="Min ₹"
                 value={minRent}
                 onChange={(e) => setMinRent(e.target.value)}
-                className="w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-xs text-gray-800 focus:border-[#009587]"
+                className="w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
               />
               <span className="text-gray-400 font-bold">-</span>
               <input
@@ -243,7 +243,7 @@ function SearchSection() {
                 placeholder="Max ₹"
                 value={maxRent}
                 onChange={(e) => setMaxRent(e.target.value)}
-                className="w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-xs text-gray-800 focus:border-[#009587]"
+                className="w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
               />
             </div>
           </div>

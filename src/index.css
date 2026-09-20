@@ -8,15 +8,65 @@
   --sar: env(safe-area-inset-right, 0px);
 }
 
+/* 
+  Mobile App UX & Zoom Prevention:
+  1. Setting touch-action: pan-x pan-y prevents double-tap zoom & pinch zoom while allowing smooth panning.
+  2. -webkit-text-size-adjust: 100% prevents automatic font enlargement on orientation change.
+  3. overscroll-behavior-y: contain prevents rubber-banding on full container.
+*/
+html,
+body {
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overscroll-behavior-y: contain;
+}
+
 body {
   padding-top: var(--sat);
-  padding-bottom: var(--sab);
   padding-left: var(--sal);
   padding-right: var(--sar);
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
 }
 
-input, textarea, select, [contenteditable="true"] {
+/*
+  CRITICAL: Prevent mobile Safari and Chrome from automatically zooming in
+  when any input, search bar, select or textarea receives focus.
+  Mobile browsers trigger auto-zoom if computed font-size < 16px.
+  Enforcing 16px on mobile viewports completely eliminates this auto-zoom!
+*/
+@media screen and (max-width: 768px) {
+  input,
+  textarea,
+  select,
+  [contenteditable="true"] {
+    font-size: 16px !important;
+  }
+}
+
+/* Allow normal text selection inside input fields */
+input,
+textarea,
+select,
+[contenteditable="true"] {
   -webkit-touch-callout: default;
+  touch-action: manipulation;
+}
+
+/* Modern app-like horizontal touch strips without clunky desktop scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Touch manipulation optimization for active tap response */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }

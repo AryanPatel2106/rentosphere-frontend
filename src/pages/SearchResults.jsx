@@ -564,7 +564,7 @@ function SearchResults() {
                   }
                 }}
                 placeholder="Search title, locality, keywords..."
-                className="w-full border border-gray-300 bg-gray-50 pl-8 pr-7 py-2 text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
+                className="w-full border border-gray-300 bg-gray-50 pl-8 pr-7 py-2 text-base sm:text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
               />
               {keyword && (
                 <button
@@ -756,7 +756,7 @@ function SearchResults() {
                     value={minRent}
                     onChange={(e) => setMinRent(e.target.value)}
                     placeholder="Min ₹"
-                    className="w-24 border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+                    className="w-24 border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
                   />
                   <span className="text-gray-400 text-xs">to</span>
                   <input
@@ -764,7 +764,7 @@ function SearchResults() {
                     value={maxRent}
                     onChange={(e) => setMaxRent(e.target.value)}
                     placeholder="Max ₹"
-                    className="w-24 border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+                    className="w-24 border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
                   />
                 </div>
 
