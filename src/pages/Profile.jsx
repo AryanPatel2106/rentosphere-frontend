@@ -535,32 +535,32 @@ export default function Profile() {
             <p className="text-xs text-gray-500 mt-0.5">{profile.email || "Manage your rentals"}</p>
           </div>
 
-          <div className="flex flex-col text-sm">
+          <div className="flex flex-row overflow-x-auto lg:flex-col text-sm border-b lg:border-b-0 border-gray-200 scrollbar-none">
             <button
               onClick={() => handleSelectTab("basic")}
-              className={`flex items-center gap-3 px-6 py-4 text-left font-medium transition ${
+              className={`flex shrink-0 items-center gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "basic"
-                  ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <span>My Profile & Account</span>
+              <span>My Profile</span>
             </button>
 
             <button
               onClick={() => handleSelectTab("shortlists")}
-              className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "shortlists"
-                  ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <FaHeart className="text-red-500 text-xs" />
-                <span>Saved Properties</span>
+                <span>Saved</span>
               </div>
               {shortlists.length > 0 && (
-                <span className="bg-red-100 text-red-700 px-2 py-0.5 text-xs font-bold">
+                <span className="bg-red-100 text-red-700 px-1.5 py-0.5 text-[11px] font-bold">
                   {shortlists.length}
                 </span>
               )}
@@ -568,15 +568,15 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("properties")}
-              className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "properties"
-                  ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <span>My Listed Properties</span>
+              <span>My Properties</span>
               {userProperties.length > 0 && (
-                <span className="bg-gray-200 text-gray-800 px-2 py-0.5 text-xs font-bold">
+                <span className="bg-gray-200 text-gray-800 px-1.5 py-0.5 text-[11px] font-bold">
                   {userProperties.length}
                 </span>
               )}
@@ -584,15 +584,15 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("interested")}
-              className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "interested"
-                  ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <span>Rental Applications</span>
+              <span>Applications</span>
               {ownerRequests.filter((r) => r.status === "pending").length > 0 && (
-                <span className="bg-amber-100 text-amber-800 px-2 py-0.5 text-xs font-bold">
+                <span className="bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[11px] font-bold">
                   {ownerRequests.filter((r) => r.status === "pending").length} new
                 </span>
               )}
@@ -600,18 +600,18 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("rented")}
-              className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "rented"
-                  ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <FaHouseUser className="text-[#009587] text-xs" />
-                <span>Active Tenancies</span>
+                <span>Tenancies</span>
               </div>
               {activeRented.length > 0 && (
-                <span className="bg-teal-100 text-[#009587] px-2 py-0.5 text-xs font-bold">
+                <span className="bg-teal-100 text-[#009587] px-1.5 py-0.5 text-[11px] font-bold">
                   {activeRented.length}
                 </span>
               )}
@@ -619,15 +619,15 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("payments")}
-              className={`flex items-center justify-between px-6 py-4 text-left font-medium transition ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "payments"
-                  ? "border-l-4 border-[#009587] bg-gray-100 text-gray-900"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <FaCreditCard className="text-blue-500 text-xs" />
-                <span>Rent Payments & Receipts</span>
+                <span>Payments</span>
               </div>
             </button>
           </div>

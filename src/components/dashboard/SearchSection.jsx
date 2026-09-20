@@ -182,18 +182,18 @@ function SearchSection() {
         </div>
 
         {/* Middle Row: BHK Pills & Budget Presets */}
-        <div className="border-b border-gray-200 bg-gray-50/70 px-5 py-3 space-y-3">
+        <div className="border-b border-gray-200 bg-gray-50/70 px-4 sm:px-5 py-3 space-y-3">
           {/* BHK Type Selector */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-gray-600 mr-1 flex items-center gap-1.5">
-              <FaBed className="text-xs text-gray-500" /> Bedrooms (BHK):
+          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none">
+            <span className="text-xs font-semibold text-gray-600 mr-1 flex items-center gap-1.5 shrink-0">
+              <FaBed className="text-xs text-gray-500" /> BHK:
             </span>
             {BHK_OPTIONS.map((opt) => (
               <button
                 key={opt}
                 type="button"
                 onClick={() => setBhkType(opt)}
-                className={`px-3 py-1.5 text-xs font-medium transition ${
+                className={`shrink-0 px-3 py-1.5 text-xs font-medium transition ${
                   bhkType === opt
                     ? "bg-[#009587] text-white font-semibold"
                     : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
@@ -205,9 +205,9 @@ function SearchSection() {
           </div>
 
           {/* Budget Presets */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-gray-600 mr-1">
-              Monthly Budget:
+          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none">
+            <span className="text-xs font-semibold text-gray-600 mr-1 shrink-0">
+              Budget:
             </span>
             {BUDGET_PRESETS.map((preset) => {
               const isSelected =
@@ -217,7 +217,7 @@ function SearchSection() {
                   key={preset.label}
                   type="button"
                   onClick={() => handleBudgetPreset(preset)}
-                  className={`px-3 py-1.5 text-xs font-medium transition ${
+                  className={`shrink-0 px-3 py-1.5 text-xs font-medium transition ${
                     isSelected
                       ? "bg-[#009587] text-white font-semibold"
                       : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
@@ -229,7 +229,7 @@ function SearchSection() {
             })}
 
             {/* Custom Min / Max Rent Inputs */}
-            <div className="flex items-center gap-1.5 ml-auto text-xs">
+            <div className="flex items-center gap-1.5 sm:ml-auto text-xs shrink-0">
               <input
                 type="number"
                 placeholder="Min ₹"

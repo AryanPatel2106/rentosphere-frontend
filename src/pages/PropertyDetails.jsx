@@ -207,7 +207,7 @@ export default function PropertyDetails() {
     property.locality?.text || property.locality?.label || "Location specified by owner";
 
   return (
-    <div className="min-h-screen bg-[#f8f8f8] pb-16">
+    <div className="min-h-screen bg-[#f8f8f8] pb-24 lg:pb-16">
       {/* ── BREADCRUMB & TOP CONTROLS ────────────────────────────────────── */}
       <div className="border-b border-gray-300 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -783,6 +783,39 @@ export default function PropertyDetails() {
           </div>
         </div>
       )}
+
+      {/* ── MOBILE STICKY ACTION BAR ─────────────────────────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-300 bg-white/95 backdrop-blur px-4 py-3 shadow-lg lg:hidden flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <span className="text-base font-bold text-[#009587]">
+            {formatRent(property.rent)}
+          </span>
+          <span className="text-[10px] text-gray-500 font-medium"> / mo</span>
+          {property.deposit > 0 && (
+            <p className="text-[10px] text-gray-500 truncate">
+              Deposit: ₹{property.deposit.toLocaleString("en-IN")}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowOwnerModal(true)}
+            className="flex items-center justify-center gap-1 border border-[#009587] bg-white px-3 py-2 text-xs font-bold uppercase text-[#009587]"
+            title="Call or WhatsApp Owner"
+          >
+            <FaPhone className="text-xs" />
+            <span className="hidden xs:inline">Owner</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowRentalModal(true)}
+            className="bg-[#009587] px-4 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70]"
+          >
+            Request to Rent
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1286,16 +1286,16 @@ function SearchResults() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <div className="flex flex-wrap items-stretch sm:items-center gap-2 pt-2">
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleGetOwnerDetails(property);
                             }}
-                            className="border border-[#009587] bg-white px-4 py-2.5 text-xs font-semibold text-[#009587] transition hover:bg-teal-50"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center min-h-[40px] border border-[#009587] bg-white px-4 py-2 text-xs font-semibold text-[#009587] transition hover:bg-teal-50 active:bg-teal-100"
                           >
-                            <FaPhone className="mr-1.5 inline text-xs" />
+                            <FaPhone className="mr-1.5 text-xs" />
                             Get Owner Details
                           </button>
                           <button
@@ -1304,7 +1304,7 @@ function SearchResults() {
                               e.stopPropagation();
                               handleOpenRentalModal(property);
                             }}
-                            className="bg-[#009587] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#007f73]"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center min-h-[40px] bg-[#009587] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#007f73] active:bg-[#006e63]"
                           >
                             Request to Rent
                           </button>
@@ -1314,14 +1314,14 @@ function SearchResults() {
                               e.stopPropagation();
                               toggleShortlist(property._id);
                             }}
-                            className={`border px-3.5 py-2.5 text-xs font-medium transition ${
+                            className={`inline-flex items-center justify-center min-h-[40px] border px-3.5 py-2 text-xs font-medium transition ${
                               isShortlisted
                                 ? "border-red-400 bg-red-50 text-red-600"
                                 : "border-gray-300 text-gray-600 hover:bg-gray-100"
                             }`}
                           >
                             <FaHeart
-                              className={`mr-1.5 inline ${
+                              className={`mr-1.5 ${
                                 isShortlisted ? "text-red-500" : "text-gray-400"
                               }`}
                             />
