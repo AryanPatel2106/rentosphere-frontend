@@ -21,6 +21,10 @@ import {
   FaStar,
   FaImage,
   FaPaste,
+  FaWandMagicSparkles,
+  FaChartLine,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa6";
 import LocalitySearch from "../components/dashboard/LocalitySearch";
 import { useNavigate } from "react-router-dom";
@@ -87,6 +91,12 @@ function PostProperty() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+
+  // ML Rent Estimation States
+  const [isEstimatingRent, setIsEstimatingRent] = useState(false);
+  const [rentEstimate, setRentEstimate] = useState(null);
+  const [rentEstimateError, setRentEstimateError] = useState(null);
+  const [showComps, setShowComps] = useState(false);
 
   const [propertyDetails, setPropertyDetails] = useState({
     title: "",
@@ -395,6 +405,59 @@ function PostProperty() {
     }
   };
 
+  // ML / Algorithm Rent Estimation
+  const handleEstimateRent = async () => {
+    if (!propertyDetails.Locality?.label && !propertyDetails.Locality?.text && !propertyDetails.Locality?.city) {
+      setRentEstimateError("Please select a Locality / Area above first so the ML model can evaluate surrounding neighborhood listings.");
+      return;
+    }
+
+    setIsEstimatingRent(true);
+    setRentEstimateError(null);
+
+    try {
+      const payload = {
+        Locality: propertyDetails.Locality,
+        locality: propertyDetails.Locality,
+        coordinates: propertyDetails.Locality?.coordinates,
+        city: propertyDetails.Locality?.city,
+        bhkType: propertyDetails.bhkType,
+        propertyType: propertyDetails.propertyType,
+        Furnishing: propertyDetails.Furnishing,
+        builtUpArea: Number(propertyDetails.builtUpArea) || 0,
+        parking: propertyDetails.parking,
+        petFriendly: propertyDetails.petFriendly,
+        amenities: propertyDetails.amenities || []
+      };
+
+      const res = await api.post("/property/estimate-rent", payload);
+      if (res.data?.data) {
+        setRentEstimate(res.data.data);
+      }
+    } catch (err) {
+      console.error("Failed to estimate rent:", err);
+      setRentEstimateError(
+        getErrorMessage(err, "Unable to compute rent estimate at this moment. Please try again.")
+      );
+    } finally {
+      setIsEstimatingRent(false);
+    }
+  };
+
+  const handleApplyEstimatedRent = (rentVal) => {
+    if (!rentVal) return;
+    setPropertyDetails((prev) => {
+      const currentRent = Number(prev.rent);
+      const currentDeposit = Number(prev.deposit);
+      const multiplier = currentRent > 0 && currentDeposit > 0 ? Math.round(currentDeposit / currentRent) : 2;
+      return {
+        ...prev,
+        rent: String(rentVal),
+        deposit: prev.deposit ? String(rentVal * (multiplier || 2)) : String(rentVal * 2),
+      };
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
@@ -511,6 +574,161 @@ function PostProperty() {
               <p className="mt-1 text-[11px] text-gray-400">
                 Type city or area name to select from verified Google Places.
               </p>
+            </div>
+
+            {/* Smart ML Rent Valuation Assistant */}
+            <div className="border border-emerald-200 bg-gradient-to-r from-emerald-50/70 via-teal-50/40 to-slate-50 p-4 transition-all">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center bg-[#009587] text-white shadow-sm">
+                    <FaWandMagicSparkles className="text-base" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-900 flex items-center gap-2">
+                      AI Rent Price Estimator
+                      <span className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 uppercase tracking-wider">
+                        Machine Learning
+                      </span>
+                    </h4>
+                    <p className="text-[11px] text-gray-500">
+                      Evaluates nearby verified properties, BHK, furnishing & square footage to predict fair market rent.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleEstimateRent}
+                  disabled={isEstimatingRent}
+                  className="inline-flex items-center gap-2 bg-[#009587] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#00796b] disabled:opacity-50"
+                >
+                  {isEstimatingRent ? (
+                    <>
+                      <FaSpinner className="animate-spin text-sm" />
+                      Analyzing Market...
+                    </>
+                  ) : (
+                    <>
+                      <FaWandMagicSparkles className="text-sm" />
+                      {rentEstimate ? "Re-estimate Rent" : "Suggest Price with AI"}
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {rentEstimateError && (
+                <div className="mt-3 flex items-start gap-2 border-l-2 border-amber-500 bg-amber-50 p-2.5 text-xs text-amber-800">
+                  <FaCircleExclamation className="mt-0.5 text-amber-600 shrink-0" />
+                  <div>{rentEstimateError}</div>
+                </div>
+              )}
+
+              {rentEstimate && (
+                <div className="mt-3 border-t border-emerald-100 pt-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 border border-emerald-100">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-gray-500">Recommended Market Rent:</span>
+                        <span className="text-xl font-extrabold text-[#009587]">
+                          ₹{rentEstimate.recommendedRent?.toLocaleString("en-IN")}{" "}
+                          <span className="text-xs font-normal text-gray-500">/ month</span>
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3 text-[11px] text-gray-600">
+                        <span>
+                          Fair Range:{" "}
+                          <strong className="text-gray-900">
+                            ₹{rentEstimate.minRent?.toLocaleString("en-IN")} – ₹{rentEstimate.maxRent?.toLocaleString("en-IN")}
+                          </strong>
+                        </span>
+                        <span className="text-gray-300">•</span>
+                        <span>
+                          Locality Median:{" "}
+                          <strong className="text-gray-900">₹{rentEstimate.localityMedian?.toLocaleString("en-IN")}</strong>
+                        </span>
+                        <span className="text-gray-300">•</span>
+                        <span
+                          className={`inline-flex items-center gap-1 font-semibold ${
+                            rentEstimate.confidence === "High"
+                              ? "text-emerald-700"
+                              : rentEstimate.confidence === "Good"
+                              ? "text-blue-700"
+                              : "text-amber-700"
+                          }`}
+                        >
+                          ● {rentEstimate.confidence} Confidence ({rentEstimate.confidenceScore}%)
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleApplyEstimatedRent(rentEstimate.recommendedRent)}
+                      className="inline-flex items-center gap-1.5 bg-gray-900 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-[#009587]"
+                    >
+                      <FaCircleCheck className="text-emerald-400" />
+                      Apply ₹{rentEstimate.recommendedRent?.toLocaleString("en-IN")}
+                    </button>
+                  </div>
+
+                  {rentEstimate.insights?.length > 0 && (
+                    <div className="mt-2 text-[11px] text-gray-600 bg-emerald-50/50 p-2.5 border border-emerald-100/60 space-y-1">
+                      <div className="font-semibold text-gray-800 flex items-center gap-1.5">
+                        <FaChartLine className="text-[#009587]" />
+                        Valuation Model Highlights:
+                      </div>
+                      <ul className="list-disc list-inside space-y-0.5 pl-1 text-gray-600">
+                        {rentEstimate.insights.map((insight, idx) => (
+                          <li key={idx}>{insight}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {rentEstimate.comparables?.length > 0 && (
+                    <div className="mt-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowComps(!showComps)}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-[#009587] hover:underline"
+                      >
+                        {showComps ? <FaChevronUp className="text-[10px]" /> : <FaChevronDown className="text-[10px]" />}
+                        {showComps ? "Hide Nearby Comparables" : `Show ${rentEstimate.comparables.length} Nearby Comparables`}
+                      </button>
+
+                      {showComps && (
+                        <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                          {rentEstimate.comparables.map((comp) => (
+                            <div
+                              key={comp._id}
+                              className="flex flex-col border border-gray-200 bg-white p-2 text-xs shadow-sm"
+                            >
+                              {comp.photo && (
+                                <img
+                                  src={comp.photo}
+                                  alt={comp.title}
+                                  className="h-20 w-full object-cover mb-1.5"
+                                />
+                              )}
+                              <p className="font-bold text-gray-900 truncate" title={comp.title}>
+                                {comp.title}
+                              </p>
+                              <p className="text-[#009587] font-semibold mt-0.5">
+                                ₹{comp.rent?.toLocaleString("en-IN")}{" "}
+                                <span className="text-[10px] text-gray-400 font-normal">/mo</span>
+                              </p>
+                              <div className="mt-1 flex items-center justify-between text-[10px] text-gray-500">
+                                <span>{comp.bhkType} • {comp.furnishing}</span>
+                                <span>{comp.distanceKm} km away</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Rent & Deposit Section */}
