@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaCircleExclamation, FaMap } from "react-icons/fa6";
 
 const GOOGLE_MAPS_API_KEY =
@@ -79,11 +80,22 @@ function PropertyMap({
   selectedProperty = null,
   onSelectProperty = () => {},
 }) {
+  const navigate = useNavigate();
   const mapContainerRef = useRef(null);
   const [mapEngine, setMapEngine] = useState("google");
   const [mapReady, setMapReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const [googleAuthError, setGoogleAuthError] = useState(false);
+
+  // Allow clicking on HTML popups to trigger SPA navigation
+  useEffect(() => {
+    window.__openPropertyDetails = (id) => {
+      if (id) navigate(`/property/${id}`);
+    };
+    return () => {
+      delete window.__openPropertyDetails;
+    };
+  }, [navigate]);
 
   // Google refs
   const googleMapRef = useRef(null);
@@ -269,25 +281,28 @@ function PropertyMap({
           ? `<img src="${property.photos[0]}" alt="${property.title}" style="width:100%;height:100px;object-fit:cover;margin-bottom:6px" />`
           : "";
         googleInfoWindowRef.current.setContent(`
-          <div style="padding:4px;font-family:inherit;max-width:240px">
+          <div onclick="window.__openPropertyDetails && window.__openPropertyDetails('${property._id}')" style="padding:4px;font-family:inherit;max-width:250px;cursor:pointer;user-select:none" title="Click to view property details">
             ${photoHtml}
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
               <span style="font-size:14px;font-weight:700;color:#009587">${rentText}</span>
               <span style="font-size:10px;font-weight:600;background:#e6f4f1;color:#009587;padding:1px 6px">${property.BHKType || "Apartment"}</span>
             </div>
-            <div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:3px;line-height:1.3">
+            <div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:3px;line-height:1.3;cursor:pointer">
               ${property.title}
             </div>
             <div style="font-size:11px;color:#6b7280;margin-bottom:6px">
               📍 ${property.locality?.label || property.locality?.text || ""}
             </div>
-            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
               <span style="font-size:10px;background:#f3f4f6;padding:2px 6px;color:#4b5563">${property.Furnishing || "Unfurnished"}</span>
               ${
                 distanceText
                   ? `<span style="background:#009587;color:#fff;font-size:10px;font-weight:700;padding:2px 6px">📍 ${distanceText}</span>`
                   : ""
               }
+            </div>
+            <div style="text-align:center;background:#009587;color:#ffffff;font-size:11px;font-weight:700;padding:6px 10px;text-transform:uppercase;cursor:pointer">
+              View Property Details →
             </div>
           </div>
         `);
@@ -445,25 +460,28 @@ function PropertyMap({
 
       const m = L.marker(position, { icon }).addTo(map);
       m.bindPopup(`
-        <div style="padding:4px;max-width:240px">
+        <div onclick="window.__openPropertyDetails && window.__openPropertyDetails('${property._id}')" style="padding:4px;max-width:250px;cursor:pointer;user-select:none" title="Click to view property details">
           ${photoHtml}
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
             <span style="font-size:14px;font-weight:700;color:#009587">${rentFull}</span>
             <span style="font-size:10px;font-weight:600;background:#e6f4f1;color:#009587;padding:1px 6px">${property.BHKType || "Apartment"}</span>
           </div>
-          <div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:3px;line-height:1.3">${
+          <div style="font-size:12px;font-weight:700;color:#1f2937;margin-bottom:3px;line-height:1.3;cursor:pointer">${
             property.title
           }</div>
           <div style="font-size:11px;color:#6b7280;margin-bottom:6px">📍 ${
             property.locality?.label || property.locality?.text || ""
           }</div>
-          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
             <span style="font-size:10px;background:#f3f4f6;padding:2px 6px;color:#4b5563">${property.Furnishing || "Unfurnished"}</span>
             ${
               distanceText
                 ? `<span style="background:#009587;color:#fff;font-size:10px;font-weight:700;padding:2px 6px">📍 ${distanceText}</span>`
                 : ""
             }
+          </div>
+          <div style="text-align:center;background:#009587;color:#ffffff;font-size:11px;font-weight:700;padding:6px 10px;text-transform:uppercase;cursor:pointer">
+            View Property Details →
           </div>
         </div>
       `);

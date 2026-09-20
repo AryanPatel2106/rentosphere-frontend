@@ -1190,131 +1190,13 @@ function SearchResults() {
 
             {/* ── MAP VIEW ──────────────────────────────────────────────────── */}
             {!loading && viewMode === "map" && properties.length > 0 && (
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-                {/* Left: compact card list */}
-                <div className="w-full lg:w-80 xl:w-96 shrink-0">
-                  <p className="mb-2 text-xs text-gray-500 font-medium">
-                    {properties.length} listings — click a card to focus on map
-                  </p>
-                  <div ref={mapListRef} className="space-y-2 lg:max-h-[calc(100vh-260px)] lg:overflow-y-auto lg:pr-1 max-h-72 overflow-y-auto pr-1">
-                    {properties.map((property, idx) => {
-                      const dist = formatDistance(property.distance);
-                      const isSel = selectedProperty?._id === property._id;
-                      const photoSrc =
-                        property.photos && property.photos.length > 0
-                          ? property.photos[0]
-                          : DEFAULT_PROPERTY_IMAGE;
-
-                      return (
-                        <div
-                          key={property._id || idx}
-                          onClick={() => setSelectedProperty(property)}
-                          className={`cursor-pointer border bg-white p-3 transition flex gap-3 ${
-                            isSel
-                              ? "border-[#009587] bg-teal-50/40 ring-1 ring-[#009587]"
-                              : "border-gray-300 hover:border-[#009587]"
-                          }`}
-                        >
-                          <img
-                            src={photoSrc}
-                            alt={property.title}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/property/${property._id}`);
-                            }}
-                            title="Click to view full property details"
-                            className="h-16 w-20 shrink-0 object-cover border border-gray-200 hover:opacity-90 transition"
-                            onError={(e) => {
-                              e.target.src = DEFAULT_PROPERTY_IMAGE;
-                            }}
-                          />
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-1">
-                              <span className="text-sm font-bold text-[#009587]">
-                                {formatRent(property.rent)}
-                                <span className="text-[10px] font-normal text-gray-500">
-                                  /mo
-                                </span>
-                              </span>
-                              {dist && (
-                                <span className="shrink-0 bg-[#009587] px-1.5 py-0.5 text-[9px] font-semibold text-white">
-                                  {dist}
-                                </span>
-                              )}
-                            </div>
-                            <h4
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/property/${property._id}`);
-                              }}
-                              className="mt-0.5 truncate text-xs font-semibold text-gray-800 hover:text-[#009587] transition cursor-pointer"
-                              title="Click to view full property details"
-                            >
-                              {property.title}
-                            </h4>
-                            <p className="mt-0.5 text-[11px] text-gray-500">
-                              {property.BHKType} • {property.Furnishing}
-                            </p>
-                            <div className="mt-1 flex items-center justify-between gap-1">
-                              <p className="flex items-center gap-1 truncate text-[10px] text-gray-400">
-                                <FaLocationDot className="shrink-0 text-[#009587]" />
-                                {property.locality?.label ||
-                                  property.locality?.text ||
-                                  ""}
-                              </p>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/property/${property._id}`);
-                                }}
-                                className="shrink-0 text-[10px] font-semibold text-[#009587] hover:underline"
-                              >
-                                View Details →
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                    <div className="py-3 text-center">
-                      {loadingMore && (
-                        <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-[#009587]">
-                          <FaSpinner className="animate-spin" />
-                          <span>Loading more properties…</span>
-                        </div>
-                      )}
-                      {hasMore && !loadingMore && (
-                        <button
-                          type="button"
-                          onClick={handleLoadMore}
-                          className="w-full border border-gray-300 bg-white py-2 text-xs font-semibold text-[#009587] hover:bg-teal-50 transition"
-                        >
-                          Load More ({properties.length} of {total})
-                        </button>
-                      )}
-                      {!loading && !hasMore && properties.length > 0 && (
-                        <div className="text-[11px] text-gray-400">
-                          ✓ All {properties.length} properties loaded
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: Map view container */}
-                <div
-                  className="w-full flex-1 lg:sticky lg:top-24 lg:h-[calc(100vh-260px)]"
-                  style={{ minHeight: "420px" }}
-                >
-                  <PropertyMap
-                    properties={properties}
-                    searchLocation={searchLocation}
-                    selectedProperty={selectedProperty}
-                    onSelectProperty={setSelectedProperty}
-                  />
-                </div>
+              <div className="w-full h-[calc(100vh-170px)] lg:h-[calc(100vh-125px)] min-h-[460px] border border-gray-200/80 shadow-xs">
+                <PropertyMap
+                  properties={properties}
+                  searchLocation={searchLocation}
+                  selectedProperty={selectedProperty}
+                  onSelectProperty={setSelectedProperty}
+                />
               </div>
             )}
 
