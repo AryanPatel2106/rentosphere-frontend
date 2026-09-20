@@ -234,6 +234,10 @@ function SearchResults() {
   };
 
   const sentinelRef = useRef(null);
+  const mapListRef = useRef(null);
+  const pageRef = useRef(1);
+  const hasMoreRef = useRef(false);
+  const isFetchingRef = useRef(false);
 
   // Calculate active filter count (excluding default values)
   const activeFilterCount = [
@@ -312,6 +316,9 @@ function SearchResults() {
   // Fetch properties from backend with all filters
   const fetchProperties = useCallback(
     async (pageToFetch, isNewSearch = false) => {
+      if (isFetchingRef.current && !isNewSearch) return;
+      isFetchingRef.current = true;
+
       const activeLocality = selectedLocalities[0];
       const params = {
         page: pageToFetch,
@@ -324,6 +331,20 @@ function SearchResults() {
         params.q = activeLocality.label || activeLocality.text;
       } else if (searchParams.get("q")) {
         params.q = searchParams.get("q");
+      }
+
+      if (activeLocality?.city) {
+        params.city = activeLocality.city;
+      } else if (searchParams.get("city")) {
+        params.city = searchParams.get("city");
+      }
+
+      if (activeLocality?.coordinates && activeLocality.coordinates.length === 2) {
+        params.lng = activeLocality.coordinates[0];
+        params.lat = activeLocality.coordinates[1];
+      } else if (searchParams.get("lat") && searchParams.get("lng")) {
+        params.lat = searchParams.get("lat");
+        params.lng = searchParams.get("lng");
       }
 
       if (keyword.trim()) params.search = keyword.trim();
@@ -347,27 +368,35 @@ function SearchResults() {
         }
 
         const res = await api.get("/property/get-properties", { params });
-        const data = res.data.data;
+        const data = res.data?.data;
+        const newProperties = data?.properties || [];
 
         if (isNewSearch) {
-          setProperties(data.properties || []);
+          setProperties(newProperties);
           setSelectedProperty(null);
-          if (data.searchLocation) {
-            setSearchLocation(data.searchLocation);
-          } else {
-            setSearchLocation(null);
-          }
+          setSearchLocation(data?.searchLocation || null);
         } else {
-          setProperties((prev) => [...prev, ...(data.properties || [])]);
+          setProperties((prev) => {
+            const existingIds = new Set(prev.map((p) => p._id));
+            const unique = newProperties.filter((p) => !existingIds.has(p._id));
+            return [...prev, ...unique];
+          });
         }
 
-        setPage(data.page || pageToFetch);
-        setHasMore(Boolean(data.hasMore));
-        setTotal(data.total || 0);
+        const currentPage = data?.page || pageToFetch;
+        const moreAvailable = Boolean(data?.hasMore);
+
+        pageRef.current = currentPage;
+        hasMoreRef.current = moreAvailable;
+
+        setPage(currentPage);
+        setHasMore(moreAvailable);
+        setTotal(data?.total || 0);
       } catch (err) {
         console.error("Failed to fetch properties:", err);
         setError(getErrorMessage(err, "Failed to load properties. Please try again."));
       } finally {
+        isFetchingRef.current = false;
         setLoading(false);
         setLoadingMore(false);
       }
@@ -391,6 +420,8 @@ function SearchResults() {
 
   // Trigger search when any filter changes
   useEffect(() => {
+    pageRef.current = 1;
+    hasMoreRef.current = false;
     setPage(1);
     fetchProperties(1, true);
     updateUrlParams();
@@ -410,24 +441,79 @@ function SearchResults() {
 
   // Handle load more for infinite scroll
   const handleLoadMore = useCallback(() => {
-    if (loading || loadingMore || !hasMore) return;
-    fetchProperties(page + 1, false);
-  }, [loading, loadingMore, hasMore, page, fetchProperties]);
+    if (isFetchingRef.current || !hasMoreRef.current) return;
+    const nextPage = pageRef.current + 1;
+    fetchProperties(nextPage, false);
+  }, [fetchProperties]);
 
+  // 1. Intersection Observer on bottom sentinel
   useEffect(() => {
-    if (!hasMore || loading || loadingMore) return;
+    if (!hasMore || loading) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) handleLoadMore();
+        if (entries[0].isIntersecting && hasMoreRef.current && !isFetchingRef.current) {
+          handleLoadMore();
+        }
       },
-      { rootMargin: "250px" }
+      { rootMargin: "400px 0px" }
     );
+
     const el = sentinelRef.current;
     if (el) observer.observe(el);
+
     return () => {
       if (el) observer.unobserve(el);
     };
-  }, [hasMore, loading, loadingMore, handleLoadMore]);
+  }, [hasMore, loading, handleLoadMore, properties.length]);
+
+  // 2. Global Window Scroll Event Listener (instant response when scrolling near bottom)
+  useEffect(() => {
+    let ticking = false;
+    const onWindowScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!isFetchingRef.current && hasMoreRef.current) {
+            const scrollY = window.scrollY || window.pageYOffset;
+            const viewportHeight = window.innerHeight;
+            const docHeight = document.documentElement.scrollHeight;
+            if (docHeight - (scrollY + viewportHeight) <= 450) {
+              handleLoadMore();
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onWindowScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onWindowScroll);
+  }, [handleLoadMore]);
+
+  // 3. Container scroll for map view card list
+  useEffect(() => {
+    const el = mapListRef.current;
+    if (!el || viewMode !== "map") return;
+
+    let ticking = false;
+    const onMapListScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!isFetchingRef.current && hasMoreRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = el;
+            if (scrollHeight - (scrollTop + clientHeight) <= 250) {
+              handleLoadMore();
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    el.addEventListener("scroll", onMapListScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onMapListScroll);
+  }, [viewMode, handleLoadMore]);
 
   // Open owner contact modal and fetch details
   const handleGetOwnerDetails = async (property) => {
@@ -994,7 +1080,7 @@ function SearchResults() {
               <p className="mb-2 text-xs text-gray-500 font-medium">
                 {properties.length} listings — click a card to focus on map
               </p>
-              <div className="space-y-2 lg:max-h-[calc(100vh-260px)] lg:overflow-y-auto lg:pr-1 max-h-72 overflow-y-auto pr-1">
+              <div ref={mapListRef} className="space-y-2 lg:max-h-[calc(100vh-260px)] lg:overflow-y-auto lg:pr-1 max-h-72 overflow-y-auto pr-1">
                 {properties.map((property, idx) => {
                   const dist = formatDistance(property.distance);
                   const isSel = selectedProperty?._id === property._id;
@@ -1076,12 +1162,21 @@ function SearchResults() {
                   );
                 })}
 
-                <div ref={sentinelRef} className="py-2 text-center">
+                <div className="py-3 text-center">
                   {loadingMore && (
-                    <div className="flex items-center justify-center gap-1.5 text-xs text-[#009587]">
+                    <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-[#009587]">
                       <FaSpinner className="animate-spin" />
-                      <span>Loading more…</span>
+                      <span>Loading more properties…</span>
                     </div>
+                  )}
+                  {hasMore && !loadingMore && (
+                    <button
+                      type="button"
+                      onClick={handleLoadMore}
+                      className="w-full border border-gray-300 bg-white py-2 text-xs font-semibold text-[#009587] hover:bg-teal-50 transition"
+                    >
+                      Load More ({properties.length} of {total})
+                    </button>
                   )}
                   {!loading && !hasMore && properties.length > 0 && (
                     <div className="text-[11px] text-gray-400">
@@ -1339,15 +1434,24 @@ function SearchResults() {
             })}
 
             {/* Infinite Scroll Sentinel */}
-            <div ref={sentinelRef} className="flex justify-center py-4">
+            <div ref={sentinelRef} className="flex flex-col items-center justify-center py-6 gap-3">
               {loadingMore && (
-                <div className="flex items-center gap-2 border border-gray-300 bg-white px-6 py-3 text-xs font-medium text-[#009587]">
-                  <FaSpinner className="animate-spin" />
-                  Loading more properties…
+                <div className="flex items-center gap-2 border border-[#009587]/30 bg-teal-50 px-6 py-3 text-xs font-semibold text-[#009587] shadow-sm">
+                  <FaSpinner className="animate-spin text-sm" />
+                  <span>Loading next 20 properties…</span>
                 </div>
               )}
+              {hasMore && !loadingMore && (
+                <button
+                  type="button"
+                  onClick={handleLoadMore}
+                  className="inline-flex items-center gap-2 border border-[#009587] bg-white px-8 py-3 text-xs font-bold uppercase tracking-wider text-[#009587] shadow-sm hover:bg-[#009587] hover:text-white transition active:scale-[0.98]"
+                >
+                  <span>Load 20 More Properties ({properties.length} of {total} loaded)</span>
+                </button>
+              )}
               {!loading && !hasMore && properties.length > 0 && (
-                <div className="border border-gray-200 bg-white px-6 py-2.5 text-xs text-gray-500">
+                <div className="border border-gray-200 bg-white px-6 py-2.5 text-xs text-gray-500 shadow-sm">
                   ✓ All {properties.length} properties displayed
                 </div>
               )}
