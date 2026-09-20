@@ -17,7 +17,7 @@ function OwnerCTA() {
       </p>
 
       <button
-        className="mt-4 rounded-xl bg-teal-600 px-8 py-3 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition shadow-sm active:scale-98"
+        className="mt-4 bg-[#009587] px-8 py-3 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#00786d] transition shadow-sm"
         onClick={() => navigate("/post-property")}
       >
         Post Your Property for Free

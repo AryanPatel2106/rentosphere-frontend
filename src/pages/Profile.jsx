@@ -526,22 +526,22 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-50 py-4 sm:py-6 px-3 sm:px-6">
-      <div className="mx-auto flex max-w-[1500px] flex-col rounded-2xl border border-slate-200/80 bg-white shadow-xs lg:h-[calc(100vh-180px)] lg:min-h-[700px] lg:flex-row lg:overflow-hidden">
+    <div className="min-h-[calc(100vh-140px)] bg-[#f6f6f6] py-6 px-4 sm:px-6">
+      <div className="mx-auto flex max-w-[1500px] flex-col border border-gray-300 bg-white shadow-sm lg:h-[calc(100vh-180px)] lg:min-h-[700px] lg:flex-row lg:overflow-hidden">
         {/* ── Sidebar Navigation ────────────────────────────────────────── */}
-        <div className="w-full border-r border-slate-200/80 lg:h-full lg:w-72 lg:overflow-y-auto">
-          <div className="border-b border-slate-200/80 px-5 py-5 sm:px-6">
-            <h2 className="text-base font-bold text-slate-800">Account Dashboard</h2>
-            <p className="text-xs text-slate-500 mt-0.5 truncate">{profile.email || "Manage your rentals"}</p>
+        <div className="w-full border-r border-gray-300 lg:h-full lg:w-72 lg:overflow-y-auto">
+          <div className="border-b border-gray-200 px-6 py-6">
+            <h2 className="text-base font-bold text-gray-800">Account Dashboard</h2>
+            <p className="text-xs text-gray-500 mt-0.5">{profile.email || "Manage your rentals"}</p>
           </div>
 
-          <div className="flex flex-row overflow-x-auto gap-1.5 p-2 bg-slate-100/70 border-b lg:border-b-0 border-slate-200/80 scrollbar-none lg:flex-col lg:p-3 lg:space-y-1 lg:bg-white text-sm">
+          <div className="flex flex-row overflow-x-auto lg:flex-col text-sm border-b lg:border-b-0 border-gray-200 scrollbar-none">
             <button
               onClick={() => handleSelectTab("basic")}
-              className={`flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2.5 lg:px-4 lg:py-3 text-left font-medium transition whitespace-nowrap ${
+              className={`flex shrink-0 items-center gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "basic"
-                  ? "bg-white lg:bg-teal-50/80 text-teal-700 font-semibold shadow-xs border border-slate-200/60 lg:border-teal-200/60"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               <span>My Profile</span>
@@ -549,18 +549,18 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("shortlists")}
-              className={`flex shrink-0 items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 lg:px-4 lg:py-3 text-left font-medium transition whitespace-nowrap ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "shortlists"
-                  ? "bg-white lg:bg-teal-50/80 text-teal-700 font-semibold shadow-xs border border-slate-200/60 lg:border-teal-200/60"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               <div className="flex items-center gap-1.5">
-                <FaHeart className="text-rose-500 text-xs" />
+                <FaHeart className="text-red-500 text-xs" />
                 <span>Saved</span>
               </div>
               {shortlists.length > 0 && (
-                <span className="rounded-full bg-rose-50 text-rose-600 border border-rose-200/60 px-2 py-0.5 text-[10px] font-bold">
+                <span className="bg-red-100 text-red-700 px-1.5 py-0.5 text-[11px] font-bold">
                   {shortlists.length}
                 </span>
               )}
@@ -568,15 +568,15 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("properties")}
-              className={`flex shrink-0 items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 lg:px-4 lg:py-3 text-left font-medium transition whitespace-nowrap ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "properties"
-                  ? "bg-white lg:bg-teal-50/80 text-teal-700 font-semibold shadow-xs border border-slate-200/60 lg:border-teal-200/60"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               <span>My Properties</span>
               {userProperties.length > 0 && (
-                <span className="rounded-full bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 text-[10px] font-bold">
+                <span className="bg-gray-200 text-gray-800 px-1.5 py-0.5 text-[11px] font-bold">
                   {userProperties.length}
                 </span>
               )}
@@ -584,15 +584,15 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("interested")}
-              className={`flex shrink-0 items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 lg:px-4 lg:py-3 text-left font-medium transition whitespace-nowrap ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "interested"
-                  ? "bg-white lg:bg-teal-50/80 text-teal-700 font-semibold shadow-xs border border-slate-200/60 lg:border-teal-200/60"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               <span>Applications</span>
               {ownerRequests.filter((r) => r.status === "pending").length > 0 && (
-                <span className="rounded-full bg-amber-50 text-amber-700 border border-amber-200/60 px-2 py-0.5 text-[10px] font-bold">
+                <span className="bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[11px] font-bold">
                   {ownerRequests.filter((r) => r.status === "pending").length} new
                 </span>
               )}
@@ -600,18 +600,18 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("rented")}
-              className={`flex shrink-0 items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 lg:px-4 lg:py-3 text-left font-medium transition whitespace-nowrap ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "rented"
-                  ? "bg-white lg:bg-teal-50/80 text-teal-700 font-semibold shadow-xs border border-slate-200/60 lg:border-teal-200/60"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               <div className="flex items-center gap-1.5">
-                <FaHouseUser className="text-teal-600 text-xs" />
+                <FaHouseUser className="text-[#009587] text-xs" />
                 <span>Tenancies</span>
               </div>
               {activeRented.length > 0 && (
-                <span className="rounded-full bg-teal-50 text-teal-700 border border-teal-200/60 px-2 py-0.5 text-[10px] font-bold">
+                <span className="bg-teal-100 text-[#009587] px-1.5 py-0.5 text-[11px] font-bold">
                   {activeRented.length}
                 </span>
               )}
@@ -619,10 +619,10 @@ export default function Profile() {
 
             <button
               onClick={() => handleSelectTab("payments")}
-              className={`flex shrink-0 items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 lg:px-4 lg:py-3 text-left font-medium transition whitespace-nowrap ${
+              className={`flex shrink-0 items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4 text-left font-medium transition whitespace-nowrap ${
                 activeTab === "payments"
-                  ? "bg-white lg:bg-teal-50/80 text-teal-700 font-semibold shadow-xs border border-slate-200/60 lg:border-teal-200/60"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "border-b-2 lg:border-b-0 lg:border-l-4 border-[#009587] bg-gray-100 text-gray-900 font-semibold"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               <div className="flex items-center gap-1.5">
@@ -637,16 +637,16 @@ export default function Profile() {
         <div className="flex-1 lg:h-full lg:overflow-y-auto">
           {/* Visible Error Banner */}
           {globalError && (
-            <div className="m-3 sm:m-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-700 shadow-xs">
+            <div className="m-3 sm:m-6 border border-red-300 bg-red-50 p-4 text-xs text-red-700">
               <div className="flex items-start gap-3">
-                <FaCircleExclamation className="mt-0.5 text-base text-rose-600 flex-shrink-0" />
+                <FaCircleExclamation className="mt-0.5 text-base text-red-600 flex-shrink-0" />
                 <div className="flex-1">
-                  <h4 className="font-bold text-rose-800 uppercase tracking-wide">Notice</h4>
+                  <h4 className="font-bold text-red-800 uppercase tracking-wide">Notice</h4>
                   <p className="mt-0.5">{globalError}</p>
                 </div>
                 <button
                   onClick={() => setGlobalError("")}
-                  className="text-xs text-rose-500 hover:text-rose-700 font-bold"
+                  className="text-xs text-red-500 hover:text-red-700 font-bold"
                 >
                   ✕
                 </button>
@@ -656,10 +656,10 @@ export default function Profile() {
           {/* TAB 1: BASIC PROFILE */}
           {activeTab === "basic" && (
             <div>
-              <div className="border-b border-slate-200/80 px-5 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
+              <div className="border-b border-gray-300 px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-800">Basic Profile</h2>
-                  <p className="text-xs text-slate-500">Manage your profile details and security</p>
+                  <h2 className="text-lg font-bold text-gray-800">Basic Profile</h2>
+                  <p className="text-xs text-gray-500">Manage your profile details and security</p>
                 </div>
                 {!isChangePasswordOpen && !emailChanged && (
                   <button
@@ -668,7 +668,7 @@ export default function Profile() {
                       if (editMode) updateProfileData();
                       else setEditMode(true);
                     }}
-                    className="rounded-xl bg-teal-600 px-4 sm:px-6 py-2.5 text-xs font-semibold text-white transition hover:bg-teal-700 shadow-xs"
+                    className="bg-[#009587] px-4 sm:px-6 py-2 text-xs font-semibold text-white transition hover:bg-[#007f73]"
                   >
                     {editMode ? "Save Changes" : "Edit Profile"}
                   </button>
@@ -676,71 +676,71 @@ export default function Profile() {
               </div>
 
               {isChangePasswordOpen ? (
-                <div className="max-w-2xl px-5 sm:px-8 py-5 sm:py-8 space-y-5">
-                  <h3 className="text-base font-semibold text-slate-800">Change Password</h3>
+                <div className="max-w-2xl px-4 sm:px-8 py-5 sm:py-8 space-y-6">
+                  <h3 className="text-base font-semibold text-gray-800">Change Password</h3>
                   {passwordMsg.text && (
                     <div
-                      className={`p-3 text-xs rounded-xl border ${
+                      className={`p-3 text-xs border ${
                         passwordMsg.error
-                          ? "border-rose-200 bg-rose-50 text-rose-600"
-                          : "border-emerald-200 bg-emerald-50 text-emerald-700"
+                          ? "border-red-200 bg-red-50 text-red-600"
+                          : "border-green-200 bg-green-50 text-green-700"
                       }`}
                     >
                       {passwordMsg.text}
                     </div>
                   )}
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
                       Current Password
                     </label>
                     <input
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                      className="h-10 w-full border border-gray-300 px-3 text-xs outline-none focus:border-[#009587]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
                       New Password
                     </label>
                     <input
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                      className="h-10 w-full border border-gray-300 px-3 text-xs outline-none focus:border-[#009587]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
                       Confirm New Password
                     </label>
                     <input
                       type="password"
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                      className="h-10 w-full border border-gray-300 px-3 text-xs outline-none focus:border-[#009587]"
                     />
                   </div>
                   <div className="flex gap-3">
                     <button
                       onClick={changePassword}
-                      className="rounded-xl bg-teal-600 px-6 py-2.5 text-xs font-semibold text-white hover:bg-teal-700 transition shadow-xs"
+                      className="bg-[#009587] px-6 py-2.5 text-xs font-semibold text-white hover:bg-[#007d70] transition"
                     >
                       Update Password
                     </button>
                     <button
                       onClick={() => setIsChangePasswordOpen(false)}
-                      className="rounded-xl border border-slate-200 px-6 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition"
+                      className="border border-gray-300 px-6 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
                     >
                       Cancel
                     </button>
                   </div>
                 </div>
               ) : emailChanged ? (
-                <div className="max-w-xl px-5 sm:px-8 py-5 sm:py-8 space-y-4">
-                  <h3 className="text-base font-semibold text-slate-800">Verify New Email</h3>
-                  <p className="text-xs text-slate-500">
+                <div className="max-w-xl px-4 sm:px-8 py-5 sm:py-8 space-y-4">
+                  <h3 className="text-base font-semibold text-gray-800">Verify New Email</h3>
+                  <p className="text-xs text-gray-500">
                     A verification code has been sent to your new email address.
                   </p>
                   <input
@@ -748,94 +748,94 @@ export default function Profile() {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="Enter OTP"
-                    className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="h-10 w-full border border-gray-300 px-3 text-xs outline-none focus:border-[#009587]"
                   />
                   <button
                     onClick={handleEmailChange}
-                    className="rounded-xl bg-teal-600 px-6 py-2.5 text-xs font-semibold text-white hover:bg-teal-700 transition shadow-xs"
+                    className="bg-[#009587] px-6 py-2.5 text-xs font-semibold text-white hover:bg-[#007d70] transition"
                   >
                     Verify & Save Email
                   </button>
                 </div>
               ) : (
-                <div className="max-w-3xl px-5 sm:px-8 py-5 sm:py-8 space-y-6">
+                <div className="max-w-3xl px-4 sm:px-8 py-5 sm:py-8 space-y-6">
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-[160px_1fr] sm:items-center">
-                    <span className="text-xs font-semibold text-slate-600">Full Name:</span>
+                    <span className="text-xs font-semibold text-gray-600">Full Name:</span>
                     {editMode ? (
                       <input
                         type="text"
                         name="fullName"
                         value={profile.fullName || ""}
                         onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
-                        className="h-10 rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                        className="h-10 border border-gray-300 px-3 text-xs outline-none focus:border-[#009587]"
                       />
                     ) : (
-                      <span className="text-sm font-medium text-slate-800">
+                      <span className="text-sm font-medium text-gray-800">
                         {profile.fullName || "Not provided"}
                       </span>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-[160px_1fr] sm:items-center">
-                    <span className="text-xs font-semibold text-slate-600">Email Address:</span>
+                    <span className="text-xs font-semibold text-gray-600">Email Address:</span>
                     {editMode ? (
                       <input
                         type="email"
                         name="email"
                         value={profile.email || ""}
                         onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                        className="h-10 rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                        className="h-10 border border-gray-300 px-3 text-xs outline-none focus:border-[#009587]"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-slate-800">{profile.email}</span>
-                        <FaCheck className="text-xs text-emerald-600" />
+                        <span className="text-sm font-medium text-gray-800">{profile.email}</span>
+                        <FaCheck className="text-xs text-green-600" />
                       </div>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-[160px_1fr] sm:items-center">
-                    <span className="text-xs font-semibold text-slate-600">Mobile Phone:</span>
+                    <span className="text-xs font-semibold text-gray-600">Mobile Phone:</span>
                     {editMode ? (
                       <input
                         type="tel"
                         name="mobileNumber"
                         value={profile.mobileNumber || ""}
                         onChange={(e) => setProfile({ ...profile, mobileNumber: e.target.value })}
-                        className="h-10 rounded-xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                        className="h-10 border border-gray-300 px-3 text-xs outline-none focus:border-[#009587]"
                       />
                     ) : (
-                      <span className="text-sm font-medium text-slate-800">
+                      <span className="text-sm font-medium text-gray-800">
                         {profile.mobileNumber || "Not provided"}
                       </span>
                     )}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-200/80">
+                  <div className="pt-4 border-t border-gray-200">
                     <button
                       type="button"
                       onClick={() => setIsChangePasswordOpen(true)}
-                      className="text-xs font-medium text-teal-600 underline hover:text-teal-700"
+                      className="text-xs font-medium text-[#009587] underline hover:text-[#007f73]"
                     >
                       Click here to change your account password.
                     </button>
                   </div>
 
                   <div className="flex items-center gap-4 pt-2">
-                    <FaWhatsapp className="text-2xl text-emerald-500" />
-                    <span className="text-xs font-medium text-slate-700">
+                    <FaWhatsapp className="text-2xl text-green-500" />
+                    <span className="text-xs font-medium text-gray-700">
                       Get updates on WhatsApp
                     </span>
                     <button
                       type="button"
                       onClick={handleWhatsappToggle}
-                      className={`relative h-6 w-11 rounded-full transition-colors ${
-                        profile.getUpdateOnWhatsApp ? "bg-teal-600" : "bg-slate-300"
+                      className={`relative h-6 w-11 transition-colors ${
+                        profile.getUpdateOnWhatsApp ? "bg-teal-600" : "bg-gray-300"
                       }`}
                     >
                       <div
-                        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-xs transition-all ${
-                          profile.getUpdateOnWhatsApp ? "left-5.5" : "left-0.5"
+                        className={`absolute top-0.5 h-5 w-5 bg-white transition-all ${
+                          profile.getUpdateOnWhatsApp ? "left-5" : "left-0.5"
                         }`}
                       />
                     </button>
@@ -848,40 +848,40 @@ export default function Profile() {
           {/* TAB 2: YOUR SHORTLISTS */}
           {activeTab === "shortlists" && (
             <div>
-              <div className="border-b border-slate-200/80 px-5 sm:px-8 py-4 sm:py-6">
-                <h2 className="text-lg font-bold text-slate-800">Your Shortlisted Properties</h2>
-                <p className="text-xs text-slate-500">Properties you saved for easy access and rental requests</p>
+              <div className="border-b border-gray-300 px-4 sm:px-8 py-4 sm:py-6">
+                <h2 className="text-lg font-bold text-gray-800">Your Shortlisted Properties</h2>
+                <p className="text-xs text-gray-500">Properties you saved for easy access and rental requests</p>
               </div>
 
-              <div className="px-5 sm:px-8 py-4 sm:py-6">
+              <div className="px-4 sm:px-8 py-4 sm:py-6">
                 {loadingData ? (
-                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-teal-600">
+                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-[#009587]">
                     <FaSpinner className="animate-spin" /> Loading your shortlists…
                   </div>
                 ) : shortlists.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-10 text-center">
-                    <FaHeart className="mx-auto text-3xl text-slate-300 mb-2" />
-                    <p className="text-sm font-semibold text-slate-800">No properties in your saved list yet.</p>
-                    <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                  <div className="border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+                    <FaHeart className="mx-auto text-3xl text-gray-300 mb-2" />
+                    <p className="text-sm font-semibold text-gray-800">No properties in your saved list yet.</p>
+                    <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
                       Save properties you like to compare rent, deposits, amenities, and send rental requests directly.
                     </p>
                     <a
                       href="/search"
-                      className="mt-4 inline-block rounded-xl bg-teal-600 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition shadow-xs"
+                      className="mt-4 inline-block bg-[#009587] px-5 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition"
                     >
                       Browse Rental Properties
                     </a>
                   </div>
                 ) : (
-                  <div className="grid gap-4">
+                  <div className="grid gap-5">
                     {shortlists.map((property) => (
                       <div
                         key={property._id}
                         onClick={() => navigate(`/property/${property._id}`)}
-                        className="group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs flex flex-col md:flex-row gap-5 items-start justify-between transition hover:border-teal-500/50 hover:shadow-md"
+                        className="group cursor-pointer border border-gray-300 bg-white p-4 shadow-xs flex flex-col md:flex-row gap-5 items-start justify-between transition hover:border-[#009587] hover:shadow-md"
                       >
                         <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                          <div className="h-32 w-full sm:w-44 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
+                          <div className="h-32 w-full sm:w-44 bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
                             {property.photos && property.photos[0] ? (
                               <img
                                 src={property.photos[0]}
@@ -889,33 +889,33 @@ export default function Profile() {
                                 className="h-full w-full object-cover group-hover:scale-105 transition duration-300"
                               />
                             ) : (
-                              <div className="h-full w-full flex items-center justify-center text-xs text-slate-400">
+                              <div className="h-full w-full flex items-center justify-center text-xs text-gray-400">
                                 No Photo
                               </div>
                             )}
                           </div>
                           <div className="space-y-1.5 flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="rounded-full bg-teal-50 border border-teal-200/80 px-2.5 py-0.5 text-xs font-semibold text-teal-700">
+                              <span className="bg-teal-50 border border-teal-200 px-2 py-0.5 text-xs font-semibold text-[#009587]">
                                 {property.propertyType || "Apartment"}
                               </span>
-                              <span className="text-xs font-semibold text-slate-700">
+                              <span className="text-xs font-semibold text-gray-700">
                                 {property.BHKType} • {property.Furnishing}
                               </span>
                             </div>
-                            <h3 className="text-base font-bold text-slate-900 group-hover:text-teal-600 transition">{property.title}</h3>
-                            <p className="text-xs text-slate-500">
+                            <h3 className="text-base font-bold text-gray-800 group-hover:text-[#009587] transition">{property.title}</h3>
+                            <p className="text-xs text-gray-500">
                               📍 {property.locality?.text || property.locality?.label || "Location"}
                             </p>
                             <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs pt-1">
-                              <span className="font-bold text-teal-600 text-sm">
+                              <span className="font-bold text-[#009587] text-sm">
                                 ₹{(property.rent || 0).toLocaleString("en-IN")}/mo
                               </span>
-                              <span className="text-slate-500">
+                              <span className="text-gray-500">
                                 Deposit: ₹{(property.deposit || 0).toLocaleString("en-IN")}
                               </span>
                               {property.builtUpArea > 0 && (
-                                <span className="text-slate-500">{property.builtUpArea} sqft</span>
+                                <span className="text-gray-500">{property.builtUpArea} sqft</span>
                               )}
                             </div>
                           </div>
@@ -928,7 +928,7 @@ export default function Profile() {
                               e.stopPropagation();
                               handleOpenRentalRequest(property);
                             }}
-                            className="flex-1 md:flex-initial rounded-xl bg-teal-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-teal-700 shadow-xs transition"
+                            className="flex-1 md:flex-initial bg-[#009587] px-4 py-2 text-xs font-semibold text-white hover:bg-[#007f73] transition"
                           >
                             Request to Rent
                           </button>
@@ -938,7 +938,7 @@ export default function Profile() {
                               e.stopPropagation();
                               handleRemoveShortlist(property._id);
                             }}
-                            className="flex-1 md:flex-initial rounded-xl border border-rose-200 text-rose-600 px-4 py-2.5 text-xs font-semibold hover:bg-rose-50 transition flex items-center justify-center gap-1.5"
+                            className="flex-1 md:flex-initial border border-red-300 text-red-600 px-4 py-2 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
                           >
                             <FaTrash className="text-xs" /> Remove
                           </button>
@@ -954,55 +954,55 @@ export default function Profile() {
           {/* TAB 3: YOUR PROPERTIES (OWNER) */}
           {activeTab === "properties" && (
             <div>
-              <div className="border-b border-slate-200/80 px-5 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
+              <div className="border-b border-gray-300 px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-800">Your Listed Properties</h2>
-                  <p className="text-xs text-slate-500">Properties you own and posted on Rentosphere</p>
+                  <h2 className="text-lg font-bold text-gray-800">Your Listed Properties</h2>
+                  <p className="text-xs text-gray-500">Properties you own and posted on Rentosphere</p>
                 </div>
                 <a
                   href="/post-property"
-                  className="rounded-xl bg-teal-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-teal-700 shadow-xs"
+                  className="bg-[#009587] px-3 sm:px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#007f73]"
                 >
                   + Post New Property
                 </a>
               </div>
 
-              <div className="px-5 sm:px-8 py-4 sm:py-6">
+              <div className="px-4 sm:px-8 py-4 sm:py-6">
                 {loadingData ? (
-                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-teal-600">
+                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-[#009587]">
                     <FaSpinner className="animate-spin" /> Loading your properties…
                   </div>
                 ) : userProperties.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-10 text-center">
-                    <p className="text-sm font-semibold text-slate-800">No properties listed yet.</p>
-                    <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                  <div className="border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+                    <p className="text-sm font-semibold text-gray-800">No properties listed yet.</p>
+                    <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
                       List your home, flat, or PG to connect with verified tenants with zero brokerage and instant digital agreements.
                     </p>
                     <a
                       href="/post-property"
-                      className="mt-4 inline-block rounded-xl bg-teal-600 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition shadow-xs"
+                      className="mt-4 inline-block bg-[#009587] px-5 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition"
                     >
                       + Post Property Free
                     </a>
                   </div>
                 ) : (
-                  <div className="space-y-5">
+                  <div className="space-y-6">
                     {userProperties.map((property) => (
-                      <div key={property._id} className="rounded-2xl border border-slate-200/80 bg-white shadow-xs overflow-hidden">
-                        <div className="border-b border-slate-200/80 px-5 py-3.5 flex flex-wrap items-center justify-between gap-2 bg-slate-50/50">
+                      <div key={property._id} className="border border-gray-300 bg-white shadow-sm">
+                        <div className="border-b border-gray-200 px-5 py-4 flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
                             <span
-                              className={`rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
+                              className={`px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
                                 property.status === "rented"
-                                  ? "bg-purple-50 text-purple-700 border border-purple-200/80"
+                                  ? "bg-purple-100 text-purple-800 border border-purple-200"
                                   : property.status === "active"
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/80"
-                                  : "bg-slate-100 text-slate-600 border border-slate-200"
+                                  ? "bg-green-100 text-green-800 border border-green-200"
+                                  : "bg-gray-100 text-gray-600 border border-gray-200"
                               }`}
                             >
                               {property.status === "rented" ? "● Booked / Rented" : `● ${property.status}`}
                             </span>
-                            <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs text-slate-600 font-medium">
+                            <span className="bg-gray-100 px-2 py-0.5 text-xs text-gray-600 font-medium">
                               {property.BHKType} • {property.Furnishing}
                             </span>
                           </div>
@@ -1011,21 +1011,21 @@ export default function Profile() {
                             <button
                               type="button"
                               onClick={() => navigate(`/property/${property._id}`)}
-                              className="rounded-xl border border-teal-600 bg-teal-50/40 px-3 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-100/50 transition"
+                              className="border border-[#009587] bg-white px-3 py-1.5 text-xs font-semibold text-[#009587] hover:bg-teal-50 transition"
                             >
                               View Listing
                             </button>
                             <button
                               type="button"
                               onClick={() => handleOpenEditModal(property)}
-                              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition flex items-center gap-1.5 shadow-xs"
+                              className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5"
                             >
-                              <FaPen className="text-xs text-teal-600" /> Edit Details
+                              <FaPen className="text-xs text-teal-700" /> Edit Details
                             </button>
                             <button
                               type="button"
                               onClick={() => handleDeleteProperty(property._id)}
-                              className="rounded-xl border border-rose-200 bg-white px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition flex items-center gap-1 shadow-xs"
+                              className="border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition flex items-center gap-1"
                             >
                               <FaTrash className="text-xs" /> Deactivate
                             </button>
@@ -1036,7 +1036,7 @@ export default function Profile() {
                           <div className="grid gap-4 lg:grid-cols-[200px_1fr]">
                             <div
                               onClick={() => navigate(`/property/${property._id}`)}
-                              className="h-36 rounded-xl border border-slate-200 bg-slate-100 overflow-hidden cursor-pointer hover:opacity-90 transition"
+                              className="h-36 border border-gray-200 bg-gray-100 overflow-hidden cursor-pointer hover:opacity-90 transition"
                               title="Click to view full property details"
                             >
                               {property.photos && property.photos[0] ? (
@@ -1046,7 +1046,7 @@ export default function Profile() {
                                   className="h-full w-full object-cover"
                                 />
                               ) : (
-                                <div className="h-full w-full flex items-center justify-center text-xs text-slate-400">
+                                <div className="h-full w-full flex items-center justify-center text-xs text-gray-400">
                                   No Photos
                                 </div>
                               )}
@@ -1055,41 +1055,41 @@ export default function Profile() {
                             <div className="space-y-2.5">
                               <h3
                                 onClick={() => navigate(`/property/${property._id}`)}
-                                className="text-base font-bold text-slate-900 hover:text-teal-600 transition cursor-pointer"
+                                className="text-base font-bold text-gray-800 hover:text-[#009587] transition cursor-pointer"
                                 title="Click to view full property details"
                               >
                                 {property.title}
                               </h3>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-xs text-gray-500">
                                 📍 {property.locality?.text || property.locality?.label}
                               </p>
 
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-center text-xs">
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 border border-gray-200 bg-gray-50 p-2.5 text-center text-xs">
                                 <div>
-                                  <span className="text-slate-500">Rent</span>
-                                  <p className="font-bold text-teal-600 text-sm mt-0.5">
+                                  <span className="text-gray-500">Rent</span>
+                                  <p className="font-bold text-[#009587]">
                                     ₹{(property.rent || 0).toLocaleString("en-IN")}/mo
                                   </p>
                                 </div>
                                 <div>
-                                  <span className="text-slate-500">Deposit</span>
-                                  <p className="font-bold text-slate-800 text-sm mt-0.5">
+                                  <span className="text-gray-500">Deposit</span>
+                                  <p className="font-bold text-gray-800">
                                     ₹{(property.deposit || 0).toLocaleString("en-IN")}
                                   </p>
                                 </div>
                                 <div>
-                                  <span className="text-slate-500">Area</span>
-                                  <p className="font-bold text-slate-800 text-sm mt-0.5">
+                                  <span className="text-gray-500">Area</span>
+                                  <p className="font-bold text-gray-800">
                                     {property.builtUpArea ? `${property.builtUpArea} sqft` : "—"}
                                   </p>
                                 </div>
                                 <div>
-                                  <span className="text-slate-500">Baths</span>
-                                  <p className="font-bold text-slate-800 text-sm mt-0.5">{property.bathrooms || 1}</p>
+                                  <span className="text-gray-500">Baths</span>
+                                  <p className="font-bold text-gray-800">{property.bathrooms || 1}</p>
                                 </div>
                               </div>
 
-                              <p className="text-xs text-slate-600 line-clamp-2">
+                              <p className="text-xs text-gray-600 line-clamp-2">
                                 {property.description || "No description provided."}
                               </p>
                             </div>
@@ -1106,22 +1106,22 @@ export default function Profile() {
           {/* TAB 4: INTERESTED IN YOUR PROPERTIES (OWNER) */}
           {activeTab === "interested" && (
             <div>
-              <div className="border-b border-slate-200/80 px-5 sm:px-8 py-4 sm:py-6">
-                <h2 className="text-lg font-bold text-slate-800">Interested in your Properties</h2>
-                <p className="text-xs text-slate-500">
+              <div className="border-b border-gray-300 px-4 sm:px-8 py-4 sm:py-6">
+                <h2 className="text-lg font-bold text-gray-800">Interested in your Properties</h2>
+                <p className="text-xs text-gray-500">
                   Prospective tenants who submitted rental requests for your listings
                 </p>
               </div>
 
-              <div className="px-5 sm:px-8 py-4 sm:py-6">
+              <div className="px-4 sm:px-8 py-4 sm:py-6">
                 {loadingData ? (
-                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-teal-600">
+                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-[#009587]">
                     <FaSpinner className="animate-spin" /> Loading tenant applications…
                   </div>
                 ) : ownerRequests.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-10 text-center">
-                    <p className="text-sm font-medium text-slate-700">No applications received yet.</p>
-                    <p className="text-xs text-slate-500 mt-1">
+                  <div className="border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+                    <p className="text-sm font-medium text-gray-700">No applications received yet.</p>
+                    <p className="text-xs text-gray-500 mt-1">
                       When tenants apply for your properties, their applications will show up here.
                     </p>
                   </div>
@@ -1130,77 +1130,77 @@ export default function Profile() {
                     {ownerRequests.map((request) => (
                       <div
                         key={request._id}
-                        className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-3"
+                        className="border border-gray-300 bg-white p-5 shadow-sm space-y-3"
                       >
-                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 pb-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-3">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-slate-700">Property:</span>
-                              <span className="text-sm font-bold text-teal-600">
+                              <span className="text-xs font-bold text-gray-700">Property:</span>
+                              <span className="text-sm font-bold text-[#009587]">
                                 {request.property?.title || "Property Listing"}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-500 mt-0.5">
+                            <p className="text-xs text-gray-500 mt-0.5">
                               📍 {request.property?.locality?.text || request.property?.locality?.label}
                             </p>
                           </div>
 
                           <span
-                            className={`rounded-full px-3 py-0.5 text-xs font-bold uppercase ${
+                            className={`px-3 py-1 text-xs font-bold uppercase ${
                               request.status === "accepted"
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200/80"
+                                ? "bg-green-100 text-green-800 border border-green-300"
                                 : request.status === "rejected"
-                                ? "bg-rose-50 text-rose-700 border border-rose-200/80"
-                                : "bg-amber-50 text-amber-700 border border-amber-200/80"
+                                ? "bg-red-100 text-red-800 border border-red-300"
+                                : "bg-amber-100 text-amber-800 border border-amber-300"
                             }`}
                           >
                             Status: {request.status}
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 text-xs">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border border-gray-200 bg-gray-50 p-3 text-xs">
                           <div>
-                            <span className="text-slate-500">Applicant:</span>
-                            <p className="font-bold text-slate-800">
+                            <span className="text-gray-500">Applicant:</span>
+                            <p className="font-bold text-gray-800">
                               {request.tenant?.fullName || "Prospective Tenant"}
                             </p>
-                            <p className="text-slate-600">{request.tenant?.email}</p>
+                            <p className="text-gray-600">{request.tenant?.email}</p>
                             {request.tenant?.mobileNumber && (
-                              <p className="text-slate-600">{request.tenant.mobileNumber}</p>
+                              <p className="text-gray-600">{request.tenant.mobileNumber}</p>
                             )}
                           </div>
                           <div>
-                            <span className="text-slate-500">Preferred Move-in:</span>
-                            <p className="font-bold text-slate-800">
+                            <span className="text-gray-500">Preferred Move-in:</span>
+                            <p className="font-bold text-gray-800">
                               {request.moveInDate
                                 ? new Date(request.moveInDate).toLocaleDateString()
                                 : "Immediate"}
                             </p>
-                            <p className="text-slate-500 mt-1">
+                            <p className="text-gray-500 mt-1">
                               Rent: ₹{(request.monthlyRent || 0).toLocaleString("en-IN")}/mo
                             </p>
                           </div>
                           <div>
-                            <span className="text-slate-500">Tenant Note:</span>
-                            <p className="italic text-slate-700 line-clamp-3">
+                            <span className="text-gray-500">Tenant Note:</span>
+                            <p className="italic text-gray-700 line-clamp-3">
                               "{request.message || "Interested in renting this property."}"
                             </p>
                           </div>
                         </div>
 
                         {request.status === "pending" && (
-                          <div className="flex justify-end gap-2.5 pt-1">
+                          <div className="flex justify-end gap-2 pt-1">
                             <button
                               type="button"
                               onClick={() => handleRejectRequest(request._id)}
-                              className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition"
+                              className="border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100"
                             >
                               Decline
                             </button>
                             <button
                               type="button"
                               onClick={() => handleAcceptRequest(request._id)}
-                              className="rounded-xl bg-emerald-600 px-5 py-2 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1.5 shadow-xs transition"
+                              className="bg-emerald-600 px-5 py-2 text-xs font-semibold text-white hover:bg-emerald-700 flex items-center gap-1.5"
                             >
                               <FaCheck className="text-xs" /> Accept Application & Book
                             </button>
@@ -1217,23 +1217,23 @@ export default function Profile() {
           {/* TAB 5: ACTIVE RENTED PROPERTIES (OWNER) */}
           {activeTab === "rented" && (
             <div>
-              <div className="border-b border-slate-200/80 px-5 sm:px-8 py-4 sm:py-6">
-                <h2 className="text-lg font-bold text-slate-800">Active Rented Properties</h2>
-                <p className="text-xs text-slate-500">
+              <div className="border-b border-gray-300 px-4 sm:px-8 py-4 sm:py-6">
+                <h2 className="text-lg font-bold text-gray-800">Active Rented Properties</h2>
+                <p className="text-xs text-gray-500">
                   Track ongoing tenancies, record offline rent payments, or end leases to re-list
                 </p>
               </div>
 
-              <div className="px-5 sm:px-8 py-4 sm:py-6">
+              <div className="px-4 sm:px-8 py-4 sm:py-6">
                 {loadingData ? (
-                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-teal-600">
+                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-[#009587]">
                     <FaSpinner className="animate-spin" /> Loading rented properties…
                   </div>
                 ) : activeRented.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-10 text-center">
-                    <FaHouseUser className="mx-auto text-3xl text-slate-300 mb-2" />
-                    <p className="text-sm font-medium text-slate-700">No active tenancies currently.</p>
-                    <p className="text-xs text-slate-500 mt-1">
+                  <div className="border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+                    <FaHouseUser className="mx-auto text-3xl text-gray-300 mb-2" />
+                    <p className="text-sm font-medium text-gray-700">No active tenancies currently.</p>
+                    <p className="text-xs text-gray-500 mt-1">
                       When you accept a tenant's rental application, the property is marked rented and tracked here.
                     </p>
                   </div>
@@ -1245,16 +1245,16 @@ export default function Profile() {
                       const payments = req?.payments || [];
 
                       return (
-                        <div key={prop._id} className="rounded-2xl border border-slate-200/80 bg-white shadow-xs overflow-hidden">
-                          <div className="border-b border-slate-200/80 px-5 py-4 flex flex-wrap items-center justify-between gap-3 bg-teal-50/40">
+                        <div key={prop._id} className="border border-gray-300 bg-white shadow-sm">
+                          <div className="border-b border-gray-200 px-5 py-4 flex flex-wrap items-center justify-between gap-3 bg-teal-50/50">
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="rounded-full bg-purple-50 text-purple-700 border border-purple-200/80 px-2.5 py-0.5 text-xs font-bold uppercase">
+                                <span className="bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-0.5 text-xs font-bold uppercase">
                                   Occupied / Rented
                                 </span>
-                                <h3 className="text-base font-bold text-slate-900">{prop.title}</h3>
+                                <h3 className="text-base font-bold text-gray-800">{prop.title}</h3>
                               </div>
-                              <p className="text-xs text-slate-500 mt-0.5">
+                              <p className="text-xs text-gray-500 mt-0.5">
                                 📍 {prop.locality?.text || prop.locality?.label} • ₹{(prop.rent || 0).toLocaleString("en-IN")}/mo
                               </p>
                             </div>
@@ -1264,7 +1264,7 @@ export default function Profile() {
                                 <button
                                   type="button"
                                   onClick={() => handleOpenOfflinePayment(item)}
-                                  className="rounded-xl bg-teal-600 text-white px-3.5 py-2 text-xs font-semibold hover:bg-teal-700 flex items-center gap-1.5 shadow-xs transition"
+                                  className="bg-[#009587] text-white px-3.5 py-2 text-xs font-semibold hover:bg-[#007f73] flex items-center gap-1.5"
                                 >
                                   <FaMoneyBillWave className="text-xs" /> Record Offline Payment
                                 </button>
@@ -1272,7 +1272,7 @@ export default function Profile() {
                               <button
                                 type="button"
                                 onClick={() => handleEndLease(prop._id)}
-                                className="rounded-xl border border-rose-200 text-rose-600 bg-white px-3 py-2 text-xs font-semibold hover:bg-rose-50 flex items-center gap-1.5 transition"
+                                className="border border-red-300 text-red-600 bg-white px-3 py-2 text-xs font-semibold hover:bg-red-50 flex items-center gap-1.5"
                               >
                                 <FaArrowRotateLeft className="text-xs" /> End Lease & Re-list
                               </button>
@@ -1280,80 +1280,80 @@ export default function Profile() {
                           </div>
 
                           {/* Tenant Info */}
-                          <div className="p-5 border-b border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                            <div className="rounded-xl border border-slate-200/80 p-3.5 bg-slate-50/70">
-                              <span className="text-slate-500 font-medium">Tenant Details:</span>
-                              <p className="font-bold text-slate-800 text-sm mt-0.5">
+                          <div className="p-5 border-b border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                            <div className="border border-gray-200 p-3 bg-gray-50">
+                              <span className="text-gray-500 font-medium">Tenant Details:</span>
+                              <p className="font-bold text-gray-800 text-sm mt-0.5">
                                 {prop.currentTenant?.fullName || req?.tenant?.fullName || "Assigned Tenant"}
                               </p>
-                              <p className="text-slate-600">{prop.currentTenant?.email || req?.tenant?.email}</p>
-                              <p className="text-slate-600">
+                              <p className="text-gray-600">{prop.currentTenant?.email || req?.tenant?.email}</p>
+                              <p className="text-gray-600">
                                 📞 {prop.currentTenant?.mobileNumber || req?.tenant?.mobileNumber || "Contact not provided"}
                               </p>
                             </div>
 
-                            <div className="rounded-xl border border-slate-200/80 p-3.5 bg-slate-50/70">
-                              <span className="text-slate-500 font-medium">Monthly Rent & Deposit:</span>
-                              <p className="font-bold text-teal-600 text-sm mt-0.5">
+                            <div className="border border-gray-200 p-3 bg-gray-50">
+                              <span className="text-gray-500 font-medium">Monthly Rent & Deposit:</span>
+                              <p className="font-bold text-[#009587] text-sm mt-0.5">
                                 ₹{(prop.rent || req?.monthlyRent || 0).toLocaleString("en-IN")}/month
                               </p>
-                              <p className="text-slate-600">
+                              <p className="text-gray-600">
                                 Security Deposit: ₹{(prop.deposit || req?.deposit || 0).toLocaleString("en-IN")}
                               </p>
                             </div>
 
-                            <div className="rounded-xl border border-slate-200/80 p-3.5 bg-slate-50/70">
-                              <span className="text-slate-500 font-medium">Lease Start Date:</span>
-                              <p className="font-bold text-slate-800 text-sm mt-0.5">
+                            <div className="border border-gray-200 p-3 bg-gray-50">
+                              <span className="text-gray-500 font-medium">Lease Start Date:</span>
+                              <p className="font-bold text-gray-800 text-sm mt-0.5">
                                 {req?.moveInDate ? new Date(req.moveInDate).toLocaleDateString() : "Active Agreement"}
                               </p>
-                              <p className="text-slate-500">Payments Recorded: {payments.length}</p>
+                              <p className="text-gray-500">Payments Recorded: {payments.length}</p>
                             </div>
                           </div>
 
                           {/* Payment Records Table */}
                           <div className="p-5">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
                               Rent Payment History
                             </h4>
                             {payments.length === 0 ? (
-                              <p className="text-xs text-slate-500 italic">
+                              <p className="text-xs text-gray-500 italic">
                                 No rent payments recorded yet for this lease. Use "Record Offline Payment" above when tenant pays via Cash, UPI, or Bank Transfer.
                               </p>
                             ) : (
-                              <div className="overflow-x-auto rounded-xl border border-slate-200">
-                                <table className="w-full text-left text-xs">
-                                  <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                              <div className="overflow-x-auto">
+                                <table className="w-full text-left text-xs border border-gray-200">
+                                  <thead className="bg-gray-100 text-gray-700 font-semibold border-b border-gray-200">
                                     <tr>
-                                      <th className="p-3">Month / Year</th>
-                                      <th className="p-3">Amount</th>
-                                      <th className="p-3">Method</th>
-                                      <th className="p-3">Status</th>
-                                      <th className="p-3">Transaction ID</th>
-                                      <th className="p-3">Notes</th>
+                                      <th className="p-2.5">Month / Year</th>
+                                      <th className="p-2.5">Amount</th>
+                                      <th className="p-2.5">Method</th>
+                                      <th className="p-2.5">Status</th>
+                                      <th className="p-2.5">Transaction ID</th>
+                                      <th className="p-2.5">Notes</th>
                                     </tr>
                                   </thead>
-                                  <tbody className="divide-y divide-slate-200">
+                                  <tbody className="divide-y divide-gray-200">
                                     {payments.map((pmt, idx) => (
-                                      <tr key={pmt._id || idx} className="hover:bg-slate-50/60">
-                                        <td className="p-3 font-semibold text-slate-800">
+                                      <tr key={pmt._id || idx} className="hover:bg-gray-50">
+                                        <td className="p-2.5 font-semibold text-gray-800">
                                           {MONTH_NAMES[pmt.month - 1]} {pmt.year}
                                         </td>
-                                        <td className="p-3 font-bold text-teal-600">
+                                        <td className="p-2.5 font-bold text-[#009587]">
                                           ₹{pmt.amount.toLocaleString("en-IN")}
                                         </td>
-                                        <td className="p-3 uppercase font-medium text-slate-600">
+                                        <td className="p-2.5 uppercase font-medium text-gray-600">
                                           {pmt.method}
                                         </td>
-                                        <td className="p-3">
-                                          <span className="rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 px-2 py-0.5 text-[10px] font-bold">
+                                        <td className="p-2.5">
+                                          <span className="bg-green-100 text-green-800 px-2 py-0.5 text-xs font-bold">
                                             PAID
                                           </span>
                                         </td>
-                                        <td className="p-3 font-mono text-slate-500 text-xs">
+                                        <td className="p-2.5 font-mono text-gray-500 text-xs">
                                           {pmt.transactionId || "—"}
                                         </td>
-                                        <td className="p-3 text-slate-500 text-xs">
+                                        <td className="p-2.5 text-gray-500 text-xs">
                                           {pmt.notes || "—"}
                                         </td>
                                       </tr>
@@ -1375,23 +1375,23 @@ export default function Profile() {
           {/* TAB 6: YOUR PAYMENTS & RENT (TENANT) */}
           {activeTab === "payments" && (
             <div>
-              <div className="border-b border-slate-200/80 px-5 sm:px-8 py-4 sm:py-6">
-                <h2 className="text-lg font-bold text-slate-800">Your Payments & Rental Agreements</h2>
-                <p className="text-xs text-slate-500">
+              <div className="border-b border-gray-300 px-4 sm:px-8 py-4 sm:py-6">
+                <h2 className="text-lg font-bold text-gray-800">Your Payments & Rental Agreements</h2>
+                <p className="text-xs text-gray-500">
                   View accepted leases, payment history, and pay monthly rent online via Razorpay
                 </p>
               </div>
 
-              <div className="px-5 sm:px-8 py-4 sm:py-6">
+              <div className="px-4 sm:px-8 py-4 sm:py-6">
                 {loadingData ? (
-                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-teal-600">
+                  <div className="flex items-center justify-center py-12 gap-2 text-xs text-[#009587]">
                     <FaSpinner className="animate-spin" /> Loading rental agreements…
                   </div>
                 ) : tenantRequests.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-10 text-center">
-                    <FaCreditCard className="mx-auto text-3xl text-slate-300 mb-2" />
-                    <p className="text-sm font-medium text-slate-700">No active rental applications or agreements.</p>
-                    <p className="text-xs text-slate-500 mt-1">
+                  <div className="border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+                    <FaCreditCard className="mx-auto text-3xl text-gray-300 mb-2" />
+                    <p className="text-sm font-medium text-gray-700">No active rental applications or agreements.</p>
+                    <p className="text-xs text-gray-500 mt-1">
                       When you submit a rental request and the owner accepts, you can manage your rent payments here.
                     </p>
                   </div>
@@ -1402,26 +1402,26 @@ export default function Profile() {
                       const payments = request.payments || [];
 
                       return (
-                        <div key={request._id} className="rounded-2xl border border-slate-200/80 bg-white shadow-xs overflow-hidden">
-                          <div className="border-b border-slate-200/80 px-5 py-4 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
+                        <div key={request._id} className="border border-gray-300 bg-white shadow-sm">
+                          <div className="border-b border-gray-200 px-5 py-4 flex flex-wrap items-center justify-between gap-3 bg-gray-50">
                             <div>
                               <div className="flex items-center gap-2">
                                 <span
-                                  className={`rounded-full px-2.5 py-0.5 text-xs font-bold uppercase ${
+                                  className={`px-2.5 py-0.5 text-xs font-bold uppercase ${
                                     isAccepted
-                                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200/80"
+                                      ? "bg-green-100 text-green-800 border border-green-300"
                                       : request.status === "rejected"
-                                      ? "bg-rose-50 text-rose-700 border border-rose-200/80"
-                                      : "bg-amber-50 text-amber-700 border border-amber-200/80"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-amber-100 text-amber-800"
                                   }`}
                                 >
                                   {isAccepted ? "● Active Agreement" : `Application: ${request.status}`}
                                 </span>
-                                <h3 className="text-base font-bold text-slate-900">
+                                <h3 className="text-base font-bold text-gray-800">
                                   {request.property?.title || "Property"}
                                 </h3>
                               </div>
-                              <p className="text-xs text-slate-500 mt-0.5">
+                              <p className="text-xs text-gray-500 mt-0.5">
                                 📍 {request.property?.locality?.text || request.property?.locality?.label}
                               </p>
                             </div>
@@ -1430,88 +1430,88 @@ export default function Profile() {
                               <button
                                 type="button"
                                 onClick={() => handleOpenRazorpay(request)}
-                                className="rounded-xl bg-teal-600 text-white px-5 py-2 text-xs font-semibold hover:bg-teal-700 flex items-center gap-1.5 shadow-xs transition"
+                                className="bg-[#009587] text-white px-5 py-2 text-xs font-semibold hover:bg-[#007f73] flex items-center gap-1.5 shadow-sm"
                               >
                                 <FaCreditCard className="text-xs" /> Pay Rent Online (Razorpay)
                               </button>
                             )}
                           </div>
 
-                          <div className="p-5 border-b border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                            <div className="rounded-xl border border-slate-200/80 p-3.5 bg-slate-50/70">
-                              <span className="text-slate-500 font-medium">Landlord:</span>
-                              <p className="font-bold text-slate-800 text-sm mt-0.5">
+                          <div className="p-5 border-b border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                            <div className="border border-gray-200 p-3 bg-gray-50">
+                              <span className="text-gray-500 font-medium">Landlord:</span>
+                              <p className="font-bold text-gray-800 text-sm mt-0.5">
                                 {request.owner?.fullName || "Property Owner"}
                               </p>
-                              <p className="text-slate-600">{request.owner?.email}</p>
+                              <p className="text-gray-600">{request.owner?.email}</p>
                               {request.owner?.mobileNumber && (
-                                <p className="text-slate-600">📞 {request.owner.mobileNumber}</p>
+                                <p className="text-gray-600">📞 {request.owner.mobileNumber}</p>
                               )}
                             </div>
 
-                            <div className="rounded-xl border border-slate-200/80 p-3.5 bg-slate-50/70">
-                              <span className="text-slate-500 font-medium">Monthly Rent & Deposit:</span>
-                              <p className="font-bold text-teal-600 text-sm mt-0.5">
+                            <div className="border border-gray-200 p-3 bg-gray-50">
+                              <span className="text-gray-500 font-medium">Monthly Rent & Deposit:</span>
+                              <p className="font-bold text-[#009587] text-sm mt-0.5">
                                 ₹{(request.monthlyRent || 0).toLocaleString("en-IN")}/mo
                               </p>
-                              <p className="text-slate-600">
+                              <p className="text-gray-600">
                                 Deposit: ₹{(request.deposit || 0).toLocaleString("en-IN")}
                               </p>
                             </div>
 
-                            <div className="rounded-xl border border-slate-200/80 p-3.5 bg-slate-50/70">
-                              <span className="text-slate-500 font-medium">Move-in Date:</span>
-                              <p className="font-bold text-slate-800 text-sm mt-0.5">
+                            <div className="border border-gray-200 p-3 bg-gray-50">
+                              <span className="text-gray-500 font-medium">Move-in Date:</span>
+                              <p className="font-bold text-gray-800 text-sm mt-0.5">
                                 {request.moveInDate ? new Date(request.moveInDate).toLocaleDateString() : "Immediate"}
                               </p>
-                              <p className="text-slate-500 mt-1">Total Paid Receipts: {payments.length}</p>
+                              <p className="text-gray-500 mt-1">Total Paid Receipts: {payments.length}</p>
                             </div>
                           </div>
 
                           {/* Receipts & Payments */}
                           {isAccepted && (
                             <div className="p-5">
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
                                 Your Rent Receipts
                               </h4>
                               {payments.length === 0 ? (
-                                <p className="text-xs text-slate-500 italic">
+                                <p className="text-xs text-gray-500 italic">
                                   No payments recorded yet. Click "Pay Rent Online (Razorpay)" above to complete this month's rent payment.
                                 </p>
                               ) : (
-                                <div className="overflow-x-auto rounded-xl border border-slate-200">
-                                  <table className="w-full text-left text-xs">
-                                    <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                                <div className="overflow-x-auto">
+                                  <table className="w-full text-left text-xs border border-gray-200">
+                                    <thead className="bg-gray-100 text-gray-700 font-semibold border-b border-gray-200">
                                       <tr>
-                                        <th className="p-3">Rent Period</th>
-                                        <th className="p-3">Amount Paid</th>
-                                        <th className="p-3">Payment Method</th>
-                                        <th className="p-3">Status</th>
-                                        <th className="p-3">Transaction Ref</th>
-                                        <th className="p-3">Date Paid</th>
+                                        <th className="p-2.5">Rent Period</th>
+                                        <th className="p-2.5">Amount Paid</th>
+                                        <th className="p-2.5">Payment Method</th>
+                                        <th className="p-2.5">Status</th>
+                                        <th className="p-2.5">Transaction Ref</th>
+                                        <th className="p-2.5">Date Paid</th>
                                       </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-200">
+                                    <tbody className="divide-y divide-gray-200">
                                       {payments.map((p, idx) => (
-                                        <tr key={p._id || idx} className="hover:bg-slate-50/60">
-                                          <td className="p-3 font-semibold text-slate-800">
+                                        <tr key={p._id || idx} className="hover:bg-gray-50">
+                                          <td className="p-2.5 font-semibold text-gray-800">
                                             {MONTH_NAMES[p.month - 1]} {p.year}
                                           </td>
-                                          <td className="p-3 font-bold text-teal-600">
+                                          <td className="p-2.5 font-bold text-[#009587]">
                                             ₹{p.amount.toLocaleString("en-IN")}
                                           </td>
-                                          <td className="p-3 uppercase font-medium text-slate-600">
+                                          <td className="p-2.5 uppercase font-medium text-gray-600">
                                             {p.method}
                                           </td>
-                                          <td className="p-3">
-                                            <span className="rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 px-2 py-0.5 text-[10px] font-bold">
+                                          <td className="p-2.5">
+                                            <span className="bg-green-100 text-green-800 px-2 py-0.5 text-xs font-bold">
                                               PAID
                                             </span>
                                           </td>
-                                          <td className="p-3 font-mono text-slate-500 text-xs">
+                                          <td className="p-2.5 font-mono text-gray-500 text-xs">
                                             {p.transactionId || "—"}
                                           </td>
-                                          <td className="p-3 text-slate-500 text-xs">
+                                          <td className="p-2.5 text-gray-500 text-xs">
                                             {p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "—"}
                                           </td>
                                         </tr>
@@ -1535,66 +1535,62 @@ export default function Profile() {
 
       {/* ── MODAL: EDIT PROPERTY DETAILS (OWNER) ────────────────────────── */}
       {editModalProperty && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 bg-white p-6 shadow-2xl">
             <button
               type="button"
               onClick={() => setEditModalProperty(null)}
-              className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
             >
               <FaXmark />
             </button>
 
-            <span className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-teal-700">
-              Edit Listing
-            </span>
-
-            <h3 className="text-lg font-bold text-slate-900 mt-2">Edit Property Details</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h3 className="text-lg font-bold text-gray-800">Edit Property Details</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
               Update rent, deposit, specifications and amenities for this property listing
             </p>
 
             <form onSubmit={handleSavePropertyEdit} className="mt-5 space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">Property Title</label>
+                <label className="block font-semibold text-gray-700 mb-1">Property Title</label>
                 <input
                   type="text"
                   value={editFormData.title || ""}
                   onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Monthly Rent (₹)</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Monthly Rent (₹)</label>
                   <input
                     type="number"
                     value={editFormData.rent}
                     onChange={(e) => setEditFormData({ ...editFormData, rent: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Security Deposit (₹)</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Security Deposit (₹)</label>
                   <input
                     type="number"
                     value={editFormData.deposit}
                     onChange={(e) => setEditFormData({ ...editFormData, deposit: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">BHK Type</label>
+                  <label className="block font-semibold text-gray-700 mb-1">BHK Type</label>
                   <select
                     value={editFormData.BHKType}
                     onChange={(e) => setEditFormData({ ...editFormData, BHKType: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   >
                     {BHK_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -1604,11 +1600,11 @@ export default function Profile() {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Furnishing</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Furnishing</label>
                   <select
                     value={editFormData.Furnishing}
                     onChange={(e) => setEditFormData({ ...editFormData, Furnishing: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   >
                     {FURNISHING_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -1618,35 +1614,35 @@ export default function Profile() {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Builtup Area (sqft)</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Builtup Area (sqft)</label>
                   <input
                     type="number"
                     value={editFormData.builtUpArea}
                     onChange={(e) => setEditFormData({ ...editFormData, builtUpArea: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Bathrooms</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Bathrooms</label>
                   <input
                     type="number"
                     min="1"
                     value={editFormData.bathrooms}
                     onChange={(e) => setEditFormData({ ...editFormData, bathrooms: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Preferred Tenant</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Preferred Tenant</label>
                   <select
                     value={editFormData.preferredTenant}
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, preferredTenant: e.target.value })
                     }
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   >
                     {TENANT_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -1656,13 +1652,13 @@ export default function Profile() {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Availability</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Availability</label>
                   <select
                     value={editFormData.Availability}
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, Availability: e.target.value })
                     }
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   >
                     {AVAILABILITY_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -1673,52 +1669,52 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-1">
-                <label className="flex items-center gap-2.5 cursor-pointer font-medium text-slate-700 rounded-xl border border-slate-200 bg-slate-50/50 p-3 hover:border-teal-400 transition">
+              <div className="flex gap-6 py-1">
+                <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-700">
                   <input
                     type="checkbox"
                     checked={editFormData.Parking || false}
                     onChange={(e) => setEditFormData({ ...editFormData, Parking: e.target.checked })}
-                    className="h-4 w-4 rounded accent-teal-600"
+                    className="accent-[#009587]"
                   />
-                  <span>Parking Available</span>
+                  Parking Available
                 </label>
-                <label className="flex items-center gap-2.5 cursor-pointer font-medium text-slate-700 rounded-xl border border-slate-200 bg-slate-50/50 p-3 hover:border-teal-400 transition">
+                <label className="flex items-center gap-2 cursor-pointer font-medium text-gray-700">
                   <input
                     type="checkbox"
                     checked={editFormData.PetFriendly || false}
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, PetFriendly: e.target.checked })
                     }
-                    className="h-4 w-4 rounded accent-teal-600"
+                    className="accent-[#009587]"
                   />
-                  <span>Pet Friendly</span>
+                  Pet Friendly
                 </label>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">Description</label>
+                <label className="block font-semibold text-gray-700 mb-1">Description</label>
                 <textarea
                   rows={4}
                   value={editFormData.description || ""}
                   onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 p-2.5 text-xs outline-none focus:border-[#009587]"
                   required
                 />
               </div>
 
-              <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-200/80">
+              <div className="flex justify-end gap-2 pt-3 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => setEditModalProperty(null)}
-                  className="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition"
+                  className="border border-gray-300 px-5 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={editSaving}
-                  className="rounded-xl bg-teal-600 px-6 py-2.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50 shadow-xs transition"
+                  className="bg-[#009587] px-6 py-2.5 text-xs font-semibold text-white hover:bg-[#007f73] disabled:opacity-50"
                 >
                   {editSaving ? "Saving changes…" : "Save Changes"}
                 </button>
@@ -1730,22 +1726,25 @@ export default function Profile() {
 
       {/* ── MODAL: RECORD OFFLINE PAYMENT (OWNER) ───────────────────────── */}
       {offlinePaymentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
+          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-200 bg-white p-5 sm:p-6 shadow-2xl">
             <button
               type="button"
               onClick={() => setOfflinePaymentModal(null)}
-              className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
             >
               <FaXmark />
             </button>
 
-            <span className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-teal-700">
-              Owner Payment Entry
-            </span>
+            <div className="flex items-center gap-2 text-[#009587] mb-1">
+              <FaMoneyBillWave className="text-base" />
+              <span className="text-xs font-bold uppercase tracking-wider">
+                Owner Payment Entry
+              </span>
+            </div>
 
-            <h3 className="text-base font-bold text-slate-900 mt-2">Record Offline Rent Payment</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h3 className="text-base font-bold text-gray-800">Record Offline Rent Payment</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
               {offlinePaymentModal.property?.title} • Tenant:{" "}
               {offlinePaymentModal.property?.currentTenant?.fullName ||
                 offlinePaymentModal.rentalRequest?.tenant?.fullName ||
@@ -1755,11 +1754,11 @@ export default function Profile() {
             <form onSubmit={handleRecordOfflinePayment} className="mt-4 space-y-3.5 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Month</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Month</label>
                   <select
                     value={offlineMonth}
                     onChange={(e) => setOfflineMonth(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                   >
                     {MONTH_NAMES.map((name, i) => (
                       <option key={name} value={i + 1}>
@@ -1769,34 +1768,34 @@ export default function Profile() {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Year</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Year</label>
                   <input
                     type="number"
                     value={offlineYear}
                     onChange={(e) => setOfflineYear(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">Amount Paid (₹)</label>
+                <label className="block font-semibold text-gray-700 mb-1">Amount Paid (₹)</label>
                 <input
                   type="number"
                   value={offlineAmount}
                   onChange={(e) => setOfflineAmount(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">Payment Method</label>
+                <label className="block font-semibold text-gray-700 mb-1">Payment Method</label>
                 <select
                   value={offlineMethod}
                   onChange={(e) => setOfflineMethod(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                 >
                   <option value="Cash">Cash</option>
                   <option value="UPI">UPI (GooglePay / PhonePe / Paytm)</option>
@@ -1805,28 +1804,28 @@ export default function Profile() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">Notes (Optional)</label>
+                <label className="block font-semibold text-gray-700 mb-1">Notes (Optional)</label>
                 <input
                   type="text"
                   value={offlineNotes}
                   onChange={(e) => setOfflineNotes(e.target.value)}
                   placeholder="e.g. Received by owner on 5th"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                 />
               </div>
 
-              <div className="flex gap-2.5 pt-2">
+              <div className="flex gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setOfflinePaymentModal(null)}
-                  className="flex-1 rounded-xl border border-slate-200 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition"
+                  className="flex-1 border border-gray-300 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={offlineSubmitting}
-                  className="flex-1 rounded-xl bg-teal-600 py-2.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50 shadow-xs transition"
+                  className="flex-1 bg-[#009587] py-2.5 text-xs font-semibold text-white hover:bg-[#007f73] disabled:opacity-50"
                 >
                   {offlineSubmitting ? "Recording…" : "Confirm Paid"}
                 </button>
@@ -1838,27 +1837,27 @@ export default function Profile() {
 
       {/* ── MODAL: RAZORPAY SIMULATED PAYMENT (TENANT) ───────────────────── */}
       {razorpayModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/65 backdrop-blur-xs p-4">
-          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200/80 bg-white shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 p-3 sm:p-4">
+          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-300 bg-white shadow-xl">
             {/* Authentic Razorpay Header */}
-            <div className="bg-teal-600 px-6 py-5 text-white">
+            <div className="bg-[#009587] px-6 py-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-bold tracking-wide">Rentosphere Housing</h4>
                   <p className="text-xs text-teal-100">Rent Payment Gateway</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] uppercase tracking-wider text-teal-100 font-semibold">Amount</span>
+                  <span className="text-xs uppercase tracking-wider text-teal-100">Amount</span>
                   <p className="text-lg font-extrabold text-white">
                     ₹{(razorpayModal.request.monthlyRent || 0).toLocaleString("en-IN")}
                   </p>
                 </div>
               </div>
-              <div className="mt-3 flex items-center justify-between text-xs text-teal-100 border-t border-teal-500/60 pt-2.5">
-                <span className="flex items-center gap-1.5">
-                  <FaShieldHalved className="text-teal-200" /> Razorpay Trusted Business
+              <div className="mt-2 flex items-center justify-between text-xs text-teal-100 border-t border-teal-600 pt-2">
+                <span className="flex items-center gap-1">
+                  <FaShieldHalved className="text-white" /> Razorpay Trusted Business
                 </span>
-                <span className="font-medium bg-teal-700/80 px-2 py-0.5 rounded-full text-[10px] text-teal-100">
+                <span className="font-medium bg-teal-800 px-2 py-0.5 text-xs text-teal-100">
                   Instant Confirmation
                 </span>
               </div>
@@ -1867,25 +1866,25 @@ export default function Profile() {
             <div className="p-6">
               {razorpayStep === "processing" ? (
                 <div className="py-10 text-center space-y-3">
-                  <FaSpinner className="mx-auto text-3xl text-teal-600 animate-spin" />
-                  <h4 className="text-sm font-bold text-slate-800">Processing Payment Securely…</h4>
-                  <p className="text-xs text-slate-500">Connecting to secure payment gateway. Please do not refresh.</p>
+                  <FaSpinner className="mx-auto text-3xl text-[#009587] animate-spin" />
+                  <h4 className="text-sm font-bold text-gray-800">Processing Payment Securely…</h4>
+                  <p className="text-xs text-gray-500">Connecting to secure payment gateway. Please do not refresh.</p>
                 </div>
               ) : razorpayStep === "success" ? (
                 <div className="py-6 text-center space-y-3">
-                  <FaCircleCheck className="mx-auto text-4xl text-teal-600" />
-                  <h4 className="text-base font-bold text-slate-900">Payment Successful!</h4>
-                  <p className="text-xs text-slate-600">
+                  <FaCircleCheck className="mx-auto text-4xl text-[#009587]" />
+                  <h4 className="text-base font-bold text-gray-800">Payment Successful!</h4>
+                  <p className="text-xs text-gray-600">
                     Rent of ₹{razorpayTxn?.amount?.toLocaleString("en-IN")} for {razorpayTxn?.month} {razorpayTxn?.year} recorded.
                   </p>
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 font-mono text-xs text-slate-600 text-left space-y-1">
+                  <div className="border border-gray-200 bg-gray-50 p-2.5 font-mono text-xs text-gray-600 text-left space-y-1">
                     <div>Ref ID: {razorpayTxn?.paymentId}</div>
                     <div>Status: Captured (Success)</div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setRazorpayModal(null)}
-                    className="w-full rounded-xl bg-teal-600 py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition shadow-xs"
+                    className="w-full bg-[#009587] py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition"
                   >
                     Close & View Receipt
                   </button>
@@ -1894,11 +1893,11 @@ export default function Profile() {
                 <div className="space-y-4 text-xs">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block font-semibold text-slate-700 mb-1.5">Rent Period</label>
+                      <label className="block font-semibold text-gray-700 mb-1">Rent Period</label>
                       <select
                         value={payMonth}
                         onChange={(e) => setPayMonth(Number(e.target.value))}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                        className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                       >
                         {MONTH_NAMES.map((name, i) => (
                           <option key={name} value={i + 1}>
@@ -1908,28 +1907,28 @@ export default function Profile() {
                       </select>
                     </div>
                     <div>
-                      <label className="block font-semibold text-slate-700 mb-1.5">Year</label>
+                      <label className="block font-semibold text-gray-700 mb-1">Year</label>
                       <input
                         type="number"
                         value={payYear}
                         onChange={(e) => setPayYear(Number(e.target.value))}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                        className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1.5">
+                    <label className="block font-semibold text-gray-700 mb-1.5">
                       Select Payment Mode
                     </label>
                     <div className="grid grid-cols-3 gap-2">
                       <button
                         type="button"
                         onClick={() => setPayMethod("upi")}
-                        className={`rounded-xl border p-2.5 text-center text-xs font-medium transition ${
+                        className={`border p-2.5 text-center text-xs font-medium transition ${
                           payMethod === "upi"
-                            ? "border-teal-600 bg-teal-50 text-teal-700 font-bold shadow-xs"
-                            : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                            ? "border-[#009587] bg-teal-50 text-[#009587] font-bold"
+                            : "border-gray-200 text-gray-600 hover:bg-gray-50"
                         }`}
                       >
                         📱 UPI / QR
@@ -1937,10 +1936,10 @@ export default function Profile() {
                       <button
                         type="button"
                         onClick={() => setPayMethod("card")}
-                        className={`rounded-xl border p-2.5 text-center text-xs font-medium transition ${
+                        className={`border p-2.5 text-center text-xs font-medium transition ${
                           payMethod === "card"
-                            ? "border-teal-600 bg-teal-50 text-teal-700 font-bold shadow-xs"
-                            : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                            ? "border-[#009587] bg-teal-50 text-[#009587] font-bold"
+                            : "border-gray-200 text-gray-600 hover:bg-gray-50"
                         }`}
                       >
                         💳 Card
@@ -1948,10 +1947,10 @@ export default function Profile() {
                       <button
                         type="button"
                         onClick={() => setPayMethod("netbanking")}
-                        className={`rounded-xl border p-2.5 text-center text-xs font-medium transition ${
+                        className={`border p-2.5 text-center text-xs font-medium transition ${
                           payMethod === "netbanking"
-                            ? "border-teal-600 bg-teal-50 text-teal-700 font-bold shadow-xs"
-                            : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                            ? "border-[#009587] bg-teal-50 text-[#009587] font-bold"
+                            : "border-gray-200 text-gray-600 hover:bg-gray-50"
                         }`}
                       >
                         🏦 NetBanking
@@ -1959,27 +1958,27 @@ export default function Profile() {
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-teal-200/80 bg-teal-50/60 p-3.5 text-xs text-slate-700 space-y-1">
+                  <div className="border border-teal-100 bg-teal-50/50 p-3 text-xs text-gray-700 space-y-1">
                     <p className="font-semibold text-teal-900 flex items-center gap-1.5">
-                      <FaShieldHalved className="text-teal-600" /> Razorpay 256-bit SSL Secure Checkout
+                      <FaShieldHalved className="text-[#009587]" /> Razorpay 256-bit SSL Secure Checkout
                     </p>
-                    <p className="text-slate-600 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed">
                       Instant rent receipt with landlord details generated immediately upon confirmation. HRA tax compliant.
                     </p>
                   </div>
 
-                  <div className="flex gap-2.5 pt-2">
+                  <div className="flex gap-2 pt-2">
                     <button
                       type="button"
                       onClick={() => setRazorpayModal(null)}
-                      className="flex-1 rounded-xl border border-slate-200 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition"
+                      className="flex-1 border border-gray-300 py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 transition"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSimulateRazorpayPayment}
-                      className="flex-1 rounded-xl bg-teal-600 py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-teal-700 transition flex items-center justify-center gap-1.5 shadow-xs"
+                      className="flex-1 bg-[#009587] py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#007d70] transition flex items-center justify-center gap-1.5"
                     >
                       <span>Pay ₹{(razorpayModal.request.monthlyRent || 0).toLocaleString("en-IN")}</span>
                     </button>
@@ -1993,65 +1992,61 @@ export default function Profile() {
 
       {/* ── MODAL: SHORTLIST RENTAL REQUEST ─────────────────────────────── */}
       {rentalModalProperty && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto border border-gray-200 bg-white p-5 sm:p-6 shadow-2xl">
             <button
               type="button"
               onClick={() => setRentalModalProperty(null)}
-              className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
             >
               <FaXmark />
             </button>
 
-            <span className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-teal-700">
-              Rental Application
-            </span>
-
-            <h3 className="text-base font-bold text-slate-900 mt-2">Submit Rental Request</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h3 className="text-base font-bold text-gray-800">Submit Rental Request</h3>
+            <p className="text-xs text-gray-500 mt-0.5">
               {rentalModalProperty.title} • ₹{(rentalModalProperty.rent || 0).toLocaleString("en-IN")}/mo
             </p>
 
             {rentalSuccessMsg ? (
-              <div className="mt-4 rounded-xl border border-teal-200 bg-teal-50/80 p-4 text-center text-teal-800">
-                <FaCircleCheck className="mx-auto text-2xl text-teal-600 mb-1" />
+              <div className="mt-4 border border-teal-200 bg-teal-50 p-4 text-center text-teal-800">
+                <FaCircleCheck className="mx-auto text-2xl text-[#009587] mb-1" />
                 <p className="text-xs font-semibold">{rentalSuccessMsg}</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmitRentalRequest} className="mt-4 space-y-3.5 text-xs">
+              <form onSubmit={handleSubmitRentalRequest} className="mt-4 space-y-3 text-xs">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">
+                  <label className="block font-semibold text-gray-700 mb-1">
                     Preferred Move-in Date
                   </label>
                   <input
                     type="date"
                     value={moveInDate}
                     onChange={(e) => setMoveInDate(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Message to Owner</label>
+                  <label className="block font-semibold text-gray-700 mb-1">Message to Owner</label>
                   <textarea
                     rows={3}
                     value={rentalMessage}
                     onChange={(e) => setRentalMessage(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                    className="w-full border border-gray-300 p-2 text-xs outline-none focus:border-[#009587]"
                     required
                   />
                 </div>
-                <div className="flex gap-2.5 pt-2">
+                <div className="flex gap-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setRentalModalProperty(null)}
-                    className="flex-1 rounded-xl border border-slate-200 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition"
+                    className="flex-1 border border-gray-300 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={rentalSubmitting}
-                    className="flex-1 rounded-xl bg-teal-600 py-2.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50 shadow-xs transition"
+                    className="flex-1 bg-[#009587] py-2 text-xs font-semibold text-white hover:bg-[#007f73] disabled:opacity-50"
                   >
                     {rentalSubmitting ? "Submitting…" : "Send Request"}
                   </button>

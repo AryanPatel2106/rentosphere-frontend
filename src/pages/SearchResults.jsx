@@ -516,14 +516,14 @@ function SearchResults() {
             </div>
 
             {/* View toggle */}
-            <div className="flex w-full rounded-xl border border-slate-200 bg-slate-100 p-1 shadow-xs sm:w-auto">
+            <div className="flex w-full border border-gray-300 bg-white shadow-sm sm:w-auto">
               <button
                 type="button"
                 onClick={() => setViewMode("list")}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold transition sm:flex-initial ${
+                className={`flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition sm:flex-initial ${
                   viewMode === "list"
-                    ? "bg-white text-teal-700 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#009587] text-white"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 <FaList /> List View
@@ -531,10 +531,10 @@ function SearchResults() {
               <button
                 type="button"
                 onClick={() => setViewMode("map")}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold transition sm:flex-initial ${
+                className={`flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition sm:flex-initial ${
                   viewMode === "map"
-                    ? "bg-white text-teal-700 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#009587] text-white"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 <FaMapLocationDot /> Map View
@@ -545,13 +545,13 @@ function SearchResults() {
       </section>
 
       {/* ── Search-Based Filters Strip ──────────────────────────────────── */}
-      <section className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/95 backdrop-blur-md shadow-xs">
+      <section className="sticky top-0 z-20 border-b border-gray-200 bg-white/95 backdrop-blur shadow-xs">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
           {/* Top filter row: Keyword Search + Quick BHK + Budget + Filter Drawer Toggle + Sort */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
             {/* Search within listings input */}
             <div className="relative w-full sm:w-auto sm:flex-1 sm:max-w-xs">
-              <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+              <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
               <input
                 type="text"
                 value={keyword}
@@ -564,7 +564,7 @@ function SearchResults() {
                   }
                 }}
                 placeholder="Search title, locality, keywords..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-8 pr-7 py-2 text-base sm:text-xs text-slate-800 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-1 focus:ring-teal-600/20"
+                className="w-full border border-gray-300 bg-gray-50 pl-8 pr-7 py-2 text-base sm:text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
               />
               {keyword && (
                 <button
@@ -574,7 +574,7 @@ function SearchResults() {
                     setPage(1);
                     updateUrlParams({ keyword: "" });
                   }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
                 >
                   <FaXmark />
                 </button>
@@ -592,10 +592,10 @@ function SearchResults() {
                       key={opt}
                       type="button"
                       onClick={() => setBhkType(opt)}
-                      className={`whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium border transition ${
+                      className={`whitespace-nowrap px-3 py-1.5 text-xs font-medium border transition ${
                         isSelected
-                          ? "border-teal-600 bg-teal-600 text-white shadow-xs"
-                          : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white"
+                          ? "border-[#009587] bg-[#009587] text-white"
+                          : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-white"
                       }`}
                     >
                       {opt}
@@ -1122,26 +1122,26 @@ function SearchResults() {
                 <div
                   key={property._id || idx}
                   onClick={() => navigate(`/property/${property._id}`)}
-                  className="group cursor-pointer rounded-2xl border border-slate-200/80 bg-white shadow-xs transition hover:border-teal-500/50 hover:shadow-md overflow-hidden"
+                  className="group cursor-pointer border border-gray-300 bg-white shadow-xs transition hover:border-[#009587] hover:shadow-md"
                 >
                   {/* Card Header: Title + Price + Distance */}
-                  <div className="flex flex-col gap-2 border-b border-slate-100 p-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex flex-col gap-2 border-b border-gray-200 p-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-teal-50 border border-teal-200/80 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-teal-800">
+                        <span className="bg-teal-50 border border-teal-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#009587]">
                           {property.propertyType || "Apartment"}
                         </span>
                         {property.preferredTenant && (
-                          <span className="bg-slate-100 border border-slate-200 rounded-full px-2.5 py-0.5 text-[10px] font-medium text-slate-600">
+                          <span className="bg-gray-100 border border-gray-200 px-2 py-0.5 text-[10px] font-medium text-gray-600">
                             For: {property.preferredTenant}
                           </span>
                         )}
                       </div>
-                      <h3 className="text-base font-semibold text-slate-900 sm:text-lg group-hover:text-teal-700 transition">
+                      <h3 className="text-base font-semibold text-gray-800 sm:text-lg group-hover:text-[#009587] transition">
                         {property.title}
                       </h3>
-                      <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-                        <FaLocationDot className="shrink-0 text-teal-600" />
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-gray-500">
+                        <FaLocationDot className="shrink-0 text-[#009587]" />
                         <span className="truncate">
                           {property.locality?.text ||
                             property.locality?.label ||
@@ -1153,18 +1153,18 @@ function SearchResults() {
                     {/* Rent & Distance Block */}
                     <div className="flex sm:flex-col items-baseline sm:items-end justify-between gap-2 shrink-0">
                       <div>
-                        <span className="text-xl sm:text-2xl font-bold text-teal-700">
+                        <span className="text-xl sm:text-2xl font-bold text-[#009587]">
                           {formatRent(property.rent)}
                         </span>
-                        <span className="text-xs text-slate-500"> / month</span>
+                        <span className="text-xs text-gray-500"> / month</span>
                       </div>
                       {property.deposit > 0 && (
-                        <p className="text-[11px] text-slate-500">
+                        <p className="text-[11px] text-gray-500">
                           Deposit: ₹{property.deposit.toLocaleString("en-IN")}
                         </p>
                       )}
                       {dist && (
-                        <div className="mt-1 w-fit rounded-full bg-teal-50 border border-teal-200/80 px-2.5 py-0.5 text-xs font-semibold text-teal-800">
+                        <div className="mt-1 w-fit bg-[#009587] px-2.5 py-0.5 text-xs font-semibold text-white">
                           📍 {dist}
                         </div>
                       )}
@@ -1172,43 +1172,43 @@ function SearchResults() {
                   </div>
 
                   {/* Metrics Strip */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-slate-100 bg-slate-50/50 text-center text-xs">
-                    <div className="border-b border-r border-slate-100 px-2 py-2.5 sm:p-3 sm:border-b-0">
-                      <span className="block font-medium text-slate-500">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-gray-200 text-center text-xs">
+                    <div className="border-b border-r border-gray-200 px-2 py-2.5 sm:p-3 sm:border-b-0">
+                      <span className="block font-medium text-gray-500">
                         BHK Type
                       </span>
-                      <span className="mt-1 flex items-center justify-center gap-1 text-sm font-semibold text-slate-800">
-                        <FaBed className="text-slate-400 text-xs" />
+                      <span className="mt-1 flex items-center justify-center gap-1 text-sm font-semibold text-gray-800">
+                        <FaBed className="text-gray-400 text-xs" />
                         {property.BHKType || "—"}
                       </span>
                     </div>
 
-                    <div className="border-b border-slate-100 px-2 py-2.5 sm:p-3 sm:border-b-0 sm:border-r">
-                      <span className="block font-medium text-slate-500">
+                    <div className="border-b border-gray-200 px-2 py-2.5 sm:p-3 sm:border-b-0 sm:border-r">
+                      <span className="block font-medium text-gray-500">
                         Built-up Area
                       </span>
-                      <span className="mt-1 flex items-center justify-center gap-1 text-sm font-semibold text-slate-800">
-                        <FaRulerCombined className="text-slate-400 text-xs" />
+                      <span className="mt-1 flex items-center justify-center gap-1 text-sm font-semibold text-gray-800">
+                        <FaRulerCombined className="text-gray-400 text-xs" />
                         {property.builtUpArea
                           ? `${property.builtUpArea} sqft`
                           : "On Request"}
                       </span>
                     </div>
 
-                    <div className="border-r border-slate-100 px-2 py-2.5 sm:p-3">
-                      <span className="block font-medium text-slate-500">
+                    <div className="border-r border-gray-200 px-2 py-2.5 sm:p-3">
+                      <span className="block font-medium text-gray-500">
                         Furnishing
                       </span>
-                      <span className="mt-1 block text-sm font-semibold text-slate-800 truncate">
+                      <span className="mt-1 block text-sm font-semibold text-gray-800 truncate">
                         {property.Furnishing || "—"}
                       </span>
                     </div>
 
                     <div className="px-2 py-2.5 sm:p-3">
-                      <span className="block font-medium text-slate-500">
+                      <span className="block font-medium text-gray-500">
                         Availability
                       </span>
-                      <span className="mt-1 block text-sm font-semibold text-slate-800 truncate">
+                      <span className="mt-1 block text-sm font-semibold text-gray-800 truncate">
                         {property.Availability || "Immediate"}
                       </span>
                     </div>
@@ -1218,7 +1218,7 @@ function SearchResults() {
                   <div className="p-4">
                     <div className="flex flex-col gap-4 sm:flex-row">
                       {/* Photo */}
-                      <div className="relative h-40 w-full sm:h-36 sm:w-52 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+                      <div className="relative h-40 w-full sm:h-36 sm:w-52 shrink-0 overflow-hidden border border-gray-200 bg-gray-100">
                         <img
                           src={photoSrc}
                           alt={property.title}
@@ -1228,7 +1228,7 @@ function SearchResults() {
                           }}
                         />
                         {property.photos && property.photos.length > 1 && (
-                          <span className="absolute bottom-2 right-2 rounded-full bg-slate-900/70 backdrop-blur-xs px-2 py-0.5 text-[10px] font-medium text-white">
+                          <span className="absolute bottom-2 right-2 bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white">
                             +{property.photos.length - 1} photos
                           </span>
                         )}
@@ -1240,10 +1240,10 @@ function SearchResults() {
                           {/* Amenity Badges */}
                           <div className="flex flex-wrap gap-2 text-xs">
                             <span
-                              className={`rounded-full border px-2.5 py-1 font-medium ${
+                              className={`border px-2.5 py-1 font-medium ${
                                 property.Parking
-                                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                                  : "border-slate-200 bg-slate-50 text-slate-500"
+                                  ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                                  : "border-gray-200 bg-gray-50 text-gray-500"
                               }`}
                             >
                               <FaCar className="mr-1 inline" />
@@ -1252,10 +1252,10 @@ function SearchResults() {
                                 : "No Parking"}
                             </span>
                             <span
-                              className={`rounded-full border px-2.5 py-1 font-medium ${
+                              className={`border px-2.5 py-1 font-medium ${
                                 property.PetFriendly
-                                  ? "border-amber-200 bg-amber-50 text-amber-700"
-                                  : "border-slate-200 bg-slate-50 text-slate-500"
+                                  ? "border-amber-300 bg-amber-50 text-amber-700"
+                                  : "border-gray-200 bg-gray-50 text-gray-500"
                               }`}
                             >
                               <FaPaw className="mr-1 inline" />
@@ -1264,8 +1264,8 @@ function SearchResults() {
                                 : "No Pets"}
                             </span>
                             {property.bathrooms && (
-                              <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-medium text-slate-600">
-                                <FaBath className="mr-1 inline text-slate-400" />
+                              <span className="border border-gray-200 bg-gray-50 px-2.5 py-1 font-medium text-gray-600">
+                                <FaBath className="mr-1 inline text-gray-400" />
                                 {property.bathrooms} Bath
                                 {property.bathrooms > 1 ? "s" : ""}
                               </span>
@@ -1274,7 +1274,7 @@ function SearchResults() {
                               property.amenities.slice(0, 3).map((am) => (
                                 <span
                                   key={am}
-                                  className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-slate-600 font-medium"
+                                  className="border border-gray-200 bg-gray-50 px-2 py-1 text-gray-600"
                                 >
                                   {am}
                                 </span>
@@ -1282,7 +1282,7 @@ function SearchResults() {
                           </div>
 
                           {property.description && (
-                            <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-slate-600">
+                            <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-gray-600">
                               {property.description}
                             </p>
                           )}
@@ -1296,7 +1296,7 @@ function SearchResults() {
                               e.stopPropagation();
                               handleGetOwnerDetails(property);
                             }}
-                            className="flex-1 sm:flex-initial inline-flex items-center justify-center min-h-[40px] rounded-xl border border-teal-600 bg-white px-4 py-2 text-xs font-semibold text-teal-700 transition hover:bg-teal-50 active:bg-teal-100 shadow-xs"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center min-h-[40px] border border-[#009587] bg-white px-4 py-2 text-xs font-semibold text-[#009587] transition hover:bg-teal-50 active:bg-teal-100"
                           >
                             <FaPhone className="mr-1.5 text-xs" />
                             Get Owner Details
@@ -1307,7 +1307,7 @@ function SearchResults() {
                               e.stopPropagation();
                               handleOpenRentalModal(property);
                             }}
-                            className="flex-1 sm:flex-initial inline-flex items-center justify-center min-h-[40px] rounded-xl bg-teal-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-teal-700 active:bg-teal-800 shadow-xs"
+                            className="flex-1 sm:flex-initial inline-flex items-center justify-center min-h-[40px] bg-[#009587] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#007f73] active:bg-[#006e63]"
                           >
                             Request to Rent
                           </button>
@@ -1317,15 +1317,15 @@ function SearchResults() {
                               e.stopPropagation();
                               toggleShortlist(property._id);
                             }}
-                            className={`inline-flex items-center justify-center min-h-[40px] rounded-xl border px-3.5 py-2 text-xs font-medium transition shadow-xs ${
+                            className={`inline-flex items-center justify-center min-h-[40px] border px-3.5 py-2 text-xs font-medium transition ${
                               isShortlisted
-                                ? "border-rose-300 bg-rose-50 text-rose-600"
-                                : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                ? "border-red-400 bg-red-50 text-red-600"
+                                : "border-gray-300 text-gray-600 hover:bg-gray-100"
                             }`}
                           >
                             <FaHeart
                               className={`mr-1.5 ${
-                                isShortlisted ? "text-rose-500" : "text-slate-400"
+                                isShortlisted ? "text-red-500" : "text-gray-400"
                               }`}
                             />
                             {isShortlisted ? "Shortlisted" : "Shortlist"}
@@ -1380,44 +1380,44 @@ function SearchResults() {
       {/* ── Owner Contact Details Modal ─────────────────────────────────── */}
       {ownerModalProperty && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
-          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-2xl">
+          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-200 bg-white p-5 sm:p-6 shadow-xl">
             <button
               type="button"
               onClick={() => {
                 setOwnerModalProperty(null);
                 setOwnerData(null);
               }}
-              className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 text-sm"
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 text-sm"
             >
               <FaXmark />
             </button>
 
-            <div className="flex items-center gap-2 text-teal-700 mb-2">
-              <FaCircleCheck className="text-lg text-teal-600" />
+            <div className="flex items-center gap-2 text-[#009587] mb-2">
+              <FaCircleCheck className="text-lg" />
               <span className="text-xs font-bold uppercase tracking-wider">
                 Verified Property Owner
               </span>
             </div>
 
-            <h3 className="text-base font-semibold text-slate-800">
+            <h3 className="text-base font-semibold text-gray-800">
               {ownerModalProperty.title}
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-gray-500 mt-0.5">
               📍 {ownerModalProperty.locality?.text || ownerModalProperty.locality?.label}
             </p>
 
-            <div className="mt-4 border-t border-b border-slate-100 py-3">
+            <div className="mt-4 border-t border-b border-gray-100 py-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-slate-500">Monthly Rent</span>
-                  <p className="text-lg font-bold text-teal-700">
+                  <span className="text-xs text-gray-500">Monthly Rent</span>
+                  <p className="text-lg font-bold text-[#009587]">
                     {formatRent(ownerModalProperty.rent)}/mo
                   </p>
                 </div>
                 {ownerModalProperty.deposit > 0 && (
                   <div className="text-right">
-                    <span className="text-xs text-slate-500">Security Deposit</span>
-                    <p className="text-sm font-semibold text-slate-700">
+                    <span className="text-xs text-gray-500">Security Deposit</span>
+                    <p className="text-sm font-semibold text-gray-700">
                       ₹{ownerModalProperty.deposit.toLocaleString("en-IN")}
                     </p>
                   </div>
@@ -1427,28 +1427,28 @@ function SearchResults() {
 
             <div className="mt-4 space-y-3">
               {ownerLoading ? (
-                <div className="flex items-center justify-center py-6 gap-2 text-xs text-teal-700">
-                  <FaSpinner className="animate-spin text-teal-600" />
+                <div className="flex items-center justify-center py-6 gap-2 text-xs text-[#009587]">
+                  <FaSpinner className="animate-spin" />
                   <span>Loading owner contact details…</span>
                 </div>
               ) : (
                 <>
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-2 text-xs">
+                  <div className="border border-gray-200 bg-gray-50 p-3 space-y-2 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Owner Name:</span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="text-gray-500">Owner Name:</span>
+                      <span className="font-semibold text-gray-800">
                         {ownerData?.fullName || "Aryan Patel (Property Owner)"}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Phone Number:</span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="text-gray-500">Phone Number:</span>
+                      <span className="font-semibold text-gray-800">
                         {ownerData?.mobileNumber || "+91 98765 43210"}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Email:</span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="text-gray-500">Email:</span>
+                      <span className="font-semibold text-gray-800">
                         {ownerData?.email || "owner@rentosphere.com"}
                       </span>
                     </div>
@@ -1457,7 +1457,7 @@ function SearchResults() {
                   <div className="flex gap-2 pt-2">
                     <a
                       href={`tel:${ownerData?.mobileNumber || "+919876543210"}`}
-                      className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-teal-600 py-2.5 text-xs font-semibold text-white transition hover:bg-teal-700 shadow-xs"
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-[#009587] py-2.5 text-xs font-semibold text-white transition hover:bg-[#007d70]"
                     >
                       <FaPhone className="text-xs" /> Call Owner
                     </a>
@@ -1465,13 +1465,13 @@ function SearchResults() {
                       href={`https://wa.me/${(ownerData?.mobileNumber || "919876543210").replace(/\D/g, "")}?text=Hi, I am interested in your property "${encodeURIComponent(ownerModalProperty.title)}" listed on Rentosphere.`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 py-2.5 text-xs font-semibold text-white transition hover:bg-emerald-700 shadow-xs"
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-emerald-600 py-2.5 text-xs font-semibold text-white transition hover:bg-emerald-700"
                     >
                       <FaWhatsapp className="text-sm" /> WhatsApp
                     </a>
                   </div>
 
-                  <p className="text-xs text-slate-500 text-center mt-2">
+                  <p className="text-xs text-gray-500 text-center mt-2">
                     💡 Tip: Never transfer token deposit without visiting the property and verifying documents.
                   </p>
                 </>
@@ -1484,49 +1484,49 @@ function SearchResults() {
       {/* ── Rental Request Application Modal ───────────────────────────────── */}
       {rentalModalProperty && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-2xl">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto border border-gray-200 bg-white p-5 sm:p-6 shadow-2xl">
             <button
               type="button"
               onClick={() => {
                 setRentalModalProperty(null);
                 setRentalError("");
               }}
-              className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 text-sm"
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 text-sm"
             >
               <FaXmark />
             </button>
 
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-teal-50 border border-teal-200/80 text-teal-800 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-[#009587] mb-2">
+              <span className="bg-[#009587] text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                 Rental Application
               </span>
             </div>
 
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-lg font-bold text-gray-800">
               Apply to Rent this Property
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-gray-500 mt-0.5">
               {rentalModalProperty.title} • {rentalModalProperty.locality?.text || rentalModalProperty.locality?.label}
             </p>
 
-            <div className="mt-4 grid grid-cols-2 gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-xs">
+            <div className="mt-4 grid grid-cols-2 gap-3 border border-gray-200 bg-gray-50 p-3 text-xs">
               <div>
-                <span className="text-slate-500">Monthly Rent:</span>
-                <p className="text-base font-bold text-teal-700">
+                <span className="text-gray-500">Monthly Rent:</span>
+                <p className="text-base font-bold text-[#009587]">
                   {formatRent(rentalModalProperty.rent)}/mo
                 </p>
               </div>
               <div>
-                <span className="text-slate-500">Security Deposit:</span>
-                <p className="text-base font-bold text-slate-800">
+                <span className="text-gray-500">Security Deposit:</span>
+                <p className="text-base font-bold text-gray-800">
                   ₹{(rentalModalProperty.deposit || 0).toLocaleString("en-IN")}
                 </p>
               </div>
             </div>
 
             {rentalSuccess ? (
-              <div className="mt-6 rounded-xl border border-teal-200 bg-teal-50 p-6 text-center text-teal-800">
-                <FaCircleCheck className="mx-auto text-3xl text-teal-600 mb-2" />
+              <div className="mt-6 border border-teal-200 bg-teal-50 p-6 text-center text-teal-800">
+                <FaCircleCheck className="mx-auto text-3xl text-[#009587] mb-2" />
                 <h4 className="text-sm font-bold">Application Sent Successfully!</h4>
                 <p className="text-xs text-teal-700 mt-1">
                   The property owner has received your request. Once accepted, the property will be booked for you.
@@ -1535,25 +1535,25 @@ function SearchResults() {
             ) : (
               <form onSubmit={handleSubmitRentalRequest} className="mt-4 space-y-4">
                 {rentalError && (
-                  <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-600">
+                  <div className="border border-red-200 bg-red-50 p-3 text-xs text-red-600">
                     {rentalError}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
                     Preferred Move-in Date
                   </label>
                   <input
                     type="date"
                     value={moveInDate}
                     onChange={(e) => setMoveInDate(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs outline-none focus:border-teal-600 focus:bg-white focus:ring-1 focus:ring-teal-600/20"
+                    className="w-full border border-gray-300 px-3 py-2 text-xs outline-none focus:border-[#009587]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
                     Message to Owner
                   </label>
                   <textarea
@@ -1561,7 +1561,7 @@ function SearchResults() {
                     value={rentalMessage}
                     onChange={(e) => setRentalMessage(e.target.value)}
                     placeholder="Tell the owner about your occupation, family size, or move-in timeline..."
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs outline-none focus:border-teal-600 focus:bg-white focus:ring-1 focus:ring-teal-600/20"
+                    className="w-full border border-gray-300 p-3 text-xs outline-none focus:border-[#009587]"
                     required
                   />
                 </div>
@@ -1570,14 +1570,14 @@ function SearchResults() {
                   <button
                     type="button"
                     onClick={() => setRentalModalProperty(null)}
-                    className="flex-1 rounded-xl border border-slate-200 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
+                    className="flex-1 border border-gray-300 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={rentalSubmitting}
-                    className="flex-1 rounded-xl bg-teal-600 py-2.5 text-xs font-semibold text-white transition hover:bg-teal-700 disabled:opacity-50 shadow-xs"
+                    className="flex-1 bg-[#009587] py-2.5 text-xs font-semibold text-white transition hover:bg-[#007f73] disabled:opacity-50"
                   >
                     {rentalSubmitting ? "Submitting..." : "Send Application"}
                   </button>

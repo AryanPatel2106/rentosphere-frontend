@@ -68,7 +68,7 @@ export default function MobileBottomNav({ setShowLogin }) {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/80 lg:hidden shadow-[0_-4px_24px_rgba(0,0,0,0.05)] rounded-t-2xl"
+      className="fixed bottom-0 inset-x-0 z-40 bg-white/98 backdrop-blur-md border-t border-gray-200 lg:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.04)]"
       style={{
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
@@ -83,18 +83,18 @@ export default function MobileBottomNav({ setShowLogin }) {
                 key={item.id}
                 type="button"
                 onClick={() => handleNav(item)}
-                className="group flex flex-col items-center justify-center -mt-3.5 cursor-pointer select-none touch-manipulation"
+                className="group flex flex-col items-center justify-center -mt-3 cursor-pointer select-none touch-manipulation"
               >
                 <div
-                  className={`flex h-11 w-11 items-center justify-center rounded-2xl transition shadow-md ${
+                  className={`flex h-10 w-10 items-center justify-center transition shadow-sm ${
                     item.isActive
-                      ? "bg-teal-700 text-white ring-2 ring-teal-700/20"
-                      : "bg-teal-600 text-white group-active:scale-95 group-hover:bg-teal-700"
+                      ? "bg-[#007b70] text-white"
+                      : "bg-[#009587] text-white group-active:scale-95"
                   }`}
                 >
                   <Icon className="text-base" />
                 </div>
-                <span className="text-[10px] font-semibold text-teal-700 mt-1">
+                <span className="text-[10px] font-semibold text-[#009587] mt-0.5">
                   {item.label}
                 </span>
               </button>
@@ -108,26 +108,18 @@ export default function MobileBottomNav({ setShowLogin }) {
               onClick={() => handleNav(item)}
               className={`flex flex-1 flex-col items-center justify-center py-1 select-none touch-manipulation transition ${
                 item.isActive
-                  ? "text-teal-700"
-                  : "text-slate-500 hover:text-slate-800 active:text-teal-700"
+                  ? "text-[#009587]"
+                  : "text-gray-500 hover:text-gray-700 active:text-[#009587]"
               }`}
             >
-              <div
-                className={`flex items-center justify-center transition-all ${
-                  item.isActive
-                    ? "bg-teal-50 text-teal-700 rounded-full px-3 py-0.5"
-                    : "p-0.5"
+              <Icon
+                className={`text-base transition-transform ${
+                  item.isActive ? "scale-110" : ""
                 }`}
-              >
-                <Icon
-                  className={`text-base transition-transform ${
-                    item.isActive ? "scale-105" : ""
-                  }`}
-                />
-              </div>
+              />
               <span
-                className={`mt-0.5 text-[10px] tracking-tight ${
-                  item.isActive ? "font-bold text-teal-800" : "font-medium"
+                className={`mt-1 text-[10px] tracking-tight ${
+                  item.isActive ? "font-bold text-[#009587]" : "font-medium"
                 }`}
               >
                 {item.label}

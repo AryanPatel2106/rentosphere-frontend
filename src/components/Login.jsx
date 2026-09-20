@@ -16,6 +16,7 @@ function Login({ isOpen, onClose, setShowSignup }) {
 
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [forgotMsg, setForgotMsg] = useState({ text: "", isError: false });
+  const [sandboxResetUrl, setSandboxResetUrl] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -54,11 +55,18 @@ function Login({ isOpen, onClose, setShowSignup }) {
       return;
     }
     setForgotMsg({ text: "", isError: false });
+    setSandboxResetUrl("");
     setLoading(true);
     try {
       const response = await api.post("/auth/forgot-password", { email });
       if (response.status === 200) {
-        setForgotMsg({ text: "Password reset link sent to your email.", isError: false });
+        const resetToken = response.data?.data?.resetToken;
+        if (resetToken) {
+          setSandboxResetUrl(`/reset-password?token=${resetToken}`);
+          setForgotMsg({ text: "Password reset link generated (SES Sandbox mode):", isError: false });
+        } else {
+          setForgotMsg({ text: "Password reset link sent to your email.", isError: false });
+        }
       }
     } catch (err) {
       console.error("Error during password reset:", err);
@@ -69,65 +77,65 @@ function Login({ isOpen, onClose, setShowSignup }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4">
-      <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4">
+      <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition"
+          className="absolute top-4 right-4 z-10 text-xl text-gray-500 hover:text-black p-1"
           aria-label="Close"
         >
-          <IoClose className="text-lg" />
+          <IoClose />
         </button>
 
         <div className="grid md:grid-cols-2">
-          <div className="hidden flex-col justify-center bg-slate-50/80 p-8 md:p-10 md:flex border-r border-slate-100">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-xs">
-              <FaHouse className="text-2xl text-white" />
+          <div className="hidden flex-col justify-center bg-gray-50 p-8 md:p-10 md:flex">
+            <div className="flex h-16 w-16 items-center justify-center bg-[#009587]">
+              <FaHouse className="text-3xl text-white" />
             </div>
 
-            <h2 className="mt-8 text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="mt-8 text-2xl font-bold text-gray-800">
               Welcome to Rentosphere
             </h2>
 
-            <ul className="mt-6 space-y-3 text-xs sm:text-sm text-slate-600 font-medium">
-              <li className="flex items-center gap-2.5">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
-                <span>100% Verified Rental Listings</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
-                <span>Direct Owner Connect — Zero Brokerage</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
-                <span>Instant HRA Tax Rent Receipts</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-xs font-bold">✓</span>
-                <span>Track Rental Requests & Payments</span>
-              </li>
+            <ul className="mt-6 space-y-3 text-sm text-gray-600">
+              <li className="flex items-center gap-2">✓ 100% Verified Rental Listings</li>
+              <li className="flex items-center gap-2">✓ Direct Owner Connect — Zero Brokerage</li>
+              <li className="flex items-center gap-2">✓ Instant HRA Tax Rent Receipts</li>
+              <li className="flex items-center gap-2">✓ Track Rental Requests & Payments</li>
             </ul>
           </div>
 
           {forgotPasswordOpen ? (<>
-            <div className="flex flex-col justify-center p-6 sm:p-8 md:p-10">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Forgot Password</h2>
+            <div className="flex flex-col justify-center p-5 sm:p-8 md:p-10">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Forgot Password</h2>
 
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500">
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">
                 Enter your registered email address to receive a secure password reset link.
               </p>
 
               <form className="mt-6 space-y-4" onSubmit={handleForgotPassword}>
                 {forgotMsg.text && (
                   <div
-                    className={`flex items-start gap-2.5 rounded-xl border p-3 text-xs font-medium ${
+                    className={`flex flex-col gap-2 border p-3 text-xs ${
                       forgotMsg.isError
-                        ? "border-rose-200 bg-rose-50 text-rose-700"
-                        : "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        ? "border-red-200 bg-red-50 text-red-700"
+                        : "border-green-200 bg-green-50 text-green-700"
                     }`}
                   >
-                    <FaTriangleExclamation className="mt-0.5 flex-shrink-0" />
-                    <span>{forgotMsg.text}</span>
+                    <div className="flex items-start gap-2">
+                      <FaTriangleExclamation className="mt-0.5 flex-shrink-0" />
+                      <span>{forgotMsg.text}</span>
+                    </div>
+                    {sandboxResetUrl && (
+                      <div className="mt-1 border-t border-green-300/60 pt-2">
+                        <a
+                          href={sandboxResetUrl}
+                          className="font-bold underline text-emerald-800 hover:text-emerald-950"
+                        >
+                          Click here to reset your password now →
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -135,10 +143,11 @@ function Login({ isOpen, onClose, setShowSignup }) {
                   type="email"
                   placeholder="Enter your email"
                   value={email}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 sm:py-3 text-sm text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
                   onChange={(e) => {
                     setEmail(e.target.value);
                     if (forgotMsg.text) setForgotMsg({ text: "", isError: false });
+                    if (sandboxResetUrl) setSandboxResetUrl("");
                   }}
                   required
                 />
@@ -146,39 +155,40 @@ function Login({ isOpen, onClose, setShowSignup }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-teal-600 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-teal-700 disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
+                  className="w-full bg-[#009587] py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70] disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {loading && <FaSpinner className="animate-spin text-sm" />}
                   <span>{loading ? "Sending..." : "Send Reset Link"}</span>
                 </button>
 
-                <p className="mt-6 text-center text-xs sm:text-sm text-slate-600">
-                  Remember your password?{" "}
-                  <button
-                    type="button"
-                    className="font-semibold text-teal-600 hover:text-teal-700 hover:underline"
-                    onClick={() => {
-                      setForgotPasswordOpen(false);
-                      setError("");
-                    }}
-                  >
-                    Back to Login
-                  </button>
-                </p>
+                <p className="mt-6 text-center text-sm text-gray-600">
+                Remember your password?{" "}
+                <button
+                  type="button"
+                  className="font-semibold text-[#009587] hover:underline"
+                  onClick={() => {
+                    setForgotPasswordOpen(false);
+                    setError("");
+                    setSandboxResetUrl("");
+                  }}
+                >
+                  Back to Login
+                </button>
+              </p>
               </form>
             </div>
           </>) : (<>
-            <div className="flex flex-col justify-center p-6 sm:p-8 md:p-10">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Account Login</h2>
+            <div className="flex flex-col justify-center p-5 sm:p-8 md:p-10">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Account Login</h2>
 
-              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500">
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">
                 Enter your credentials to access your properties, applications, and payments.
               </p>
 
               <form className="mt-6 space-y-4" onSubmit={handleLogin}>
                 {error && (
-                  <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs font-medium text-rose-700">
-                    <FaTriangleExclamation className="mt-0.5 flex-shrink-0 text-rose-500" />
+                  <div className="flex items-start gap-2 border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                    <FaTriangleExclamation className="mt-0.5 flex-shrink-0 text-red-500" />
                     <span className="leading-relaxed">{error}</span>
                   </div>
                 )}
@@ -187,7 +197,7 @@ function Login({ isOpen, onClose, setShowSignup }) {
                   type="email"
                   placeholder="Enter your email"
                   value={email}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 sm:py-3 text-sm text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
                   onChange={(e) => {
                     setEmail(e.target.value);
                     if (error) setError("");
@@ -199,7 +209,7 @@ function Login({ isOpen, onClose, setShowSignup }) {
                   type="password"
                   placeholder="Enter your password"
                   value={password}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 sm:py-3 text-sm text-slate-800 outline-none focus:border-teal-500 focus:bg-white transition"
+                  className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
                   onChange={(e) => {
                     setPassword(e.target.value);
                     if (error) setError("");
@@ -210,29 +220,29 @@ function Login({ isOpen, onClose, setShowSignup }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-teal-600 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-teal-700 disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
+                  className="w-full bg-[#009587] py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70] disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {loading && <FaSpinner className="animate-spin text-sm" />}
                   <span>{loading ? "Logging in..." : "Login"}</span>
                 </button>
               </form>
 
-              <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
+              <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
                 <span>Forgot your password?</span>
                 <button
                   type="button"
-                  className="font-semibold text-teal-600 hover:text-teal-700 hover:underline"
+                  className="font-semibold text-[#009587] hover:underline"
                   onClick={() => setForgotPasswordOpen(true)}
                 >
                   Reset Password
                 </button>
               </div>
 
-              <p className="mt-6 text-center text-xs sm:text-sm text-slate-600">
+              <p className="mt-6 text-center text-sm text-gray-600">
                 Don't have an account?{" "}
                 <button
                   type="button"
-                  className="font-semibold text-teal-600 hover:text-teal-700 hover:underline"
+                  className="font-semibold text-[#009587] hover:underline"
                   onClick={() => {
                     onClose();
                     setShowSignup(true);

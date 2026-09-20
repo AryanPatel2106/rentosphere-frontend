@@ -435,34 +435,34 @@ function PostProperty() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#f8f8f8]">
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="border-b border-slate-200/80 bg-white px-4 py-10 text-center sm:py-14">
-        <h1 className="text-3xl font-light text-slate-800 sm:text-4xl lg:text-5xl">
-          Post Your <span className="font-semibold text-teal-600">Property</span>
+      <section className="border-b border-gray-200 bg-white px-4 py-12 text-center sm:py-16">
+        <h1 className="text-3xl font-light text-gray-700 sm:text-4xl lg:text-5xl">
+          Post Your <span className="font-semibold text-[#009587]">Property</span>
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
           List your property on Rentosphere for free and connect directly with verified tenants —
           zero brokerage, maximum reach.
         </p>
       </section>
 
       {/* ── How It Works ──────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
-        <h2 className="mb-6 text-center text-xl font-semibold text-slate-800">
+      <section className="mx-auto max-w-5xl px-6 py-10 sm:py-12">
+        <h2 className="mb-8 text-center text-xl font-semibold text-gray-800">
           How It Works
         </h2>
         <div className="grid gap-6 sm:grid-cols-3">
           {steps.map((step, index) => (
             <div key={step.title} className="flex flex-col items-center gap-3 text-center">
-              <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-600 shadow-xs">
+              <div className="relative flex h-12 w-12 items-center justify-center bg-[#009587]">
                 {step.icon}
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-800 text-[10px] font-bold text-white shadow-xs">
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center bg-gray-800 text-[10px] font-bold text-white">
                   {index + 1}
                 </span>
               </div>
-              <h3 className="text-sm font-semibold text-slate-800">{step.title}</h3>
-              <p className="text-xs leading-5 text-slate-500">{step.desc}</p>
+              <h3 className="text-sm font-semibold text-gray-800">{step.title}</h3>
+              <p className="text-xs leading-5 text-gray-500">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -470,10 +470,10 @@ function PostProperty() {
 
       {/* ── Form Section ──────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-3xl px-3 pb-16 sm:px-6">
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-8 shadow-xs">
-          <div className="mb-6 flex items-center gap-2.5 rounded-xl border border-teal-200/80 bg-teal-50/60 p-3.5">
-            <FaCircleInfo className="text-teal-600 shrink-0" />
-            <p className="text-xs sm:text-sm text-slate-700">
+        <div className="border border-gray-200 bg-white p-4 sm:p-8 shadow-xs">
+          <div className="mb-6 flex items-center gap-2 border-b border-gray-100 pb-4">
+            <FaCircleInfo className="text-[#009587]" />
+            <p className="text-xs sm:text-sm text-gray-600">
               Fill in all details accurately so suitable tenants can reach out directly.
             </p>
           </div>
@@ -481,8 +481,8 @@ function PostProperty() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Title */}
             <div>
-              <label htmlFor="title" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Property Title <span className="text-rose-500">*</span>
+              <label htmlFor="title" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
+                Property Title <span className="text-red-500">*</span>
               </label>
               <input
                 id="title"
@@ -491,24 +491,24 @@ function PostProperty() {
                 value={propertyDetails.title}
                 onChange={handleChange}
                 placeholder="e.g. Spacious 2BHK Apartment in Koramangala 4th Block"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                className="w-full border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 required
               />
             </div>
 
             {/* Locality Search */}
             <div>
-              <label htmlFor="Locality" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Locality / Area <span className="text-rose-500">*</span>
+              <label htmlFor="Locality" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
+                Locality / Area <span className="text-red-500">*</span>
               </label>
-              <div className="w-full rounded-xl border border-slate-200 bg-slate-50/50 text-sm text-slate-800 outline-none transition focus-within:border-teal-500 focus-within:bg-white">
+              <div className="w-full border border-gray-300 bg-gray-50 text-sm text-gray-700 outline-none transition focus-within:border-[#009587] focus-within:bg-white">
                 <LocalitySearch
                   selected={selectedLocalities}
                   setSelected={handleLocalitySelection}
                   singleSelect={true}
                 />
               </div>
-              <p className="mt-1 text-[11px] text-slate-400">
+              <p className="mt-1 text-[11px] text-gray-400">
                 Type city or area name to select from verified Google Places.
               </p>
             </div>
@@ -516,11 +516,11 @@ function PostProperty() {
             {/* Rent & Deposit Section */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="rent" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Monthly Rent (₹) <span className="text-rose-500">*</span>
+                <label htmlFor="rent" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
+                  Monthly Rent (₹) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
                   <input
                     id="rent"
                     name="rent"
@@ -529,30 +529,31 @@ function PostProperty() {
                     value={propertyDetails.rent}
                     onChange={handleChange}
                     placeholder="25000"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-8 pr-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                    className="w-full border border-gray-300 bg-gray-50 pl-8 pr-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label htmlFor="deposit" className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <div className="flex items-center justify-between mb-1">
+                  <label htmlFor="deposit" className="block text-xs font-semibold uppercase tracking-wider text-gray-600">
                     Security Deposit (₹)
                   </label>
                   {propertyDetails.rent > 0 && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex gap-1">
                       <button
                         type="button"
                         onClick={() => handleSetDepositMultiplier(2)}
-                        className="rounded-full bg-teal-50 border border-teal-200/80 px-2 py-0.5 text-[10px] font-semibold text-teal-700 hover:bg-teal-100/50 transition"
+                        className="text-[10px] text-[#009587] hover:underline"
                       >
                         2x Rent
                       </button>
+                      <span className="text-gray-300 text-[10px]">|</span>
                       <button
                         type="button"
                         onClick={() => handleSetDepositMultiplier(3)}
-                        className="rounded-full bg-teal-50 border border-teal-200/80 px-2 py-0.5 text-[10px] font-semibold text-teal-700 hover:bg-teal-100/50 transition"
+                        className="text-[10px] text-[#009587] hover:underline"
                       >
                         3x Rent
                       </button>
@@ -560,7 +561,7 @@ function PostProperty() {
                   )}
                 </div>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
                   <input
                     id="deposit"
                     name="deposit"
@@ -569,7 +570,7 @@ function PostProperty() {
                     value={propertyDetails.deposit}
                     onChange={handleChange}
                     placeholder="50000"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-8 pr-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                    className="w-full border border-gray-300 bg-gray-50 pl-8 pr-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                   />
                 </div>
               </div>
@@ -578,7 +579,7 @@ function PostProperty() {
             {/* Property Type, BHK Type, Furnishing */}
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
-                <label htmlFor="propertyType" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="propertyType" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Property Type
                 </label>
                 <select
@@ -586,7 +587,7 @@ function PostProperty() {
                   name="propertyType"
                   value={propertyDetails.propertyType}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 >
                   <option value="Apartment">Apartment</option>
                   <option value="Independent House">Independent House</option>
@@ -598,7 +599,7 @@ function PostProperty() {
               </div>
 
               <div>
-                <label htmlFor="bhkType" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="bhkType" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   BHK Type
                 </label>
                 <select
@@ -606,7 +607,7 @@ function PostProperty() {
                   name="bhkType"
                   value={propertyDetails.bhkType}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 >
                   <option value="1RK">1RK</option>
                   <option value="1BHK">1BHK</option>
@@ -618,7 +619,7 @@ function PostProperty() {
               </div>
 
               <div>
-                <label htmlFor="Furnishing" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="Furnishing" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Furnishing
                 </label>
                 <select
@@ -626,7 +627,7 @@ function PostProperty() {
                   name="Furnishing"
                   value={propertyDetails.Furnishing}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 >
                   <option value="Fully Furnished">Fully Furnished</option>
                   <option value="Semi-Furnished">Semi-Furnished</option>
@@ -638,7 +639,7 @@ function PostProperty() {
             {/* Tenant, Availability, Built-up Area */}
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
-                <label htmlFor="preferredTenant" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="preferredTenant" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Preferred Tenant
                 </label>
                 <select
@@ -646,7 +647,7 @@ function PostProperty() {
                   name="preferredTenant"
                   value={propertyDetails.preferredTenant}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 >
                   <option value="Anyone">Anyone</option>
                   <option value="Family">Family</option>
@@ -656,7 +657,7 @@ function PostProperty() {
               </div>
 
               <div>
-                <label htmlFor="Availability" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="Availability" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Availability
                 </label>
                 <select
@@ -664,7 +665,7 @@ function PostProperty() {
                   name="Availability"
                   value={propertyDetails.Availability}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 >
                   <option value="Immediate">Immediate</option>
                   <option value="Within 15 Days">Within 15 Days</option>
@@ -674,7 +675,7 @@ function PostProperty() {
               </div>
 
               <div>
-                <label htmlFor="builtUpArea" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="builtUpArea" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Built-up Area (sqft)
                 </label>
                 <input
@@ -685,7 +686,7 @@ function PostProperty() {
                   value={propertyDetails.builtUpArea}
                   onChange={handleChange}
                   placeholder="e.g. 1150"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 />
               </div>
             </div>
@@ -693,7 +694,7 @@ function PostProperty() {
             {/* Bathrooms & Balconies */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="bathrooms" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="bathrooms" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Bathrooms
                 </label>
                 <select
@@ -701,7 +702,7 @@ function PostProperty() {
                   name="bathrooms"
                   value={propertyDetails.bathrooms}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 >
                   <option value="1">1 Bathroom</option>
                   <option value="2">2 Bathrooms</option>
@@ -711,7 +712,7 @@ function PostProperty() {
               </div>
 
               <div>
-                <label htmlFor="balconies" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <label htmlFor="balconies" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                   Balconies
                 </label>
                 <select
@@ -719,7 +720,7 @@ function PostProperty() {
                   name="balconies"
                   value={propertyDetails.balconies}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                  className="w-full border border-gray-300 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
                 >
                   <option value="0">No Balcony</option>
                   <option value="1">1 Balcony</option>
@@ -731,36 +732,36 @@ function PostProperty() {
 
             {/* Parking & Pet Friendly Checkboxes */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-700 transition hover:border-teal-400">
+              <label className="flex cursor-pointer items-center gap-3 border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 transition hover:border-[#009587]">
                 <input
                   id="parking"
                   name="parking"
                   type="checkbox"
                   checked={Boolean(propertyDetails.parking)}
                   onChange={handleChange}
-                  className="h-4 w-4 rounded accent-teal-600"
+                  className="h-4 w-4 accent-[#009587]"
                 />
-                <FaCar className="text-slate-500" />
+                <FaCar className="text-gray-500" />
                 <span className="font-medium">Parking Available</span>
               </label>
 
-              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-700 transition hover:border-teal-400">
+              <label className="flex cursor-pointer items-center gap-3 border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 transition hover:border-[#009587]">
                 <input
                   id="petFriendly"
                   name="petFriendly"
                   type="checkbox"
                   checked={Boolean(propertyDetails.petFriendly)}
                   onChange={handleChange}
-                  className="h-4 w-4 rounded accent-teal-600"
+                  className="h-4 w-4 accent-[#009587]"
                 />
-                <FaPaw className="text-slate-500" />
+                <FaPaw className="text-gray-500" />
                 <span className="font-medium">Pet Friendly</span>
               </label>
             </div>
 
             {/* Popular Amenities Selection */}
             <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                 Key Amenities
               </label>
               <div className="flex flex-wrap gap-2">
@@ -771,10 +772,10 @@ function PostProperty() {
                       key={amenity}
                       type="button"
                       onClick={() => handleToggleAmenity(amenity)}
-                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                      className={`border px-3 py-1.5 text-xs font-medium transition ${
                         isChecked
-                          ? "border border-teal-300 bg-teal-50 text-teal-700 shadow-xs"
-                          : "border border-slate-200 bg-slate-50/80 text-slate-600 hover:border-slate-300"
+                          ? "border-[#009587] bg-teal-50 text-[#009587]"
+                          : "border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300"
                       }`}
                     >
                       {isChecked ? "✓ " : "+ "}
@@ -788,10 +789,10 @@ function PostProperty() {
             {/* Photos Section */}
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Property Photos <span className="text-rose-500">*</span>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600">
+                  Property Photos <span className="text-red-500">*</span>
                 </label>
-                <span className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-0.5 text-[11px] font-semibold text-teal-700">
+                <span className="border border-teal-200 bg-teal-50 px-2 py-0.5 text-[11px] font-semibold text-[#009587]">
                   AWS S3 Secure Storage
                 </span>
               </div>
@@ -816,41 +817,41 @@ function PostProperty() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`group relative cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition focus:outline-none focus:ring-2 focus:ring-teal-500/20 ${
+                className={`group relative cursor-pointer border-2 border-dashed p-6 text-center transition focus:outline-none focus:ring-1 focus:ring-[#009587] ${
                   isDragging
-                    ? "border-teal-500 bg-teal-50/80 ring-2 ring-teal-500/20"
-                    : "border-slate-300 bg-slate-50/50 hover:border-teal-500 hover:bg-teal-50/20"
+                    ? "border-[#009587] bg-teal-50 ring-2 ring-[#009587]/20"
+                    : "border-gray-300 bg-gray-50 hover:border-[#009587] hover:bg-teal-50/20"
                 }`}
               >
                 <div className="pointer-events-none flex flex-col items-center justify-center">
-                  <div className="mb-2.5 flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-100/70 text-teal-600">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center bg-teal-100 text-[#009587]">
                     {uploadingCount > 0 ? (
-                      <FaSpinner className="animate-spin text-xl text-teal-600" />
+                      <FaSpinner className="animate-spin text-xl text-[#009587]" />
                     ) : (
-                      <FaCloudArrowUp className="text-2xl text-teal-600" />
+                      <FaCloudArrowUp className="text-2xl text-[#009587]" />
                     )}
                   </div>
-                  <p className="text-sm font-semibold text-slate-800">
+                  <p className="text-sm font-semibold text-gray-800">
                     {uploadingCount > 0
                       ? uploadProgressText || "Uploading photos to S3..."
                       : isDragging
                       ? "Drop images here to upload directly"
                       : "Drag & drop photos, click to browse, or paste with Ctrl+V / ⌘V"}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-gray-500">
                     Supports JPG, PNG, WEBP up to 10MB each (Multi-upload & clipboard screenshots supported)
                   </p>
                   <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
                     <button
                       type="button"
                       disabled={uploadingCount > 0}
-                      className="pointer-events-auto rounded-xl bg-teal-600 px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-teal-700 disabled:opacity-50"
+                      className="pointer-events-auto bg-[#009587] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#007d70] disabled:opacity-50"
                     >
                       <span className="sm:hidden">Choose Photos</span>
                       <span className="hidden sm:inline">Select Images From Computer</span>
                     </button>
-                    <span className="pointer-events-auto hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-xs">
-                      <FaPaste className="text-teal-600" />
+                    <span className="pointer-events-auto hidden sm:inline-flex items-center gap-1.5 border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-600">
+                      <FaPaste className="text-[#009587]" />
                       Paste Screenshot / Image (Ctrl+V)
                     </span>
                   </div>
@@ -859,9 +860,9 @@ function PostProperty() {
 
               {/* Upload Progress Indicator */}
               {uploadingCount > 0 && (
-                <div className="mt-2.5 flex items-center justify-between rounded-xl border border-teal-200 bg-teal-50/90 p-3 text-xs text-teal-800">
+                <div className="mt-2 flex items-center justify-between border border-teal-200 bg-teal-50 p-2.5 text-xs text-teal-800">
                   <span className="flex items-center gap-2">
-                    <FaSpinner className="animate-spin text-teal-600" />
+                    <FaSpinner className="animate-spin text-[#009587]" />
                     {uploadProgressText || `Uploading ${uploadingCount} photo(s) to S3...`}
                   </span>
                   <span className="font-semibold text-teal-900">Direct S3 Upload</span>
@@ -871,9 +872,9 @@ function PostProperty() {
               {/* Uploaded Photos Gallery */}
               {propertyDetails.photos.length > 0 && (
                 <div className="mt-4">
-                  <div className="mb-2 flex items-center justify-between text-xs font-semibold text-slate-600">
+                  <div className="mb-2 flex items-center justify-between text-xs font-semibold text-gray-600">
                     <span>Uploaded Photos ({propertyDetails.photos.length})</span>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[11px] text-gray-400">
                       First photo is the Cover Image shown to tenants
                     </span>
                   </div>
@@ -881,9 +882,9 @@ function PostProperty() {
                     {propertyDetails.photos.map((url, i) => (
                       <div
                         key={i}
-                        className="group relative rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-xs"
+                        className="group relative border border-gray-300 bg-white overflow-hidden shadow-xs"
                       >
-                        <div className="aspect-4/3 w-full overflow-hidden bg-slate-100">
+                        <div className="aspect-4/3 w-full overflow-hidden bg-gray-100">
                           <img
                             src={url}
                             alt={`Property photo ${i + 1}`}
@@ -891,14 +892,14 @@ function PostProperty() {
                           />
                         </div>
                         {i === 0 ? (
-                          <span className="absolute top-1.5 left-1.5 rounded-full bg-teal-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
+                          <span className="absolute top-1 left-1 bg-[#009587] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
                             Cover Photo
                           </span>
                         ) : (
                           <button
                             type="button"
                             onClick={() => handleMakeCoverPhoto(i)}
-                            className="absolute top-1.5 left-1.5 flex items-center gap-1 rounded-lg bg-slate-900/80 backdrop-blur-xs px-2 py-0.5 text-[10px] font-medium text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-teal-600 shadow-xs transition"
+                            className="absolute top-1 left-1 flex items-center gap-1 bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-[#009587] shadow-xs"
                           >
                             <FaStar className="text-[9px]" /> Make Cover
                           </button>
@@ -907,7 +908,7 @@ function PostProperty() {
                           type="button"
                           onClick={() => handleRemovePhoto(i)}
                           title="Remove photo"
-                          className="absolute top-1.5 right-1.5 rounded-lg bg-slate-900/80 backdrop-blur-xs p-1.5 text-xs text-white transition hover:bg-rose-600"
+                          className="absolute top-1 right-1 bg-black/70 p-1 text-xs text-white transition hover:bg-red-600"
                         >
                           <FaTrash className="text-[10px]" />
                         </button>
@@ -918,36 +919,36 @@ function PostProperty() {
               )}
 
               {/* Optional URL or Sample Photos Toggle */}
-              <div className="mt-3 border-t border-slate-200/80 pt-3">
+              <div className="mt-3 border-t border-gray-200 pt-3">
                 <button
                   type="button"
                   onClick={() => setShowUrlInput(!showUrlInput)}
-                  className="flex items-center gap-1 text-xs font-semibold text-teal-600 hover:text-teal-700 hover:underline"
+                  className="flex items-center gap-1 text-xs font-semibold text-[#009587] hover:underline"
                 >
                   {showUrlInput
                     ? "- Hide external photo options"
                     : "+ Paste image URL or pick sample photos"}
                 </button>
                 {showUrlInput && (
-                  <div className="mt-2.5 space-y-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                  <div className="mt-2 space-y-3 border border-gray-200 bg-gray-50 p-3">
                     <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         type="url"
                         value={photoInput}
                         onChange={(e) => setPhotoInput(e.target.value)}
                         placeholder="Paste image URL (https://...)"
-                        className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 outline-none focus:border-teal-500"
+                        className="flex-1 border border-gray-300 bg-white px-3 py-2 text-xs text-gray-700 outline-none focus:border-[#009587]"
                       />
                       <button
                         type="button"
                         onClick={handleAddPhoto}
-                        className="flex items-center justify-center gap-1.5 rounded-xl bg-teal-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-teal-700 shadow-xs"
+                        className="flex items-center justify-center gap-1 border border-[#009587] bg-[#009587] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#007d70]"
                       >
                         <FaPlus className="text-[10px]" /> Add URL
                       </button>
                     </div>
                     <div>
-                      <span className="mb-1.5 block text-[11px] font-medium text-slate-500">
+                      <span className="mb-1 block text-[11px] text-gray-500">
                         Sample verified photos:
                       </span>
                       <div className="flex flex-wrap gap-1.5">
@@ -963,7 +964,7 @@ function PostProperty() {
                                 }));
                               }
                             }}
-                            className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 transition hover:border-teal-500 hover:text-teal-700 shadow-xs"
+                            className="border border-gray-300 bg-white px-2 py-1 text-[11px] text-gray-600 transition hover:border-[#009587] hover:text-[#009587]"
                           >
                             + {sample.label}
                           </button>
@@ -977,7 +978,7 @@ function PostProperty() {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+              <label htmlFor="description" className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
                 Description
               </label>
               <textarea
@@ -987,14 +988,14 @@ function PostProperty() {
                 value={propertyDetails.description}
                 onChange={handleChange}
                 placeholder="Highlight sunlight, ventilation, security, nearby schools/metros, and neighborhood features..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-teal-500 focus:bg-white"
+                className="w-full border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
               />
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs text-rose-700 flex items-start gap-2.5">
-                <FaCircleExclamation className="text-rose-600 text-sm mt-0.5 flex-shrink-0" />
+              <div className="border border-red-300 bg-red-50 p-3.5 text-xs text-red-700 flex items-start gap-2.5">
+                <FaCircleExclamation className="text-red-600 text-sm mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <span className="font-bold">Error: </span>
                   {error}
@@ -1006,7 +1007,7 @@ function PostProperty() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full rounded-xl bg-teal-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:opacity-60 flex items-center justify-center gap-2 shadow-xs"
+              className="mt-2 w-full bg-[#009587] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#007d71] disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>Submitting Listing...</>
