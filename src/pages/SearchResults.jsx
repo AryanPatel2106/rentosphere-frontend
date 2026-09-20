@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import LocalitySearch from "../components/dashboard/LocalitySearch";
 import PropertyMap from "../components/PropertyMap";
@@ -77,6 +77,7 @@ const AVAILABILITY_OPTIONS = [
 ];
 
 function SearchResults() {
+  const navigate = useNavigate();
   const { state } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -1012,7 +1013,12 @@ function SearchResults() {
                       <img
                         src={photoSrc}
                         alt={property.title}
-                        className="h-16 w-20 shrink-0 object-cover border border-gray-200"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/property/${property._id}`);
+                        }}
+                        title="Click to view full property details"
+                        className="h-16 w-20 shrink-0 object-cover border border-gray-200 hover:opacity-90 transition"
                         onError={(e) => {
                           e.target.src = DEFAULT_PROPERTY_IMAGE;
                         }}
@@ -1031,18 +1037,37 @@ function SearchResults() {
                             </span>
                           )}
                         </div>
-                        <h4 className="mt-0.5 truncate text-xs font-semibold text-gray-800">
+                        <h4
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/property/${property._id}`);
+                          }}
+                          className="mt-0.5 truncate text-xs font-semibold text-gray-800 hover:text-[#009587] transition cursor-pointer"
+                          title="Click to view full property details"
+                        >
                           {property.title}
                         </h4>
                         <p className="mt-0.5 text-[11px] text-gray-500">
                           {property.BHKType} • {property.Furnishing}
                         </p>
-                        <p className="mt-0.5 flex items-center gap-1 truncate text-[10px] text-gray-400">
-                          <FaLocationDot className="shrink-0 text-[#009587]" />
-                          {property.locality?.label ||
-                            property.locality?.text ||
-                            ""}
-                        </p>
+                        <div className="mt-1 flex items-center justify-between gap-1">
+                          <p className="flex items-center gap-1 truncate text-[10px] text-gray-400">
+                            <FaLocationDot className="shrink-0 text-[#009587]" />
+                            {property.locality?.label ||
+                              property.locality?.text ||
+                              ""}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/property/${property._id}`);
+                            }}
+                            className="shrink-0 text-[10px] font-semibold text-[#009587] hover:underline"
+                          >
+                            View Details →
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -1093,7 +1118,8 @@ function SearchResults() {
               return (
                 <div
                   key={property._id || idx}
-                  className="border border-gray-300 bg-white shadow-sm transition hover:border-[#009587]"
+                  onClick={() => navigate(`/property/${property._id}`)}
+                  className="group cursor-pointer border border-gray-300 bg-white shadow-xs transition hover:border-[#009587] hover:shadow-md"
                 >
                   {/* Card Header: Title + Price + Distance */}
                   <div className="flex flex-col gap-2 border-b border-gray-200 p-4 sm:flex-row sm:items-start sm:justify-between">
@@ -1108,7 +1134,7 @@ function SearchResults() {
                           </span>
                         )}
                       </div>
-                      <h3 className="text-base font-semibold text-gray-800 sm:text-lg">
+                      <h3 className="text-base font-semibold text-gray-800 sm:text-lg group-hover:text-[#009587] transition">
                         {property.title}
                       </h3>
                       <p className="mt-1 flex items-center gap-1.5 text-xs text-gray-500">
@@ -1263,7 +1289,10 @@ function SearchResults() {
                         <div className="flex flex-wrap items-center gap-2 pt-1">
                           <button
                             type="button"
-                            onClick={() => handleGetOwnerDetails(property)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleGetOwnerDetails(property);
+                            }}
                             className="border border-[#009587] bg-white px-4 py-2.5 text-xs font-semibold text-[#009587] transition hover:bg-teal-50"
                           >
                             <FaPhone className="mr-1.5 inline text-xs" />
@@ -1271,14 +1300,20 @@ function SearchResults() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleOpenRentalModal(property)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenRentalModal(property);
+                            }}
                             className="bg-[#009587] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#007f73]"
                           >
                             Request to Rent
                           </button>
                           <button
                             type="button"
-                            onClick={() => toggleShortlist(property._id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleShortlist(property._id);
+                            }}
                             className={`border px-3.5 py-2.5 text-xs font-medium transition ${
                               isShortlisted
                                 ? "border-red-400 bg-red-50 text-red-600"

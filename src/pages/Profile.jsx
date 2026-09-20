@@ -21,7 +21,7 @@ import {
   FaCircleExclamation,
 } from "react-icons/fa6";
 import api from "../services/api";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../utils/errorHandler";
 import { openRazorpayCheckout } from "../utils/razorpay";
 
@@ -36,6 +36,7 @@ const TENANT_OPTIONS = ["Anyone", "Family", "Bachelors", "Company"];
 const AVAILABILITY_OPTIONS = ["Immediate", "Within 15 Days", "Within 30 Days", "After 30 Days"];
 
 export default function Profile() {
+  const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -876,15 +877,16 @@ export default function Profile() {
                     {shortlists.map((property) => (
                       <div
                         key={property._id}
-                        className="border border-gray-300 bg-white p-4 shadow-sm flex flex-col md:flex-row gap-5 items-start justify-between"
+                        onClick={() => navigate(`/property/${property._id}`)}
+                        className="group cursor-pointer border border-gray-300 bg-white p-4 shadow-xs flex flex-col md:flex-row gap-5 items-start justify-between transition hover:border-[#009587] hover:shadow-md"
                       >
                         <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                          <div className="h-32 w-full sm:w-44 bg-gray-100 border border-gray-200 overflow-hidden flex-shrink-0">
+                          <div className="h-32 w-full sm:w-44 bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
                             {property.photos && property.photos[0] ? (
                               <img
                                 src={property.photos[0]}
                                 alt={property.title}
-                                className="h-full w-full object-cover"
+                                className="h-full w-full object-cover group-hover:scale-105 transition duration-300"
                               />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center text-xs text-gray-400">
@@ -901,7 +903,7 @@ export default function Profile() {
                                 {property.BHKType} • {property.Furnishing}
                               </span>
                             </div>
-                            <h3 className="text-base font-bold text-gray-800">{property.title}</h3>
+                            <h3 className="text-base font-bold text-gray-800 group-hover:text-[#009587] transition">{property.title}</h3>
                             <p className="text-xs text-gray-500">
                               📍 {property.locality?.text || property.locality?.label || "Location"}
                             </p>
@@ -922,14 +924,20 @@ export default function Profile() {
                         <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
                           <button
                             type="button"
-                            onClick={() => handleOpenRentalRequest(property)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenRentalRequest(property);
+                            }}
                             className="flex-1 md:flex-initial bg-[#009587] px-4 py-2 text-xs font-semibold text-white hover:bg-[#007f73] transition"
                           >
                             Request to Rent
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleRemoveShortlist(property._id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveShortlist(property._id);
+                            }}
                             className="flex-1 md:flex-initial border border-red-300 text-red-600 px-4 py-2 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
                           >
                             <FaTrash className="text-xs" /> Remove
@@ -1002,6 +1010,13 @@ export default function Profile() {
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
+                              onClick={() => navigate(`/property/${property._id}`)}
+                              className="border border-[#009587] bg-white px-3 py-1.5 text-xs font-semibold text-[#009587] hover:bg-teal-50 transition"
+                            >
+                              View Listing
+                            </button>
+                            <button
+                              type="button"
                               onClick={() => handleOpenEditModal(property)}
                               className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition flex items-center gap-1.5"
                             >
@@ -1019,7 +1034,11 @@ export default function Profile() {
 
                         <div className="p-5">
                           <div className="grid gap-4 lg:grid-cols-[200px_1fr]">
-                            <div className="h-36 border border-gray-200 bg-gray-100 overflow-hidden">
+                            <div
+                              onClick={() => navigate(`/property/${property._id}`)}
+                              className="h-36 border border-gray-200 bg-gray-100 overflow-hidden cursor-pointer hover:opacity-90 transition"
+                              title="Click to view full property details"
+                            >
                               {property.photos && property.photos[0] ? (
                                 <img
                                   src={property.photos[0]}
@@ -1034,7 +1053,13 @@ export default function Profile() {
                             </div>
 
                             <div className="space-y-2.5">
-                              <h3 className="text-base font-bold text-gray-800">{property.title}</h3>
+                              <h3
+                                onClick={() => navigate(`/property/${property._id}`)}
+                                className="text-base font-bold text-gray-800 hover:text-[#009587] transition cursor-pointer"
+                                title="Click to view full property details"
+                              >
+                                {property.title}
+                              </h3>
                               <p className="text-xs text-gray-500">
                                 📍 {property.locality?.text || property.locality?.label}
                               </p>

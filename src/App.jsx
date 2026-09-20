@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 
 import SearchResults from "./pages/SearchResults";
+import PropertyDetails from "./pages/PropertyDetails";
 
 import ResetPassword from "./pages/ResetPassword";
 
@@ -28,6 +29,7 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/property/:id" element={<PropertyDetails />} />
         <Route path="/pay-fee" element={<PayRent />} />
         <Route path="/pay-rent" element={<PayRent />} />
 
