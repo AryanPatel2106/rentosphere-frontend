@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import api from "../services/api";
 import {
@@ -20,6 +20,7 @@ import {
   FaSpinner,
   FaStar,
   FaImage,
+  FaPaste,
 } from "react-icons/fa6";
 import LocalitySearch from "../components/dashboard/LocalitySearch";
 import { useNavigate } from "react-router-dom";
@@ -200,26 +201,135 @@ function PostProperty() {
     setUploadProgressText("");
   };
 
+  const dragCounter = useRef(0);
+  const handleFilesRef = useRef(handleFiles);
+  handleFilesRef.current = handleFiles;
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current += 1;
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(true);
+    e.dataTransfer.dropEffect = "copy";
+    if (!isDragging) setIsDragging(true);
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
+    dragCounter.current -= 1;
+    if (dragCounter.current <= 0) {
+      dragCounter.current = 0;
+      setIsDragging(false);
+    }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    dragCounter.current = 0;
     setIsDragging(false);
+
+    // 1. Files dropped directly from system / file manager
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(e.dataTransfer.files);
+      return;
+    }
+
+    // 2. Dragged image from web browser / HTML
+    const uriList = e.dataTransfer.getData("text/uri-list");
+    const plainText = e.dataTransfer.getData("text/plain");
+    const droppedUrl = (uriList || plainText || "").trim();
+    if (
+      droppedUrl &&
+      (droppedUrl.startsWith("http://") || droppedUrl.startsWith("https://"))
+    ) {
+      if (/\.(jpeg|jpg|png|webp|gif|avif)($|\?)/i.test(droppedUrl)) {
+        setPropertyDetails((prev) => ({
+          ...prev,
+          photos: [...prev.photos, droppedUrl],
+        }));
+      }
     }
   };
+
+  // Clipboard paste support (Ctrl+V / Cmd+V)
+  useEffect(() => {
+    const handlePaste = (e) => {
+      const items = e.clipboardData?.items;
+      const files = e.clipboardData?.files;
+      const pastedImages = [];
+
+      if (items && items.length > 0) {
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.type && item.type.startsWith("image/")) {
+            const blob = item.getAsFile();
+            if (blob) {
+              const ext = blob.type.split("/")[1]?.replace("+xml", "") || "png";
+              const namedFile = new File(
+                [blob],
+                blob.name && blob.name !== "image.png"
+                  ? blob.name
+                  : `clipboard-image-${Date.now()}-${i + 1}.${ext}`,
+                { type: blob.type }
+              );
+              pastedImages.push(namedFile);
+            }
+          }
+        }
+      }
+
+      if (pastedImages.length === 0 && files && files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          if (file.type && file.type.startsWith("image/")) {
+            pastedImages.push(file);
+          }
+        }
+      }
+
+      if (pastedImages.length > 0) {
+        e.preventDefault();
+        handleFilesRef.current(pastedImages);
+        return;
+      }
+
+      // If user pastes an image URL when NOT focused on a text input/textarea
+      const targetTag = e.target?.tagName?.toLowerCase();
+      const isTextInput =
+        (targetTag === "input" && e.target?.type !== "file") ||
+        targetTag === "textarea" ||
+        e.target?.isContentEditable;
+
+      if (!isTextInput) {
+        const text = e.clipboardData?.getData("text/plain")?.trim();
+        if (
+          text &&
+          (text.startsWith("http://") || text.startsWith("https://")) &&
+          /\.(jpeg|jpg|png|webp|gif|avif)($|\?)/i.test(text)
+        ) {
+          e.preventDefault();
+          setPropertyDetails((prev) => ({
+            ...prev,
+            photos: [...prev.photos, text],
+          }));
+        }
+      }
+    };
+
+    window.addEventListener("paste", handlePaste);
+    return () => {
+      window.removeEventListener("paste", handlePaste);
+    };
+  }, []);
 
   const handleFileInputChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -699,17 +809,21 @@ function PostProperty() {
 
               {/* Drag & Drop Upload Zone */}
               <div
+                tabIndex={0}
+                role="button"
+                aria-label="Upload property photos"
                 onClick={() => fileInputRef.current?.click()}
+                onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`cursor-pointer border-2 border-dashed p-6 text-center transition ${
+                className={`group relative cursor-pointer border-2 border-dashed p-6 text-center transition focus:outline-none focus:ring-1 focus:ring-[#009587] ${
                   isDragging
-                    ? "border-[#009587] bg-teal-50"
+                    ? "border-[#009587] bg-teal-50 ring-2 ring-[#009587]/20"
                     : "border-gray-300 bg-gray-50 hover:border-[#009587] hover:bg-teal-50/20"
                 }`}
               >
-                <div className="flex flex-col items-center justify-center">
+                <div className="pointer-events-none flex flex-col items-center justify-center">
                   <div className="mb-2 flex h-12 w-12 items-center justify-center bg-teal-100 text-[#009587]">
                     {uploadingCount > 0 ? (
                       <FaSpinner className="animate-spin text-xl text-[#009587]" />
@@ -720,18 +834,26 @@ function PostProperty() {
                   <p className="text-sm font-semibold text-gray-800">
                     {uploadingCount > 0
                       ? uploadProgressText || "Uploading photos to S3..."
-                      : "Click to upload photos or drag and drop"}
+                      : isDragging
+                      ? "Drop images here to upload directly"
+                      : "Drag & drop photos, click to browse, or paste with Ctrl+V / ⌘V"}
                   </p>
                   <p className="mt-1 text-xs text-gray-500">
-                    Supports JPG, PNG, WEBP up to 10MB each (Multi-select enabled)
+                    Supports JPG, PNG, WEBP up to 10MB each (Multi-upload & clipboard screenshots supported)
                   </p>
-                  <button
-                    type="button"
-                    disabled={uploadingCount > 0}
-                    className="mt-3 bg-[#009587] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#007d70] disabled:opacity-50"
-                  >
-                    Select Images From Computer
-                  </button>
+                  <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      disabled={uploadingCount > 0}
+                      className="pointer-events-auto bg-[#009587] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#007d70] disabled:opacity-50"
+                    >
+                      Select Images From Computer
+                    </button>
+                    <span className="pointer-events-auto inline-flex items-center gap-1.5 border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-600">
+                      <FaPaste className="text-[#009587]" />
+                      Paste Screenshot / Image (Ctrl+V)
+                    </span>
+                  </div>
                 </div>
               </div>
 
