@@ -235,9 +235,11 @@ function SearchResults() {
 
   const sentinelRef = useRef(null);
   const mapListRef = useRef(null);
+  const listScrollRef = useRef(null);
   const pageRef = useRef(1);
   const hasMoreRef = useRef(false);
   const isFetchingRef = useRef(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Calculate active filter count (excluding default values)
   const activeFilterCount = [
@@ -375,6 +377,12 @@ function SearchResults() {
           setProperties(newProperties);
           setSelectedProperty(null);
           setSearchLocation(data?.searchLocation || null);
+          if (listScrollRef.current) {
+            listScrollRef.current.scrollTop = 0;
+          }
+          if (mapListRef.current) {
+            mapListRef.current.scrollTop = 0;
+          }
         } else {
           setProperties((prev) => {
             const existingIds = new Set(prev.map((p) => p._id));
@@ -446,6 +454,16 @@ function SearchResults() {
     fetchProperties(nextPage, false);
   }, [fetchProperties]);
 
+  const handleScrollToTop = () => {
+    if (viewMode === "list" && listScrollRef.current) {
+      listScrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (viewMode === "map" && mapListRef.current) {
+      mapListRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   // 1. Intersection Observer on bottom sentinel
   useEffect(() => {
     if (!hasMore || loading) return;
@@ -455,7 +473,10 @@ function SearchResults() {
           handleLoadMore();
         }
       },
-      { rootMargin: "400px 0px" }
+      {
+        root: viewMode === "list" ? listScrollRef.current : null,
+        rootMargin: "350px 0px",
+      }
     );
 
     const el = sentinelRef.current;
@@ -464,19 +485,21 @@ function SearchResults() {
     return () => {
       if (el) observer.unobserve(el);
     };
-  }, [hasMore, loading, handleLoadMore, properties.length]);
+  }, [hasMore, loading, handleLoadMore, properties.length, viewMode]);
 
-  // 2. Global Window Scroll Event Listener (instant response when scrolling near bottom)
+  // 2. Container scroll for list view box
   useEffect(() => {
+    const el = listScrollRef.current;
+    if (!el || viewMode !== "list") return;
+
     let ticking = false;
-    const onWindowScroll = () => {
+    const onListScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
+          setShowScrollTop(el.scrollTop > 300);
           if (!isFetchingRef.current && hasMoreRef.current) {
-            const scrollY = window.scrollY || window.pageYOffset;
-            const viewportHeight = window.innerHeight;
-            const docHeight = document.documentElement.scrollHeight;
-            if (docHeight - (scrollY + viewportHeight) <= 450) {
+            const { scrollTop, scrollHeight, clientHeight } = el;
+            if (scrollHeight - (scrollTop + clientHeight) <= 350) {
               handleLoadMore();
             }
           }
@@ -486,9 +509,9 @@ function SearchResults() {
       }
     };
 
-    window.addEventListener("scroll", onWindowScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onWindowScroll);
-  }, [handleLoadMore]);
+    el.addEventListener("scroll", onListScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onListScroll);
+  }, [viewMode, handleLoadMore]);
 
   // 3. Container scroll for map view card list
   useEffect(() => {
@@ -499,6 +522,7 @@ function SearchResults() {
     const onMapListScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
+          setShowScrollTop(el.scrollTop > 300);
           if (!isFetchingRef.current && hasMoreRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = el;
             if (scrollHeight - (scrollTop + clientHeight) <= 250) {
@@ -567,64 +591,73 @@ function SearchResults() {
 
   return (
     <div className="min-h-screen bg-[#f8f8f8]">
-      {/* ── Header ───────────────────────────────────────────────────────── */}
-      <section className="border-b border-gray-200 bg-white px-4 py-8 text-center sm:py-10">
-        <h1 className="text-2xl font-light text-gray-700 sm:text-3xl lg:text-4xl">
-          Properties near{" "}
-          <span className="font-semibold text-[#009587]">{activeLabel}</span>
-        </h1>
-        <p className="mx-auto mt-2 max-w-2xl text-xs leading-6 text-gray-500 sm:text-sm">
-          Explore rental properties with verified owners and transparent pricing.
-          {total > 0 && ` Found ${total} listing${total !== 1 ? "s" : ""}.`}
-        </p>
-      </section>
-
-      {/* ── Search Bar & View Toggle ────────────────────────────────────── */}
-      <section className="border-b border-gray-200 bg-white py-3 shadow-sm sm:py-4">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-            {/* Locality search */}
-            <div className="min-w-0 flex-1 border border-gray-300 bg-gray-50 transition focus-within:border-[#009587] focus-within:bg-white">
-              <LocalitySearch
-                selected={selectedLocalities}
-                setSelected={(localities) => {
-                  setSelectedLocalities(localities);
-                  if (localities.length > 0) {
-                    setSearchParams((prev) => {
-                      prev.set("placeId", localities[0].placeId || "");
-                      prev.set("label", localities[0].label || "");
-                      return prev;
-                    });
-                  }
-                }}
-                singleSelect={true}
-              />
+      {/* ── Compact Header & Locality Search ─────────────────────────────── */}
+      <section className="border-b border-gray-200 bg-white py-2.5 sm:py-3 shadow-xs">
+        <div className="mx-auto max-w-6xl px-3 sm:px-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
+            {/* Title & Count Badge */}
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h1 className="text-base sm:text-lg font-bold text-gray-800 truncate">
+                  Properties in <span className="text-[#009587]">{activeLabel}</span>
+                </h1>
+                {total > 0 && (
+                  <span className="shrink-0 bg-teal-50 border border-teal-200 text-[#009587] text-[11px] font-bold px-2 py-0.5">
+                    {total} listings
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-gray-500 truncate hidden sm:block">
+                Verified owners • Transparent pricing • Instant contact
+              </p>
             </div>
 
-            {/* View toggle */}
-            <div className="flex w-full border border-gray-300 bg-white shadow-sm sm:w-auto">
-              <button
-                type="button"
-                onClick={() => setViewMode("list")}
-                className={`flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition sm:flex-initial ${
-                  viewMode === "list"
-                    ? "bg-[#009587] text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <FaList /> List View
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("map")}
-                className={`flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition sm:flex-initial ${
-                  viewMode === "map"
-                    ? "bg-[#009587] text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <FaMapLocationDot /> Map View
-              </button>
+            {/* Locality Search + View Toggle */}
+            <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1 sm:w-72 border border-gray-300 bg-gray-50 transition focus-within:border-[#009587] focus-within:bg-white text-xs">
+                <LocalitySearch
+                  selected={selectedLocalities}
+                  setSelected={(localities) => {
+                    setSelectedLocalities(localities);
+                    if (localities.length > 0) {
+                      setSearchParams((prev) => {
+                        prev.set("placeId", localities[0].placeId || "");
+                        prev.set("label", localities[0].label || "");
+                        return prev;
+                      });
+                    }
+                  }}
+                  singleSelect={true}
+                />
+              </div>
+
+              {/* View Toggle Buttons */}
+              <div className="flex shrink-0 border border-gray-300 bg-white shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("list")}
+                  className={`flex items-center justify-center gap-1 px-3 py-2 text-xs font-semibold transition ${
+                    viewMode === "list"
+                      ? "bg-[#009587] text-white"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  title="List View"
+                >
+                  <FaList /> <span className="hidden sm:inline">List</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("map")}
+                  className={`flex items-center justify-center gap-1 px-3 py-2 text-xs font-semibold transition ${
+                    viewMode === "map"
+                      ? "bg-[#009587] text-white"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  title="Map View"
+                >
+                  <FaMapLocationDot /> <span className="hidden sm:inline">Map</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1025,9 +1058,9 @@ function SearchResults() {
       </section>
 
       {/* ── Main Content Area ────────────────────────────────────────────── */}
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto max-w-6xl px-3 sm:px-6 py-3 sm:py-4">
         {error && (
-          <div className="mb-6 border border-red-300 bg-red-50 p-4 text-xs text-red-700 flex items-start gap-3">
+          <div className="mb-4 border border-red-300 bg-red-50 p-4 text-xs text-red-700 flex items-start gap-3">
             <FaCircleExclamation className="text-red-600 text-base mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <h4 className="font-bold text-red-800 uppercase tracking-wide">Notice</h4>
@@ -1204,7 +1237,10 @@ function SearchResults() {
 
         {/* ── LIST VIEW ─────────────────────────────────────────────────── */}
         {!loading && viewMode === "list" && properties.length > 0 && (
-          <div className="space-y-4 sm:space-y-6">
+          <div
+            ref={listScrollRef}
+            className="h-[calc(100vh-215px)] min-h-[440px] overflow-y-auto overscroll-contain pr-1 sm:pr-2 space-y-4 rounded-none border border-gray-200/80 bg-slate-50/40 p-2 sm:p-4 shadow-xs"
+          >
             {properties.map((property, idx) => {
               const dist = formatDistance(property.distance);
               const isShortlisted = shortlists.includes(property._id);
@@ -1478,6 +1514,18 @@ function SearchResults() {
               Reset Filters
             </button>
           </div>
+        )}
+
+        {/* Floating Back to Top Button */}
+        {showScrollTop && (
+          <button
+            type="button"
+            onClick={handleScrollToTop}
+            className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 inline-flex items-center gap-1.5 border border-[#009587] bg-[#009587] text-white px-3.5 py-2 text-xs font-bold uppercase tracking-wider shadow-lg hover:bg-[#007d71] active:scale-95 transition-all rounded-none"
+            title="Back to top"
+          >
+            <span>↑ Back to Top</span>
+          </button>
         )}
       </main>
 
