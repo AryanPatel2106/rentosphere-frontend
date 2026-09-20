@@ -582,6 +582,263 @@ function SearchResults() {
     });
   };
 
+  // Render unified filter controls for both Desktop Left Sidebar and Mobile Slide-over Drawer
+  const renderFilterContent = (isMobile = false) => (
+    <div className="space-y-4 text-xs">
+      {/* 1. Keyword Search */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Search Keywords
+        </label>
+        <div className="relative">
+          <FaMagnifyingGlass className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+          <input
+            type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setPage(1);
+                fetchProperties(1, true);
+                updateUrlParams({ keyword });
+              }
+            }}
+            placeholder="Title, locality, amenities..."
+            className="w-full border border-gray-300 bg-gray-50 pl-8 pr-7 py-2 text-base sm:text-xs text-gray-800 outline-none transition focus:border-[#009587] focus:bg-white"
+          />
+          {keyword && (
+            <button
+              type="button"
+              onClick={() => {
+                setKeyword("");
+                setPage(1);
+                updateUrlParams({ keyword: "" });
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+            >
+              <FaXmark className="text-xs" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 2. BHK Configuration */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+          BHK Configuration
+        </label>
+        <div className="grid grid-cols-3 gap-1.5">
+          {BHK_OPTIONS.map((opt) => {
+            const isSelected = bhkType === opt;
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => setBhkType(opt)}
+                className={`px-2 py-2 text-center text-xs font-semibold border transition ${
+                  isSelected
+                    ? "border-[#009587] bg-[#009587] text-white"
+                    : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-white"
+                }`}
+              >
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Budget Range */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Monthly Rent Budget
+        </label>
+        <select
+          value={
+            BUDGET_PRESETS.find(
+              (p) => p.min === minRent && p.max === maxRent
+            )?.label || "Custom Budget"
+          }
+          onChange={(e) => {
+            const found = BUDGET_PRESETS.find(
+              (p) => p.label === e.target.value
+            );
+            if (found) {
+              setMinRent(found.min);
+              setMaxRent(found.max);
+            }
+          }}
+          className="w-full border border-gray-300 bg-gray-50 px-2.5 py-2 text-base sm:text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white mb-2"
+        >
+          {BUDGET_PRESETS.map((p) => (
+            <option key={p.label} value={p.label}>
+              {p.label}
+            </option>
+          ))}
+          {minRent !== "" &&
+            maxRent !== "" &&
+            !BUDGET_PRESETS.some(
+              (p) => p.min === minRent && p.max === maxRent
+            ) && <option value="Custom Budget">Custom Budget</option>}
+        </select>
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
+            <input
+              type="number"
+              value={minRent}
+              onChange={(e) => setMinRent(e.target.value)}
+              placeholder="Min"
+              className="w-full border border-gray-300 bg-gray-50 pl-6 pr-2 py-1.5 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+            />
+          </div>
+          <span className="text-gray-400 text-xs font-semibold">to</span>
+          <div className="relative flex-1">
+            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
+            <input
+              type="number"
+              value={maxRent}
+              onChange={(e) => setMaxRent(e.target.value)}
+              placeholder="Max"
+              className="w-full border border-gray-300 bg-gray-50 pl-6 pr-2 py-1.5 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Property Type */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Property Type
+        </label>
+        <select
+          value={propertyType}
+          onChange={(e) => setPropertyType(e.target.value)}
+          className="w-full border border-gray-300 bg-gray-50 px-2.5 py-2 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+        >
+          {PROPERTY_TYPES.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 5. Furnishing */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Furnishing Status
+        </label>
+        <select
+          value={furnishing}
+          onChange={(e) => setFurnishing(e.target.value)}
+          className="w-full border border-gray-300 bg-gray-50 px-2.5 py-2 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+        >
+          {FURNISHING_OPTIONS.map((f) => (
+            <option key={f} value={f}>
+              {f}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 6. Preferred Tenant */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Preferred Tenant
+        </label>
+        <select
+          value={tenantType}
+          onChange={(e) => setTenantType(e.target.value)}
+          className="w-full border border-gray-300 bg-gray-50 px-2.5 py-2 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+        >
+          {TENANT_OPTIONS.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 7. Availability */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Availability
+        </label>
+        <select
+          value={availability}
+          onChange={(e) => setAvailability(e.target.value)}
+          className="w-full border border-gray-300 bg-gray-50 px-2.5 py-2 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+        >
+          {AVAILABILITY_OPTIONS.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 8. Amenities & Rules */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Amenities & Rules
+        </label>
+        <div className="space-y-2 pt-0.5">
+          <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={parking}
+              onChange={(e) => setParking(e.target.checked)}
+              className="accent-[#009587] h-4 w-4"
+            />
+            <FaCar className="text-gray-500 text-xs" />
+            <span>Parking Available</span>
+          </label>
+          <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={petFriendly}
+              onChange={(e) => setPetFriendly(e.target.checked)}
+              className="accent-[#009587] h-4 w-4"
+            />
+            <FaPaw className="text-gray-500 text-xs" />
+            <span>Pet Friendly</span>
+          </label>
+        </div>
+      </div>
+
+      {/* 9. Sort By */}
+      <div>
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
+          Sort Listings
+        </label>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="w-full border border-gray-300 bg-gray-50 px-2.5 py-2 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
+        >
+          <option value="nearest">Nearest First</option>
+          <option value="rent_asc">Price: Low to High</option>
+          <option value="rent_desc">Price: High to Low</option>
+          <option value="newest">Newest First</option>
+        </select>
+      </div>
+
+      {/* Reset Button */}
+      {activeFilterCount > 0 && (
+        <div className="pt-2 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={handleResetFilters}
+            className="w-full border border-red-200 bg-red-50 py-2 text-xs font-semibold text-red-600 hover:bg-red-100 transition"
+          >
+            Clear All Filters ({activeFilterCount})
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   const activeLabel =
     selectedLocalities[0]?.label ||
     selectedLocalities[0]?.text ||
@@ -663,584 +920,410 @@ function SearchResults() {
         </div>
       </section>
 
-      {/* ── Search-Based Filters Strip ──────────────────────────────────── */}
-      <section className="sticky top-0 z-20 border-b border-gray-200 bg-white/95 backdrop-blur shadow-xs">
-        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
-          {/* Top filter row: Keyword Search + Quick BHK + Budget + Filter Drawer Toggle + Sort */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-            {/* Search within listings input */}
-            <div className="relative w-full sm:w-auto sm:flex-1 sm:max-w-xs">
-              <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
-              <input
-                type="text"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setPage(1);
-                    fetchProperties(1, true);
-                    updateUrlParams({ keyword });
-                  }
-                }}
-                placeholder="Search title, locality, keywords..."
-                className="w-full border border-gray-300 bg-gray-50 pl-8 pr-7 py-2 text-base sm:text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
-              />
-              {keyword && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setKeyword("");
-                    setPage(1);
-                    updateUrlParams({ keyword: "" });
-                  }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
-                >
-                  <FaXmark />
-                </button>
-              )}
-            </div>
+      {/* ── Mobile Quick Bar (Sticky on mobile only) ──────────────────── */}
+      <div className="lg:hidden sticky top-0 z-20 border-b border-gray-200 bg-white/95 backdrop-blur px-3 py-2 flex items-center justify-between gap-2 shadow-xs">
+        {/* Filters Drawer Trigger */}
+        <button
+          type="button"
+          onClick={() => setShowFilterDrawer(true)}
+          className={`shrink-0 flex items-center gap-1.5 border px-3 py-1.5 text-xs font-bold transition ${
+            activeFilterCount > 0
+              ? "border-[#009587] bg-teal-50 text-[#009587]"
+              : "border-gray-300 bg-white text-gray-700 active:bg-gray-50"
+          }`}
+        >
+          <FaSliders className="text-xs" />
+          <span>Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="flex h-4 w-4 items-center justify-center bg-[#009587] text-[10px] font-bold text-white">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
 
-            {/* Quick Filters Row (horizontal scroll on mobile) */}
-            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none flex-1">
-              {/* Quick BHK pills */}
-              <div className="flex items-center gap-1 shrink-0">
-                {BHK_OPTIONS.map((opt) => {
-                  const isSelected = bhkType === opt;
-                  return (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => setBhkType(opt)}
-                      className={`whitespace-nowrap px-3 py-1.5 text-xs font-medium border transition ${
-                        isSelected
-                          ? "border-[#009587] bg-[#009587] text-white"
-                          : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-white"
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Budget Presets Dropdown */}
-              <div className="relative shrink-0">
-                <select
-                  value={
-                    BUDGET_PRESETS.find(
-                      (p) => p.min === minRent && p.max === maxRent
-                    )?.label || "Custom Budget"
-                  }
-                  onChange={(e) => {
-                    const found = BUDGET_PRESETS.find(
-                      (p) => p.label === e.target.value
-                    );
-                    if (found) {
-                      setMinRent(found.min);
-                      setMaxRent(found.max);
-                    }
-                  }}
-                  className="border border-gray-300 bg-gray-50 px-3 py-1.5 text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
-                >
-                  {BUDGET_PRESETS.map((p) => (
-                    <option key={p.label} value={p.label}>
-                      {p.label}
-                    </option>
-                  ))}
-                  {minRent !== "" &&
-                    maxRent !== "" &&
-                    !BUDGET_PRESETS.some(
-                      (p) => p.min === minRent && p.max === maxRent
-                    ) && <option value="Custom Budget">Custom Budget</option>}
-                </select>
-              </div>
-
-              {/* Sort Dropdown */}
-              <div className="relative shrink-0 flex items-center gap-1 sm:ml-auto">
-                <FaArrowDownWideShort className="text-gray-400 text-xs hidden sm:inline" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
-                >
-                  <option value="nearest">Nearest First</option>
-                  <option value="rent_asc">Price: Low to High</option>
-                  <option value="rent_desc">Price: High to Low</option>
-                  <option value="newest">Newest First</option>
-                </select>
-              </div>
-
-              {/* More Filters Toggle Button */}
+        {/* Quick BHK Horizontal Scroller */}
+        <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap scrollbar-none flex-1 py-0.5">
+          {BHK_OPTIONS.map((opt) => {
+            const isSelected = bhkType === opt;
+            return (
               <button
+                key={opt}
                 type="button"
-                onClick={() => setShowFilterDrawer((prev) => !prev)}
-                className={`shrink-0 flex items-center gap-1.5 border px-3 py-1.5 text-xs font-semibold transition ${
-                  showFilterDrawer || activeFilterCount > 0
-                    ? "border-[#009587] bg-teal-50 text-[#009587]"
-                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                onClick={() => setBhkType(opt)}
+                className={`whitespace-nowrap px-2.5 py-1 text-xs font-medium border transition ${
+                  isSelected
+                    ? "border-[#009587] bg-[#009587] text-white"
+                    : "border-gray-200 bg-gray-50 text-gray-700"
                 }`}
               >
-                <FaSliders className="text-xs" />
-                <span>Filters</span>
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Quick Sort Dropdown */}
+        <div className="shrink-0">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="border border-gray-300 bg-gray-50 px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-[#009587]"
+          >
+            <option value="nearest">Nearest</option>
+            <option value="rent_asc">₹ Low</option>
+            <option value="rent_desc">₹ High</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
+      </div>
+
+      {/* ── Main Content Area ────────────────────────────────────────────── */}
+      <main className="mx-auto max-w-7xl px-3 sm:px-4 py-3 sm:py-4">
+        {/* ── 2-Column Responsive Layout ──────────────────────────────────── */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:gap-5">
+          {/* ── DESKTOP LEFT FILTER SIDEBAR ───────────────────────────────── */}
+          <aside className="hidden lg:block w-72 xl:w-80 shrink-0 sticky top-3 h-[calc(100vh-120px)] overflow-y-auto overscroll-contain border border-gray-200 bg-white p-4 shadow-xs">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-4">
+              <div className="flex items-center gap-2">
+                <FaSliders className="text-[#009587] text-sm" />
+                <span className="text-sm font-bold text-gray-800 uppercase tracking-wider">
+                  Filters
+                </span>
                 {activeFilterCount > 0 && (
-                  <span className="flex h-4 w-4 items-center justify-center bg-[#009587] text-[10px] font-bold text-white">
+                  <span className="flex h-5 w-5 items-center justify-center bg-[#009587] text-[10px] font-bold text-white">
                     {activeFilterCount}
                   </span>
                 )}
-              </button>
-            </div>
-          </div>
-
-          {/* ── Collapsible Advanced Filter Drawer ────────────────────────── */}
-          {showFilterDrawer && (
-            <div className="mt-3 border-t border-gray-200 pt-4 pb-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Property Type */}
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                    Property Type
-                  </label>
-                  <select
-                    value={propertyType}
-                    onChange={(e) => setPropertyType(e.target.value)}
-                    className="w-full border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
-                  >
-                    {PROPERTY_TYPES.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Furnishing */}
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                    Furnishing
-                  </label>
-                  <select
-                    value={furnishing}
-                    onChange={(e) => setFurnishing(e.target.value)}
-                    className="w-full border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
-                  >
-                    {FURNISHING_OPTIONS.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Preferred Tenant */}
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                    Preferred Tenant
-                  </label>
-                  <select
-                    value={tenantType}
-                    onChange={(e) => setTenantType(e.target.value)}
-                    className="w-full border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
-                  >
-                    {TENANT_OPTIONS.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Availability */}
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                    Availability
-                  </label>
-                  <select
-                    value={availability}
-                    onChange={(e) => setAvailability(e.target.value)}
-                    className="w-full border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
-                  >
-                    {AVAILABILITY_OPTIONS.map((a) => (
-                      <option key={a} value={a}>
-                        {a}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
-
-              {/* Second row: Custom Rent Range + Amenities Checkboxes + Action Buttons */}
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-3">
-                {/* Custom budget min / max */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 font-medium">Rent:</span>
-                  <input
-                    type="number"
-                    value={minRent}
-                    onChange={(e) => setMinRent(e.target.value)}
-                    placeholder="Min ₹"
-                    className="w-24 border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
-                  />
-                  <span className="text-gray-400 text-xs">to</span>
-                  <input
-                    type="number"
-                    value={maxRent}
-                    onChange={(e) => setMaxRent(e.target.value)}
-                    placeholder="Max ₹"
-                    className="w-24 border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-base sm:text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
-                  />
-                </div>
-
-                {/* Checkboxes */}
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-1.5 text-xs text-gray-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={parking}
-                      onChange={(e) => setParking(e.target.checked)}
-                      className="accent-[#009587]"
-                    />
-                    <FaCar className="text-gray-500 text-xs" />
-                    <span>Parking Available</span>
-                  </label>
-                  <label className="flex items-center gap-1.5 text-xs text-gray-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={petFriendly}
-                      onChange={(e) => setPetFriendly(e.target.checked)}
-                      className="accent-[#009587]"
-                    />
-                    <FaPaw className="text-gray-500 text-xs" />
-                    <span>Pet Friendly</span>
-                  </label>
-                </div>
-
-                {/* Action buttons */}
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleResetFilters}
-                    className="border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
-                  >
-                    Reset All
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowFilterDrawer(false)}
-                    className="bg-[#009587] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#007d71] transition"
-                  >
-                    Apply Filters
-                  </button>
-                </div>
-              </div>
+              {activeFilterCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-[11px] font-semibold text-red-500 hover:underline"
+                >
+                  Clear All
+                </button>
+              )}
             </div>
-          )}
+            {renderFilterContent(false)}
+          </aside>
 
-          {/* ── Active Filter Chips Strip ───────────────────────────────── */}
-          {activeFilterCount > 0 && (
-            <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-t border-gray-100 pt-2 text-xs">
-              <span className="text-gray-400 text-[11px] font-medium mr-1">Active:</span>
-              {keyword.trim() && (
-                <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
-                  <span>\"${keyword}\"</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setKeyword("");
-                      setPage(1);
-                      updateUrlParams({ keyword: "" });
-                    }}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              {bhkType !== "All" && (
-                <span className="inline-flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-0.5 text-[#009587] text-[11px] font-medium">
-                  <span>{bhkType}</span>
-                  <button
-                    type="button"
-                    onClick={() => setBhkType("All")}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              {(minRent !== "" || maxRent !== "") && (
-                <span className="inline-flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-0.5 text-[#009587] text-[11px] font-medium">
-                  <span>
-                    {minRent ? `₹${Number(minRent).toLocaleString()}` : "₹0"} -{" "}
-                    {maxRent ? `₹${Number(maxRent).toLocaleString()}` : "Any"}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMinRent("");
-                      setMaxRent("");
-                    }}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              {propertyType !== "All" && (
-                <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
-                  <span>{propertyType}</span>
-                  <button
-                    type="button"
-                    onClick={() => setPropertyType("All")}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              {furnishing !== "All" && (
-                <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
-                  <span>{furnishing}</span>
-                  <button
-                    type="button"
-                    onClick={() => setFurnishing("All")}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              {tenantType !== "All" && (
-                <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
-                  <span>{tenantType}</span>
-                  <button
-                    type="button"
-                    onClick={() => setTenantType("All")}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              {parking && (
-                <span className="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-emerald-700 text-[11px]">
-                  <span>Parking</span>
-                  <button
-                    type="button"
-                    onClick={() => setParking(false)}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              {petFriendly && (
-                <span className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 px-2 py-0.5 text-amber-700 text-[11px]">
-                  <span>Pet Friendly</span>
-                  <button
-                    type="button"
-                    onClick={() => setPetFriendly(false)}
-                    className="hover:text-red-500"
-                  >
-                    <FaXmark className="text-[10px]" />
-                  </button>
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                className="text-[11px] font-semibold text-red-500 hover:underline ml-1"
-              >
-                Clear All
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── Main Content Area ────────────────────────────────────────────── */}
-      <main className="mx-auto max-w-6xl px-3 sm:px-6 py-3 sm:py-4">
-        {error && (
-          <div className="mb-4 border border-red-300 bg-red-50 p-4 text-xs text-red-700 flex items-start gap-3">
-            <FaCircleExclamation className="text-red-600 text-base mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <h4 className="font-bold text-red-800 uppercase tracking-wide">Notice</h4>
-              <p className="mt-0.5">{error}</p>
-            </div>
-            <button
-              onClick={() => setError(null)}
-              className="text-xs text-red-500 hover:text-red-700 font-bold"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
-        {/* Loading skeletons */}
-        {loading && (
-          <div className="space-y-4 sm:space-y-6">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse border border-gray-300 bg-white"
-              >
-                <div className="border-b border-gray-200 p-4 space-y-2">
-                  <div className="h-5 w-1/3 bg-gray-200" />
-                  <div className="h-4 w-1/2 bg-gray-200" />
-                </div>
-                <div className="grid grid-cols-2 border-b border-gray-200 sm:grid-cols-4">
-                  {[...Array(4)].map((_, j) => (
-                    <div key={j} className="h-14 bg-gray-100 mx-4 my-3" />
-                  ))}
-                </div>
-                <div className="p-4 flex gap-4">
-                  <div className="hidden sm:block h-36 w-48 shrink-0 bg-gray-200" />
-                  <div className="flex-1 space-y-3">
-                    <div className="h-4 w-3/4 bg-gray-200" />
-                    <div className="h-4 w-1/2 bg-gray-200" />
-                    <div className="h-9 w-40 bg-gray-200 mt-4" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ── MAP VIEW ──────────────────────────────────────────────────── */}
-        {!loading && viewMode === "map" && properties.length > 0 && (
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-            {/* Left: compact card list */}
-            <div className="w-full lg:w-80 xl:w-96 shrink-0">
-              <p className="mb-2 text-xs text-gray-500 font-medium">
-                {properties.length} listings — click a card to focus on map
-              </p>
-              <div ref={mapListRef} className="space-y-2 lg:max-h-[calc(100vh-260px)] lg:overflow-y-auto lg:pr-1 max-h-72 overflow-y-auto pr-1">
-                {properties.map((property, idx) => {
-                  const dist = formatDistance(property.distance);
-                  const isSel = selectedProperty?._id === property._id;
-                  const photoSrc =
-                    property.photos && property.photos.length > 0
-                      ? property.photos[0]
-                      : DEFAULT_PROPERTY_IMAGE;
-
-                  return (
-                    <div
-                      key={property._id || idx}
-                      onClick={() => setSelectedProperty(property)}
-                      className={`cursor-pointer border bg-white p-3 transition flex gap-3 ${
-                        isSel
-                          ? "border-[#009587] bg-teal-50/40 ring-1 ring-[#009587]"
-                          : "border-gray-300 hover:border-[#009587]"
-                      }`}
+          {/* ── RIGHT LISTINGS & CONTENT AREA ─────────────────────────────── */}
+          <div className="flex-1 min-w-0">
+            {/* Active Filter Chips Strip */}
+            {activeFilterCount > 0 && (
+              <div className="mb-3 flex flex-wrap items-center gap-1.5 bg-white border border-gray-200 p-2.5 text-xs shadow-2xs">
+                <span className="text-gray-400 text-[11px] font-medium mr-1">Active:</span>
+                {keyword.trim() && (
+                  <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
+                    <span>"{keyword}"</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setKeyword("");
+                        setPage(1);
+                        updateUrlParams({ keyword: "" });
+                      }}
+                      className="hover:text-red-500"
                     >
-                      <img
-                        src={photoSrc}
-                        alt={property.title}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/property/${property._id}`);
-                        }}
-                        title="Click to view full property details"
-                        className="h-16 w-20 shrink-0 object-cover border border-gray-200 hover:opacity-90 transition"
-                        onError={(e) => {
-                          e.target.src = DEFAULT_PROPERTY_IMAGE;
-                        }}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-1">
-                          <span className="text-sm font-bold text-[#009587]">
-                            {formatRent(property.rent)}
-                            <span className="text-[10px] font-normal text-gray-500">
-                              /mo
-                            </span>
-                          </span>
-                          {dist && (
-                            <span className="shrink-0 bg-[#009587] px-1.5 py-0.5 text-[9px] font-semibold text-white">
-                              {dist}
-                            </span>
-                          )}
-                        </div>
-                        <h4
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/property/${property._id}`);
-                          }}
-                          className="mt-0.5 truncate text-xs font-semibold text-gray-800 hover:text-[#009587] transition cursor-pointer"
-                          title="Click to view full property details"
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {bhkType !== "All" && (
+                  <span className="inline-flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-0.5 text-[#009587] text-[11px] font-medium">
+                    <span>{bhkType}</span>
+                    <button
+                      type="button"
+                      onClick={() => setBhkType("All")}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {(minRent !== "" || maxRent !== "") && (
+                  <span className="inline-flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-0.5 text-[#009587] text-[11px] font-medium">
+                    <span>
+                      {minRent ? `₹${Number(minRent).toLocaleString()}` : "₹0"} -{" "}
+                      {maxRent ? `₹${Number(maxRent).toLocaleString()}` : "Any"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMinRent("");
+                        setMaxRent("");
+                      }}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {propertyType !== "All" && (
+                  <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
+                    <span>{propertyType}</span>
+                    <button
+                      type="button"
+                      onClick={() => setPropertyType("All")}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {furnishing !== "All" && (
+                  <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
+                    <span>{furnishing}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFurnishing("All")}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {tenantType !== "All" && (
+                  <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
+                    <span>{tenantType}</span>
+                    <button
+                      type="button"
+                      onClick={() => setTenantType("All")}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {availability !== "All" && (
+                  <span className="inline-flex items-center gap-1 bg-gray-100 border border-gray-300 px-2 py-0.5 text-gray-700 text-[11px]">
+                    <span>{availability}</span>
+                    <button
+                      type="button"
+                      onClick={() => setAvailability("All")}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {parking && (
+                  <span className="inline-flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-0.5 text-[#009587] text-[11px]">
+                    <span>Parking</span>
+                    <button
+                      type="button"
+                      onClick={() => setParking(false)}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                {petFriendly && (
+                  <span className="inline-flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-0.5 text-[#009587] text-[11px]">
+                    <span>Pet Friendly</span>
+                    <button
+                      type="button"
+                      onClick={() => setPetFriendly(false)}
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-[11px] font-semibold text-red-500 hover:underline ml-1"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-4 border border-red-300 bg-red-50 p-4 text-xs text-red-700 flex items-start gap-3">
+                <FaCircleExclamation className="text-red-600 text-base mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-bold text-red-800 uppercase tracking-wide">Notice</h4>
+                  <p className="mt-0.5">{error}</p>
+                </div>
+                <button
+                  onClick={() => setError(null)}
+                  className="text-xs text-red-500 hover:text-red-700 font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* Loading skeletons */}
+            {loading && (
+              <div className="space-y-4 sm:space-y-6">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="animate-pulse border border-gray-300 bg-white"
+                  >
+                    <div className="border-b border-gray-200 p-4 space-y-2">
+                      <div className="h-5 w-1/3 bg-gray-200" />
+                      <div className="h-4 w-1/2 bg-gray-200" />
+                    </div>
+                    <div className="grid grid-cols-2 border-b border-gray-200 sm:grid-cols-4">
+                      {[...Array(4)].map((_, j) => (
+                        <div key={j} className="h-14 bg-gray-100 mx-4 my-3" />
+                      ))}
+                    </div>
+                    <div className="p-4 flex gap-4">
+                      <div className="hidden sm:block h-36 w-48 shrink-0 bg-gray-200" />
+                      <div className="flex-1 space-y-3">
+                        <div className="h-4 w-3/4 bg-gray-200" />
+                        <div className="h-4 w-1/2 bg-gray-200" />
+                        <div className="h-9 w-40 bg-gray-200 mt-4" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* ── MAP VIEW ──────────────────────────────────────────────────── */}
+            {!loading && viewMode === "map" && properties.length > 0 && (
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+                {/* Left: compact card list */}
+                <div className="w-full lg:w-80 xl:w-96 shrink-0">
+                  <p className="mb-2 text-xs text-gray-500 font-medium">
+                    {properties.length} listings — click a card to focus on map
+                  </p>
+                  <div ref={mapListRef} className="space-y-2 lg:max-h-[calc(100vh-260px)] lg:overflow-y-auto lg:pr-1 max-h-72 overflow-y-auto pr-1">
+                    {properties.map((property, idx) => {
+                      const dist = formatDistance(property.distance);
+                      const isSel = selectedProperty?._id === property._id;
+                      const photoSrc =
+                        property.photos && property.photos.length > 0
+                          ? property.photos[0]
+                          : DEFAULT_PROPERTY_IMAGE;
+
+                      return (
+                        <div
+                          key={property._id || idx}
+                          onClick={() => setSelectedProperty(property)}
+                          className={`cursor-pointer border bg-white p-3 transition flex gap-3 ${
+                            isSel
+                              ? "border-[#009587] bg-teal-50/40 ring-1 ring-[#009587]"
+                              : "border-gray-300 hover:border-[#009587]"
+                          }`}
                         >
-                          {property.title}
-                        </h4>
-                        <p className="mt-0.5 text-[11px] text-gray-500">
-                          {property.BHKType} • {property.Furnishing}
-                        </p>
-                        <div className="mt-1 flex items-center justify-between gap-1">
-                          <p className="flex items-center gap-1 truncate text-[10px] text-gray-400">
-                            <FaLocationDot className="shrink-0 text-[#009587]" />
-                            {property.locality?.label ||
-                              property.locality?.text ||
-                              ""}
-                          </p>
-                          <button
-                            type="button"
+                          <img
+                            src={photoSrc}
+                            alt={property.title}
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate(`/property/${property._id}`);
                             }}
-                            className="shrink-0 text-[10px] font-semibold text-[#009587] hover:underline"
-                          >
-                            View Details →
-                          </button>
+                            title="Click to view full property details"
+                            className="h-16 w-20 shrink-0 object-cover border border-gray-200 hover:opacity-90 transition"
+                            onError={(e) => {
+                              e.target.src = DEFAULT_PROPERTY_IMAGE;
+                            }}
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-1">
+                              <span className="text-sm font-bold text-[#009587]">
+                                {formatRent(property.rent)}
+                                <span className="text-[10px] font-normal text-gray-500">
+                                  /mo
+                                </span>
+                              </span>
+                              {dist && (
+                                <span className="shrink-0 bg-[#009587] px-1.5 py-0.5 text-[9px] font-semibold text-white">
+                                  {dist}
+                                </span>
+                              )}
+                            </div>
+                            <h4
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/property/${property._id}`);
+                              }}
+                              className="mt-0.5 truncate text-xs font-semibold text-gray-800 hover:text-[#009587] transition cursor-pointer"
+                              title="Click to view full property details"
+                            >
+                              {property.title}
+                            </h4>
+                            <p className="mt-0.5 text-[11px] text-gray-500">
+                              {property.BHKType} • {property.Furnishing}
+                            </p>
+                            <div className="mt-1 flex items-center justify-between gap-1">
+                              <p className="flex items-center gap-1 truncate text-[10px] text-gray-400">
+                                <FaLocationDot className="shrink-0 text-[#009587]" />
+                                {property.locality?.label ||
+                                  property.locality?.text ||
+                                  ""}
+                              </p>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/property/${property._id}`);
+                                }}
+                                className="shrink-0 text-[10px] font-semibold text-[#009587] hover:underline"
+                              >
+                                View Details →
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                      );
+                    })}
 
-                <div className="py-3 text-center">
-                  {loadingMore && (
-                    <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-[#009587]">
-                      <FaSpinner className="animate-spin" />
-                      <span>Loading more properties…</span>
+                    <div className="py-3 text-center">
+                      {loadingMore && (
+                        <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-[#009587]">
+                          <FaSpinner className="animate-spin" />
+                          <span>Loading more properties…</span>
+                        </div>
+                      )}
+                      {hasMore && !loadingMore && (
+                        <button
+                          type="button"
+                          onClick={handleLoadMore}
+                          className="w-full border border-gray-300 bg-white py-2 text-xs font-semibold text-[#009587] hover:bg-teal-50 transition"
+                        >
+                          Load More ({properties.length} of {total})
+                        </button>
+                      )}
+                      {!loading && !hasMore && properties.length > 0 && (
+                        <div className="text-[11px] text-gray-400">
+                          ✓ All {properties.length} properties loaded
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {hasMore && !loadingMore && (
-                    <button
-                      type="button"
-                      onClick={handleLoadMore}
-                      className="w-full border border-gray-300 bg-white py-2 text-xs font-semibold text-[#009587] hover:bg-teal-50 transition"
-                    >
-                      Load More ({properties.length} of {total})
-                    </button>
-                  )}
-                  {!loading && !hasMore && properties.length > 0 && (
-                    <div className="text-[11px] text-gray-400">
-                      ✓ All {properties.length} properties loaded
-                    </div>
-                  )}
+                  </div>
+                </div>
+
+                {/* Right: Map view container */}
+                <div
+                  className="w-full flex-1 lg:sticky lg:top-24 lg:h-[calc(100vh-260px)]"
+                  style={{ minHeight: "420px" }}
+                >
+                  <PropertyMap
+                    properties={properties}
+                    searchLocation={searchLocation}
+                    selectedProperty={selectedProperty}
+                    onSelectProperty={setSelectedProperty}
+                  />
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Right: Map view container */}
-            <div
-              className="w-full flex-1 lg:sticky lg:top-24 lg:h-[calc(100vh-260px)]"
-              style={{ minHeight: "420px" }}
-            >
-              <PropertyMap
-                properties={properties}
-                searchLocation={searchLocation}
-                selectedProperty={selectedProperty}
-                onSelectProperty={setSelectedProperty}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* ── LIST VIEW ─────────────────────────────────────────────────── */}
-        {!loading && viewMode === "list" && properties.length > 0 && (
-          <div
-            ref={listScrollRef}
-            className="h-[calc(100vh-215px)] min-h-[440px] overflow-y-auto overscroll-contain pr-1 sm:pr-2 space-y-4 rounded-none border border-gray-200/80 bg-slate-50/40 p-2 sm:p-4 shadow-xs"
-          >
+            {/* ── LIST VIEW ─────────────────────────────────────────────────── */}
+            {!loading && viewMode === "list" && properties.length > 0 && (
+              <div
+                ref={listScrollRef}
+                className="h-[calc(100vh-170px)] lg:h-[calc(100vh-125px)] min-h-[440px] overflow-y-auto overscroll-contain pr-1 sm:pr-2 space-y-4 rounded-none border border-gray-200/80 bg-slate-50/40 p-2 sm:p-4 shadow-xs"
+              >
             {properties.map((property, idx) => {
               const dist = formatDistance(property.distance);
               const isShortlisted = shortlists.includes(property._id);
@@ -1515,6 +1598,8 @@ function SearchResults() {
             </button>
           </div>
         )}
+          </div>
+        </div>
 
         {/* Floating Back to Top Button */}
         {showScrollTop && (
@@ -1526,6 +1611,61 @@ function SearchResults() {
           >
             <span>↑ Back to Top</span>
           </button>
+        )}
+
+        {/* ── MOBILE SLIDE-OVER FILTER DRAWER ──────────────────────────────── */}
+        {showFilterDrawer && (
+          <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+            {/* Backdrop overlay */}
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
+              onClick={() => setShowFilterDrawer(false)}
+            />
+            {/* Slide-over panel */}
+            <div className="relative w-full max-w-xs sm:max-w-sm h-full bg-white shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-200">
+              <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3.5 bg-gray-50">
+                <div className="flex items-center gap-2">
+                  <FaSliders className="text-[#009587] text-sm" />
+                  <span className="text-sm font-bold text-gray-800 uppercase tracking-wider">
+                    Filters
+                  </span>
+                  {activeFilterCount > 0 && (
+                    <span className="flex h-5 w-5 items-center justify-center bg-[#009587] text-[10px] font-bold text-white">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowFilterDrawer(false)}
+                  className="p-1 text-gray-400 hover:text-gray-700 text-base"
+                >
+                  <FaXmark />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 overscroll-contain">
+                {renderFilterContent(true)}
+              </div>
+
+              <div className="border-t border-gray-200 p-3 bg-gray-50 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="flex-1 border border-gray-300 bg-white py-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 transition"
+                >
+                  Reset All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowFilterDrawer(false)}
+                  className="flex-1 bg-[#009587] py-2.5 text-xs font-bold text-white hover:bg-[#007d71] transition"
+                >
+                  Apply Filters
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </main>
 
