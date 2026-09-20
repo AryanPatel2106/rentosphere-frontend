@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import axios from "axios";
 import api from "../services/api";
 import {
   FaPenToSquare,
@@ -15,6 +16,10 @@ import {
   FaBed,
   FaBath,
   FaRulerCombined,
+  FaCloudArrowUp,
+  FaSpinner,
+  FaStar,
+  FaImage,
 } from "react-icons/fa6";
 import LocalitySearch from "../components/dashboard/LocalitySearch";
 import { useNavigate } from "react-router-dom";
@@ -75,6 +80,11 @@ function PostProperty() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [photoInput, setPhotoInput] = useState("");
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [uploadingCount, setUploadingCount] = useState(0);
+  const [uploadProgressText, setUploadProgressText] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const [propertyDetails, setPropertyDetails] = useState({
@@ -94,7 +104,7 @@ function PostProperty() {
     totalFloors: "",
     parking: true,
     petFriendly: false,
-    photos: [CURATED_SAMPLE_PHOTOS[0].url],
+    photos: [],
     amenities: ["Lift", "Power Backup", "Gated Security"],
     description: "",
   });
@@ -115,7 +125,120 @@ function PostProperty() {
     }));
   };
 
-  // Add photo URL
+  // Upload files to AWS S3
+  const handleFiles = async (files) => {
+    const validFiles = Array.from(files).filter((file) => {
+      if (!file.type.startsWith("image/")) {
+        setError(`"${file.name}" is not an image file.`);
+        return false;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        setError(`"${file.name}" exceeds 10MB limit.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (!validFiles.length) return;
+
+    setError(null);
+    setUploadingCount((prev) => prev + validFiles.length);
+
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
+      setUploadProgressText(
+        `Uploading ${file.name} to S3 (${i + 1}/${validFiles.length})...`
+      );
+
+      try {
+        // 1. Get presigned upload URL from backend
+        const res = await api.post("/property/upload-url", {
+          fileName: file.name,
+          fileType: file.type || "image/jpeg",
+        });
+
+        const { uploadUrl, fileUrl } = res.data.data;
+
+        // 2. Direct binary upload to S3 (standard axios without cookies/auth header)
+        await axios.put(uploadUrl, file, {
+          headers: {
+            "Content-Type": file.type || "image/jpeg",
+          },
+        });
+
+        // 3. Add uploaded S3 URL to property photos
+        setPropertyDetails((prev) => ({
+          ...prev,
+          photos: [...prev.photos, fileUrl],
+        }));
+      } catch (presignedErr) {
+        console.warn(
+          "Direct S3 presigned upload failed, falling back to backend direct upload:",
+          presignedErr
+        );
+        try {
+          const formData = new FormData();
+          formData.append("image", file);
+          const fallbackRes = await api.post("/property/upload-image", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          const fileUrl = fallbackRes.data.data.fileUrl;
+          setPropertyDetails((prev) => ({
+            ...prev,
+            photos: [...prev.photos, fileUrl],
+          }));
+        } catch (fallbackErr) {
+          console.error("Failed to upload image:", fallbackErr);
+          setError(
+            getErrorMessage(fallbackErr, `Failed to upload "${file.name}" to S3.`)
+          );
+        }
+      } finally {
+        setUploadingCount((prev) => Math.max(0, prev - 1));
+      }
+    }
+    setUploadProgressText("");
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleFileInputChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFiles(e.target.files);
+      e.target.value = ""; // Reset input so same file can be re-selected if needed
+    }
+  };
+
+  const handleMakeCoverPhoto = (index) => {
+    if (index === 0) return;
+    setPropertyDetails((prev) => {
+      const nextPhotos = [...prev.photos];
+      const [selected] = nextPhotos.splice(index, 1);
+      nextPhotos.unshift(selected);
+      return { ...prev, photos: nextPhotos };
+    });
+  };
+
+  // Add photo URL (fallback / external URL)
   const handleAddPhoto = () => {
     if (!photoInput.trim()) return;
     if (!photoInput.startsWith("http://") && !photoInput.startsWith("https://")) {
@@ -177,6 +300,14 @@ function PostProperty() {
     }
     if (!propertyDetails.rent || Number(propertyDetails.rent) <= 0) {
       setError("Please enter a valid monthly rent.");
+      return;
+    }
+    if (uploadingCount > 0) {
+      setError("Please wait until all photos finish uploading to S3.");
+      return;
+    }
+    if (!propertyDetails.photos || propertyDetails.photos.length === 0) {
+      setError("Please upload at least one photo of the property.");
       return;
     }
 
@@ -547,69 +678,179 @@ function PostProperty() {
 
             {/* Photos Section */}
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-600">
-                Property Photos
-              </label>
-              <div className="flex gap-2 mb-2">
-                <input
-                  type="url"
-                  value={photoInput}
-                  onChange={(e) => setPhotoInput(e.target.value)}
-                  placeholder="Paste image URL (https://...)"
-                  className="flex-1 border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-700 outline-none focus:border-[#009587] focus:bg-white"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddPhoto}
-                  className="border border-[#009587] bg-teal-50 px-3 py-2 text-xs font-semibold text-[#009587] hover:bg-teal-100 transition flex items-center gap-1"
-                >
-                  <FaPlus className="text-[10px]" /> Add Photo
-                </button>
+              <div className="mb-2 flex items-center justify-between">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600">
+                  Property Photos <span className="text-red-500">*</span>
+                </label>
+                <span className="border border-teal-200 bg-teal-50 px-2 py-0.5 text-[11px] font-semibold text-[#009587]">
+                  AWS S3 Secure Storage
+                </span>
               </div>
 
-              {/* Curated Sample Photos Chips */}
-              <div className="mb-3">
-                <span className="text-[11px] text-gray-400 block mb-1">
-                  Or add sample photos in 1-click:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {CURATED_SAMPLE_PHOTOS.map((sample) => (
-                    <button
-                      key={sample.label}
-                      type="button"
-                      onClick={() => {
-                        if (!propertyDetails.photos.includes(sample.url)) {
-                          setPropertyDetails((prev) => ({
-                            ...prev,
-                            photos: [...prev.photos, sample.url],
-                          }));
-                        }
-                      }}
-                      className="border border-gray-200 bg-gray-50 px-2 py-1 text-[11px] text-gray-600 hover:border-[#009587] transition"
-                    >
-                      + {sample.label}
-                    </button>
-                  ))}
+              {/* Hidden Native File Input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/jpeg,image/png,image/webp,image/jpg,image/heic,image/heif"
+                onChange={handleFileInputChange}
+                className="hidden"
+              />
+
+              {/* Drag & Drop Upload Zone */}
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`cursor-pointer border-2 border-dashed p-6 text-center transition ${
+                  isDragging
+                    ? "border-[#009587] bg-teal-50"
+                    : "border-gray-300 bg-gray-50 hover:border-[#009587] hover:bg-teal-50/20"
+                }`}
+              >
+                <div className="flex flex-col items-center justify-center">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center bg-teal-100 text-[#009587]">
+                    {uploadingCount > 0 ? (
+                      <FaSpinner className="animate-spin text-xl text-[#009587]" />
+                    ) : (
+                      <FaCloudArrowUp className="text-2xl text-[#009587]" />
+                    )}
+                  </div>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {uploadingCount > 0
+                      ? uploadProgressText || "Uploading photos to S3..."
+                      : "Click to upload photos or drag and drop"}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Supports JPG, PNG, WEBP up to 10MB each (Multi-select enabled)
+                  </p>
+                  <button
+                    type="button"
+                    disabled={uploadingCount > 0}
+                    className="mt-3 bg-[#009587] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#007d70] disabled:opacity-50"
+                  >
+                    Select Images From Computer
+                  </button>
                 </div>
               </div>
 
-              {/* Photo Previews */}
-              {propertyDetails.photos.length > 0 && (
-                <div className="flex flex-wrap gap-3 pt-1">
-                  {propertyDetails.photos.map((url, i) => (
-                    <div key={i} className="relative h-20 w-24 border border-gray-200 overflow-hidden group">
-                      <img src={url} alt="Uploaded preview" className="h-full w-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => handleRemovePhoto(i)}
-                        className="absolute top-1 right-1 bg-black/70 p-1 text-white hover:bg-red-600 transition text-[10px]"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  ))}
+              {/* Upload Progress Indicator */}
+              {uploadingCount > 0 && (
+                <div className="mt-2 flex items-center justify-between border border-teal-200 bg-teal-50 p-2.5 text-xs text-teal-800">
+                  <span className="flex items-center gap-2">
+                    <FaSpinner className="animate-spin text-[#009587]" />
+                    {uploadProgressText || `Uploading ${uploadingCount} photo(s) to S3...`}
+                  </span>
+                  <span className="font-semibold text-teal-900">Direct S3 Upload</span>
                 </div>
               )}
+
+              {/* Uploaded Photos Gallery */}
+              {propertyDetails.photos.length > 0 && (
+                <div className="mt-4">
+                  <div className="mb-2 flex items-center justify-between text-xs font-semibold text-gray-600">
+                    <span>Uploaded Photos ({propertyDetails.photos.length})</span>
+                    <span className="text-[11px] text-gray-400">
+                      First photo is the Cover Image shown to tenants
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                    {propertyDetails.photos.map((url, i) => (
+                      <div
+                        key={i}
+                        className="group relative border border-gray-300 bg-white overflow-hidden shadow-xs"
+                      >
+                        <div className="aspect-4/3 w-full overflow-hidden bg-gray-100">
+                          <img
+                            src={url}
+                            alt={`Property photo ${i + 1}`}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        {i === 0 ? (
+                          <span className="absolute top-1 left-1 bg-[#009587] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
+                            Cover Photo
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleMakeCoverPhoto(i)}
+                            className="absolute top-1 left-1 flex items-center gap-1 bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white opacity-0 transition group-hover:opacity-100 hover:bg-[#009587] shadow-xs"
+                          >
+                            <FaStar className="text-[9px]" /> Make Cover
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleRemovePhoto(i)}
+                          title="Remove photo"
+                          className="absolute top-1 right-1 bg-black/70 p-1 text-xs text-white transition hover:bg-red-600"
+                        >
+                          <FaTrash className="text-[10px]" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Optional URL or Sample Photos Toggle */}
+              <div className="mt-3 border-t border-gray-200 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowUrlInput(!showUrlInput)}
+                  className="flex items-center gap-1 text-xs font-semibold text-[#009587] hover:underline"
+                >
+                  {showUrlInput
+                    ? "- Hide external photo options"
+                    : "+ Paste image URL or pick sample photos"}
+                </button>
+                {showUrlInput && (
+                  <div className="mt-2 space-y-3 border border-gray-200 bg-gray-50 p-3">
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={photoInput}
+                        onChange={(e) => setPhotoInput(e.target.value)}
+                        placeholder="Paste image URL (https://...)"
+                        className="flex-1 border border-gray-300 bg-white px-3 py-2 text-xs text-gray-700 outline-none focus:border-[#009587]"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddPhoto}
+                        className="flex items-center gap-1 border border-[#009587] bg-[#009587] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#007d70]"
+                      >
+                        <FaPlus className="text-[10px]" /> Add URL
+                      </button>
+                    </div>
+                    <div>
+                      <span className="mb-1 block text-[11px] text-gray-500">
+                        Sample verified photos:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {CURATED_SAMPLE_PHOTOS.map((sample) => (
+                          <button
+                            key={sample.label}
+                            type="button"
+                            onClick={() => {
+                              if (!propertyDetails.photos.includes(sample.url)) {
+                                setPropertyDetails((prev) => ({
+                                  ...prev,
+                                  photos: [...prev.photos, sample.url],
+                                }));
+                              }
+                            }}
+                            className="border border-gray-300 bg-white px-2 py-1 text-[11px] text-gray-600 transition hover:border-[#009587] hover:text-[#009587]"
+                          >
+                            + {sample.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Description */}
