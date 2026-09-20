@@ -253,10 +253,10 @@ export default function PayRent(props) {
   const selectedRental = rentals.find((r) => r._id === selectedRentalId) || rentals[0];
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8f9fa] py-4 sm:py-8 px-3 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         {/* ── Page Header ──────────────────────────────────────────────── */}
-        <div className="mb-6 flex flex-col items-start justify-between gap-4 border-b border-gray-300 bg-white p-6 sm:flex-row sm:items-center">
+        <div className="mb-6 flex flex-col items-start justify-between gap-4 border-b border-gray-300 bg-white p-4 sm:p-6 sm:flex-row sm:items-center">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold uppercase tracking-wide text-gray-800 sm:text-2xl">
@@ -381,10 +381,10 @@ export default function PayRent(props) {
         )}
 
         {/* ── Mode Switch Tabs ─────────────────────────────────────────── */}
-        <div className="mb-6 flex border-b border-gray-300 bg-white px-4">
+        <div className="mb-6 flex border-b border-gray-300 bg-white px-2 sm:px-4 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveView("rentals")}
-            className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs font-bold uppercase tracking-wide transition ${
+            className={`flex shrink-0 items-center gap-2 border-b-2 py-3 px-3 sm:px-4 text-xs font-bold uppercase tracking-wide transition whitespace-nowrap ${
               activeView === "rentals"
                 ? "border-[#009587] text-[#009587]"
                 : "border-transparent text-gray-500 hover:text-gray-800"
@@ -395,7 +395,7 @@ export default function PayRent(props) {
           </button>
           <button
             onClick={() => setActiveView("direct")}
-            className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs font-bold uppercase tracking-wide transition ${
+            className={`flex shrink-0 items-center gap-2 border-b-2 py-3 px-3 sm:px-4 text-xs font-bold uppercase tracking-wide transition whitespace-nowrap ${
               activeView === "direct"
                 ? "border-[#009587] text-[#009587]"
                 : "border-transparent text-gray-500 hover:text-gray-800"

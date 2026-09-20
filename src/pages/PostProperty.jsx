@@ -469,8 +469,8 @@ function PostProperty() {
       </section>
 
       {/* ── Form Section ──────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
-        <div className="border border-gray-200 bg-white p-6 sm:p-8 shadow-xs">
+      <section className="mx-auto max-w-3xl px-3 pb-16 sm:px-6">
+        <div className="border border-gray-200 bg-white p-4 sm:p-8 shadow-xs">
           <div className="mb-6 flex items-center gap-2 border-b border-gray-100 pb-4">
             <FaCircleInfo className="text-[#009587]" />
             <p className="text-xs sm:text-sm text-gray-600">
@@ -847,9 +847,10 @@ function PostProperty() {
                       disabled={uploadingCount > 0}
                       className="pointer-events-auto bg-[#009587] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#007d70] disabled:opacity-50"
                     >
-                      Select Images From Computer
+                      <span className="sm:hidden">Choose Photos</span>
+                      <span className="hidden sm:inline">Select Images From Computer</span>
                     </button>
-                    <span className="pointer-events-auto inline-flex items-center gap-1.5 border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-600">
+                    <span className="pointer-events-auto hidden sm:inline-flex items-center gap-1.5 border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-600">
                       <FaPaste className="text-[#009587]" />
                       Paste Screenshot / Image (Ctrl+V)
                     </span>
@@ -898,7 +899,7 @@ function PostProperty() {
                           <button
                             type="button"
                             onClick={() => handleMakeCoverPhoto(i)}
-                            className="absolute top-1 left-1 flex items-center gap-1 bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white opacity-0 transition group-hover:opacity-100 hover:bg-[#009587] shadow-xs"
+                            className="absolute top-1 left-1 flex items-center gap-1 bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-[#009587] shadow-xs"
                           >
                             <FaStar className="text-[9px]" /> Make Cover
                           </button>
@@ -930,7 +931,7 @@ function PostProperty() {
                 </button>
                 {showUrlInput && (
                   <div className="mt-2 space-y-3 border border-gray-200 bg-gray-50 p-3">
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         type="url"
                         value={photoInput}
@@ -941,7 +942,7 @@ function PostProperty() {
                       <button
                         type="button"
                         onClick={handleAddPhoto}
-                        className="flex items-center gap-1 border border-[#009587] bg-[#009587] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#007d70]"
+                        className="flex items-center justify-center gap-1 border border-[#009587] bg-[#009587] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#007d70]"
                       >
                         <FaPlus className="text-[10px]" /> Add URL
                       </button>

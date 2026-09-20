@@ -256,7 +256,7 @@ export default function PropertyDetails() {
 
       <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
         {/* ── HEADER CARD ─────────────────────────────────────────────────── */}
-        <div className="border border-gray-300 bg-white p-6 shadow-xs">
+        <div className="border border-gray-300 bg-white p-4 sm:p-6 shadow-xs">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
@@ -386,115 +386,115 @@ export default function PropertyDetails() {
             </div>
 
             {/* OVERVIEW SPECIFICATIONS METRICS */}
-            <div className="border border-gray-300 bg-white p-6 shadow-xs">
+            <div className="border border-gray-300 bg-white p-4 sm:p-6 shadow-xs">
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700 mb-4 pb-2 border-b border-gray-200">
                 Property Overview
               </h2>
 
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 text-xs">
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaBed className="text-[#009587]" /> BHK Type
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 sm:grid-cols-3 md:grid-cols-4 text-xs">
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaBed className="text-[#009587] shrink-0" /> BHK Type
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">{property.BHKType || "—"}</p>
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">{property.BHKType || "—"}</p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaRulerCombined className="text-[#009587]" /> Built-up Area
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaRulerCombined className="text-[#009587] shrink-0" /> Built-up Area
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">
                     {property.builtUpArea ? `${property.builtUpArea} sqft` : "On Request"}
                   </p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaHouse className="text-[#009587]" /> Furnishing
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaHouse className="text-[#009587] shrink-0" /> Furnishing
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">
                     {property.Furnishing || "Semi-Furnished"}
                   </p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaBath className="text-[#009587]" /> Bathrooms
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaBath className="text-[#009587] shrink-0" /> Bathrooms
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">{property.bathrooms || "—"}</p>
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">{property.bathrooms || "—"}</p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaBuilding className="text-[#009587]" /> Floor
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaBuilding className="text-[#009587] shrink-0" /> Floor
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">
                     {property.floor
                       ? `${property.floor}${property.totalFloors ? ` of ${property.totalFloors}` : ""}`
                       : "—"}
                   </p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaUserGroup className="text-[#009587]" /> Preferred Tenant
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaUserGroup className="text-[#009587] shrink-0" /> Tenant
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">
                     {property.preferredTenant || "Anyone"}
                   </p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaRegCalendarDays className="text-[#009587]" /> Availability
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaRegCalendarDays className="text-[#009587] shrink-0" /> Availability
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">
                     {property.Availability || "Immediate"}
                   </p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaCar className="text-[#009587]" /> Parking
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaCar className="text-[#009587] shrink-0" /> Parking
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">
                     {property.Parking ? "Available" : "No"}
                   </p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaPaw className="text-[#009587]" /> Pet Friendly
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaPaw className="text-[#009587] shrink-0" /> Pet Friendly
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">
                     {property.PetFriendly ? "Yes" : "No"}
                   </p>
                 </div>
 
-                <div className="border border-gray-200 bg-gray-50 p-3.5">
-                  <span className="flex items-center gap-1.5 text-gray-500 font-medium">
-                    <FaLayerGroup className="text-[#009587]" /> Balconies
+                <div className="border border-gray-200 bg-gray-50 p-2.5 sm:p-3.5 min-w-0">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-medium text-[11px] sm:text-xs truncate">
+                    <FaLayerGroup className="text-[#009587] shrink-0" /> Balconies
                   </span>
-                  <p className="mt-1 text-sm font-bold text-gray-800">{property.balconies || "—"}</p>
+                  <p className="mt-1 text-sm font-bold text-gray-800 truncate">{property.balconies || "—"}</p>
                 </div>
               </div>
             </div>
 
             {/* AMENITIES */}
-            <div className="border border-gray-300 bg-white p-6 shadow-xs">
+            <div className="border border-gray-300 bg-white p-4 sm:p-6 shadow-xs">
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700 mb-4 pb-2 border-b border-gray-200">
                 Amenities & Features
               </h2>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
                 {property.amenities && property.amenities.length > 0 ? (
                   property.amenities.map((amenity, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700 font-medium"
+                      className="flex items-center gap-2 border border-gray-200 bg-gray-50 px-2.5 py-2 text-gray-700 font-medium"
                     >
                       <FaCheck className="text-[#009587] text-xs shrink-0" />
-                      <span>{amenity}</span>
+                      <span className="truncate">{amenity}</span>
                     </div>
                   ))
                 ) : (
@@ -506,7 +506,7 @@ export default function PropertyDetails() {
             </div>
 
             {/* DESCRIPTION */}
-            <div className="border border-gray-300 bg-white p-6 shadow-xs">
+            <div className="border border-gray-300 bg-white p-4 sm:p-6 shadow-xs">
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700 mb-4 pb-2 border-b border-gray-200">
                 About this Property
               </h2>
@@ -517,14 +517,14 @@ export default function PropertyDetails() {
             </div>
 
             {/* LOCATION MAP */}
-            <div className="border border-gray-300 bg-white p-6 shadow-xs">
+            <div className="border border-gray-300 bg-white p-4 sm:p-6 shadow-xs">
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-700 mb-2">
                 Locality & Surrounding Map
               </h2>
               <p className="text-xs text-gray-500 mb-4">
                 📍 {localityText}
               </p>
-              <div className="h-72 w-full border border-gray-200 overflow-hidden">
+              <div className="h-64 sm:h-72 w-full border border-gray-200 overflow-hidden">
                 <PropertyMap
                   properties={[property]}
                   selectedProperty={property}
@@ -544,7 +544,7 @@ export default function PropertyDetails() {
           {/* Right Column: Owner & Action Sidebar */}
           <div className="space-y-6">
             {/* OWNER & APPLICATION CARD */}
-            <div className="border border-gray-300 bg-white p-6 shadow-xs sticky top-20">
+            <div className="border border-gray-300 bg-white p-4 sm:p-6 shadow-xs sticky top-20">
               <div className="border-b border-gray-200 pb-4 mb-4">
                 <span className="border border-teal-200 bg-teal-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#009587]">
                   Direct Owner Listing
@@ -617,8 +617,8 @@ export default function PropertyDetails() {
 
       {/* ── OWNER CONTACT MODAL ────────────────────────────────────────────── */}
       {showOwnerModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="relative w-full max-w-md border border-gray-200 bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
+          <div className="relative w-full max-w-md border border-gray-200 bg-white p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               type="button"
               onClick={() => setShowOwnerModal(false)}
@@ -681,8 +681,8 @@ export default function PropertyDetails() {
 
       {/* ── RENTAL APPLICATION MODAL ───────────────────────────────────────── */}
       {showRentalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="relative w-full max-w-lg border border-gray-200 bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
+          <div className="relative w-full max-w-lg border border-gray-200 bg-white p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               type="button"
               onClick={() => {
@@ -785,7 +785,10 @@ export default function PropertyDetails() {
       )}
 
       {/* ── MOBILE STICKY ACTION BAR ─────────────────────────────────────── */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-300 bg-white/95 backdrop-blur px-4 py-3 shadow-lg lg:hidden flex items-center justify-between gap-3">
+      <div
+        className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-300 bg-white/95 backdrop-blur px-4 py-3 shadow-lg lg:hidden flex items-center justify-between gap-3"
+        style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom, 12px))" }}
+      >
         <div className="min-w-0">
           <span className="text-base font-bold text-[#009587]">
             {formatRent(property.rent)}

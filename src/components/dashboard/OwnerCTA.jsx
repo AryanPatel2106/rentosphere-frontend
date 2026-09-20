@@ -4,12 +4,12 @@ function OwnerCTA() {
   const navigate = useNavigate();
   return (
     <section className="mt-12 flex flex-col items-center px-4 pb-14">
-      <div className="flex items-center gap-4">
-        <div className="h-px w-16 bg-gray-300 sm:w-24"></div>
-        <p className="text-center text-sm font-bold uppercase tracking-wider text-gray-700 sm:text-base">
+      <div className="flex items-center gap-2 sm:gap-4 max-w-full">
+        <div className="h-px w-6 sm:w-24 bg-gray-300 shrink-0"></div>
+        <p className="text-center text-xs sm:text-base font-bold uppercase tracking-wider text-gray-700">
           Are you a Property Owner or Landlord?
         </p>
-        <div className="h-px w-16 bg-gray-300 sm:w-24"></div>
+        <div className="h-px w-6 sm:w-24 bg-gray-300 shrink-0"></div>
       </div>
 
       <p className="mt-2 text-center text-xs text-gray-500 max-w-md leading-relaxed">

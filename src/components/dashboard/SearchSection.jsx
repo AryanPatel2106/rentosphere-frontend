@@ -204,38 +204,42 @@ function SearchSection() {
             ))}
           </div>
 
-          {/* Budget Presets */}
-          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none">
-            <span className="text-xs font-semibold text-gray-600 mr-1 shrink-0">
-              Budget:
-            </span>
-            {BUDGET_PRESETS.map((preset) => {
-              const isSelected =
-                minRent === preset.min && maxRent === preset.max;
-              return (
-                <button
-                  key={preset.label}
-                  type="button"
-                  onClick={() => handleBudgetPreset(preset)}
-                  className={`shrink-0 px-3 py-1.5 text-xs font-medium transition ${
-                    isSelected
-                      ? "bg-[#009587] text-white font-semibold"
-                      : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-                  }`}
-                >
-                  {preset.label}
-                </button>
-              );
-            })}
+          {/* Budget Presets & Custom Rent */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+            {/* Quick Budget Chips */}
+            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none flex-1">
+              <span className="text-xs font-semibold text-gray-600 mr-1 shrink-0">
+                Budget:
+              </span>
+              {BUDGET_PRESETS.map((preset) => {
+                const isSelected =
+                  minRent === preset.min && maxRent === preset.max;
+                return (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => handleBudgetPreset(preset)}
+                    className={`shrink-0 px-3 py-1.5 text-xs font-medium transition ${
+                      isSelected
+                        ? "bg-[#009587] text-white font-semibold"
+                        : "border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
+            </div>
 
             {/* Custom Min / Max Rent Inputs */}
-            <div className="flex items-center gap-1.5 sm:ml-auto text-xs shrink-0">
+            <div className="flex items-center gap-1.5 text-xs shrink-0 pt-1 sm:pt-0 sm:border-l sm:border-gray-200 sm:pl-3">
+              <span className="text-xs text-gray-500 font-medium sm:hidden">Custom:</span>
               <input
                 type="number"
                 placeholder="Min ₹"
                 value={minRent}
                 onChange={(e) => setMinRent(e.target.value)}
-                className="w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
+                className="flex-1 sm:w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
               />
               <span className="text-gray-400 font-bold">-</span>
               <input
@@ -243,7 +247,7 @@ function SearchSection() {
                 placeholder="Max ₹"
                 value={maxRent}
                 onChange={(e) => setMaxRent(e.target.value)}
-                className="w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
+                className="flex-1 sm:w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
               />
             </div>
           </div>

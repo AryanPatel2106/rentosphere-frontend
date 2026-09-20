@@ -548,9 +548,9 @@ function SearchResults() {
       <section className="sticky top-0 z-20 border-b border-gray-200 bg-white/95 backdrop-blur shadow-xs">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
           {/* Top filter row: Keyword Search + Quick BHK + Budget + Filter Drawer Toggle + Sort */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
             {/* Search within listings input */}
-            <div className="relative flex-1 min-w-[180px] max-w-xs">
+            <div className="relative w-full sm:w-auto sm:flex-1 sm:max-w-xs">
               <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
               <input
                 type="text"
@@ -581,92 +581,95 @@ function SearchResults() {
               )}
             </div>
 
-            {/* Quick BHK pills */}
-            <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-              {BHK_OPTIONS.map((opt) => {
-                const isSelected = bhkType === opt;
-                return (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => setBhkType(opt)}
-                    className={`whitespace-nowrap px-3 py-1.5 text-xs font-medium border transition ${
-                      isSelected
-                        ? "border-[#009587] bg-[#009587] text-white"
-                        : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-white"
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Budget Presets Dropdown */}
-            <div className="relative">
-              <select
-                value={
-                  BUDGET_PRESETS.find(
-                    (p) => p.min === minRent && p.max === maxRent
-                  )?.label || "Custom Budget"
-                }
-                onChange={(e) => {
-                  const found = BUDGET_PRESETS.find(
-                    (p) => p.label === e.target.value
+            {/* Quick Filters Row (horizontal scroll on mobile) */}
+            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none flex-1">
+              {/* Quick BHK pills */}
+              <div className="flex items-center gap-1 shrink-0">
+                {BHK_OPTIONS.map((opt) => {
+                  const isSelected = bhkType === opt;
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => setBhkType(opt)}
+                      className={`whitespace-nowrap px-3 py-1.5 text-xs font-medium border transition ${
+                        isSelected
+                          ? "border-[#009587] bg-[#009587] text-white"
+                          : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-white"
+                      }`}
+                    >
+                      {opt}
+                    </button>
                   );
-                  if (found) {
-                    setMinRent(found.min);
-                    setMaxRent(found.max);
+                })}
+              </div>
+
+              {/* Budget Presets Dropdown */}
+              <div className="relative shrink-0">
+                <select
+                  value={
+                    BUDGET_PRESETS.find(
+                      (p) => p.min === minRent && p.max === maxRent
+                    )?.label || "Custom Budget"
                   }
-                }}
-                className="border border-gray-300 bg-gray-50 px-3 py-1.5 text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
-              >
-                {BUDGET_PRESETS.map((p) => (
-                  <option key={p.label} value={p.label}>
-                    {p.label}
-                  </option>
-                ))}
-                {minRent !== "" &&
-                  maxRent !== "" &&
-                  !BUDGET_PRESETS.some(
-                    (p) => p.min === minRent && p.max === maxRent
-                  ) && <option value="Custom Budget">Custom Budget</option>}
-              </select>
-            </div>
+                  onChange={(e) => {
+                    const found = BUDGET_PRESETS.find(
+                      (p) => p.label === e.target.value
+                    );
+                    if (found) {
+                      setMinRent(found.min);
+                      setMaxRent(found.max);
+                    }
+                  }}
+                  className="border border-gray-300 bg-gray-50 px-3 py-1.5 text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
+                >
+                  {BUDGET_PRESETS.map((p) => (
+                    <option key={p.label} value={p.label}>
+                      {p.label}
+                    </option>
+                  ))}
+                  {minRent !== "" &&
+                    maxRent !== "" &&
+                    !BUDGET_PRESETS.some(
+                      (p) => p.min === minRent && p.max === maxRent
+                    ) && <option value="Custom Budget">Custom Budget</option>}
+                </select>
+              </div>
 
-            {/* Sort Dropdown */}
-            <div className="relative ml-auto flex items-center gap-1">
-              <FaArrowDownWideShort className="text-gray-400 text-xs hidden sm:inline" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
-              >
-                <option value="nearest">Nearest First</option>
-                <option value="rent_asc">Price: Low to High</option>
-                <option value="rent_desc">Price: High to Low</option>
-                <option value="newest">Newest First</option>
-              </select>
-            </div>
+              {/* Sort Dropdown */}
+              <div className="relative shrink-0 flex items-center gap-1 sm:ml-auto">
+                <FaArrowDownWideShort className="text-gray-400 text-xs hidden sm:inline" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="border border-gray-300 bg-gray-50 px-2.5 py-1.5 text-xs text-gray-700 outline-none transition focus:border-[#009587] focus:bg-white"
+                >
+                  <option value="nearest">Nearest First</option>
+                  <option value="rent_asc">Price: Low to High</option>
+                  <option value="rent_desc">Price: High to Low</option>
+                  <option value="newest">Newest First</option>
+                </select>
+              </div>
 
-            {/* More Filters Toggle Button */}
-            <button
-              type="button"
-              onClick={() => setShowFilterDrawer((prev) => !prev)}
-              className={`flex items-center gap-1.5 border px-3 py-1.5 text-xs font-semibold transition ${
-                showFilterDrawer || activeFilterCount > 0
-                  ? "border-[#009587] bg-teal-50 text-[#009587]"
-                  : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <FaSliders className="text-xs" />
-              <span>Filters</span>
-              {activeFilterCount > 0 && (
-                <span className="flex h-4 w-4 items-center justify-center bg-[#009587] text-[10px] font-bold text-white">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
+              {/* More Filters Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowFilterDrawer((prev) => !prev)}
+                className={`shrink-0 flex items-center gap-1.5 border px-3 py-1.5 text-xs font-semibold transition ${
+                  showFilterDrawer || activeFilterCount > 0
+                    ? "border-[#009587] bg-teal-50 text-[#009587]"
+                    : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <FaSliders className="text-xs" />
+                <span>Filters</span>
+                {activeFilterCount > 0 && (
+                  <span className="flex h-4 w-4 items-center justify-center bg-[#009587] text-[10px] font-bold text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* ── Collapsible Advanced Filter Drawer ────────────────────────── */}
@@ -1170,7 +1173,7 @@ function SearchResults() {
 
                   {/* Metrics Strip */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-gray-200 text-center text-xs">
-                    <div className="border-b border-r border-gray-200 p-3 sm:border-b-0">
+                    <div className="border-b border-r border-gray-200 px-2 py-2.5 sm:p-3 sm:border-b-0">
                       <span className="block font-medium text-gray-500">
                         BHK Type
                       </span>
@@ -1180,7 +1183,7 @@ function SearchResults() {
                       </span>
                     </div>
 
-                    <div className="border-b border-gray-200 p-3 sm:border-b-0 sm:border-r">
+                    <div className="border-b border-gray-200 px-2 py-2.5 sm:p-3 sm:border-b-0 sm:border-r">
                       <span className="block font-medium text-gray-500">
                         Built-up Area
                       </span>
@@ -1192,20 +1195,20 @@ function SearchResults() {
                       </span>
                     </div>
 
-                    <div className="border-r border-gray-200 p-3">
+                    <div className="border-r border-gray-200 px-2 py-2.5 sm:p-3">
                       <span className="block font-medium text-gray-500">
                         Furnishing
                       </span>
-                      <span className="mt-1 block text-sm font-semibold text-gray-800">
+                      <span className="mt-1 block text-sm font-semibold text-gray-800 truncate">
                         {property.Furnishing || "—"}
                       </span>
                     </div>
 
-                    <div className="p-3">
+                    <div className="px-2 py-2.5 sm:p-3">
                       <span className="block font-medium text-gray-500">
                         Availability
                       </span>
-                      <span className="mt-1 block text-sm font-semibold text-gray-800">
+                      <span className="mt-1 block text-sm font-semibold text-gray-800 truncate">
                         {property.Availability || "Immediate"}
                       </span>
                     </div>
@@ -1376,8 +1379,8 @@ function SearchResults() {
 
       {/* ── Owner Contact Details Modal ─────────────────────────────────── */}
       {ownerModalProperty && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="relative w-full max-w-md border border-gray-200 bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
+          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto border border-gray-200 bg-white p-5 sm:p-6 shadow-xl">
             <button
               type="button"
               onClick={() => {
@@ -1480,8 +1483,8 @@ function SearchResults() {
 
       {/* ── Rental Request Application Modal ───────────────────────────────── */}
       {rentalModalProperty && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="relative w-full max-w-lg border border-gray-200 bg-white p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto border border-gray-200 bg-white p-5 sm:p-6 shadow-2xl">
             <button
               type="button"
               onClick={() => {

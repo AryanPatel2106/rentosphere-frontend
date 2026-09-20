@@ -69,17 +69,18 @@ function Login({ isOpen, onClose, setShowSignup }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="relative w-full max-w-3xl overflow-hidden bg-white shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4">
+      <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-lg text-gray-500 hover:text-black"
+          className="absolute top-4 right-4 z-10 text-xl text-gray-500 hover:text-black p-1"
+          aria-label="Close"
         >
           <IoClose />
         </button>
 
         <div className="grid md:grid-cols-2">
-          <div className="hidden flex-col justify-center bg-gray-50 p-10 md:flex">
+          <div className="hidden flex-col justify-center bg-gray-50 p-8 md:p-10 md:flex">
             <div className="flex h-16 w-16 items-center justify-center bg-[#009587]">
               <FaHouse className="text-3xl text-white" />
             </div>
@@ -97,10 +98,10 @@ function Login({ isOpen, onClose, setShowSignup }) {
           </div>
 
           {forgotPasswordOpen ? (<>
-            <div className="flex flex-col justify-center p-8 md:p-10">
-              <h2 className="text-2xl font-bold text-gray-800">Forgot Password</h2>
+            <div className="flex flex-col justify-center p-5 sm:p-8 md:p-10">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Forgot Password</h2>
 
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">
                 Enter your registered email address to receive a secure password reset link.
               </p>
 
@@ -122,7 +123,7 @@ function Login({ isOpen, onClose, setShowSignup }) {
                   type="email"
                   placeholder="Enter your email"
                   value={email}
-                  className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#009587]"
+                  className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
                   onChange={(e) => {
                     setEmail(e.target.value);
                     if (forgotMsg.text) setForgotMsg({ text: "", isError: false });
@@ -155,10 +156,10 @@ function Login({ isOpen, onClose, setShowSignup }) {
               </form>
             </div>
           </>) : (<>
-            <div className="flex flex-col justify-center p-8 md:p-10">
-              <h2 className="text-2xl font-bold text-gray-800">Account Login</h2>
+            <div className="flex flex-col justify-center p-5 sm:p-8 md:p-10">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Account Login</h2>
 
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">
                 Enter your credentials to access your properties, applications, and payments.
               </p>
 
@@ -174,7 +175,7 @@ function Login({ isOpen, onClose, setShowSignup }) {
                   type="email"
                   placeholder="Enter your email"
                   value={email}
-                  className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#009587]"
+                  className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
                   onChange={(e) => {
                     setEmail(e.target.value);
                     if (error) setError("");
@@ -186,7 +187,7 @@ function Login({ isOpen, onClose, setShowSignup }) {
                   type="password"
                   placeholder="Enter your password"
                   value={password}
-                  className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#009587]"
+                  className="w-full border border-gray-300 px-4 py-2.5 sm:py-3 text-base sm:text-sm outline-none focus:border-[#009587]"
                   onChange={(e) => {
                     setPassword(e.target.value);
                     if (error) setError("");

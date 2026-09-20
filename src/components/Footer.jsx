@@ -19,7 +19,7 @@ import { FaGithub } from "react-icons/fa";
 function Footer() {
   return (
     <footer className="mt-16 border-t border-gray-300 bg-gray-100">
-      <div className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-12">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
           <div className="lg:col-span-2">
@@ -144,8 +144,8 @@ function Footer() {
 
             <div className="space-y-4 text-sm text-gray-600">
               <div className="flex gap-3">
-                <FaEnvelope className="mt-1 text-[#009587]" />
-                <span>aryanpatel80822@gmail.com</span>
+                <FaEnvelope className="mt-1 text-[#009587] shrink-0" />
+                <span className="break-all">aryanpatel80822@gmail.com</span>
               </div>
 
               <div className="flex gap-3">

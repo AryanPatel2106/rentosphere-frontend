@@ -139,11 +139,11 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
             {singleSelect ? (
                 <div className="flex min-h-[48px] items-center gap-2 px-3">
                     {selected.length > 0 ? (
-                        <div className="flex flex-1 flex-col justify-center py-2 text-left">
-                            <span className="text-[15px] font-medium text-gray-700">
+                        <div className="flex flex-1 flex-col justify-center py-2 text-left min-w-0">
+                            <span className="text-sm sm:text-[15px] font-medium text-gray-700 truncate">
                                 {selected[0].label || selected[0].text}
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-500 truncate">
                                 {selected[0].text}
                             </span>
                         </div>
@@ -160,7 +160,7 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                                 if (suggestions.length) setShowDropdown(true);
                             }}
                             placeholder="Search locality, landmark, or area (e.g. Koramangala, Whitefield)..."
-                            className="min-w-[180px] flex-1 py-2 text-base sm:text-sm text-gray-700 outline-none"
+                            className="min-w-[120px] flex-1 py-2 text-base sm:text-sm text-gray-700 outline-none"
                         />
                     )}
 
@@ -168,7 +168,7 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                         <button
                             type="button"
                             onClick={clearLocality}
-                            className="text-sm text-gray-500 hover:text-gray-700"
+                            className="text-sm text-gray-500 hover:text-gray-700 shrink-0"
                         >
                             Clear
                         </button>
@@ -179,13 +179,14 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                     {selected.map((item) => (
                         <div
                             key={item.placeId}
-                            className="flex items-center gap-1 bg-[#009587] px-3 py-1 text-sm text-white"
+                            className="flex items-center gap-1 bg-[#009587] px-2.5 py-1 text-xs sm:text-sm text-white max-w-[180px] sm:max-w-[240px]"
                         >
-                            {item.label}
+                            <span className="truncate">{item.label}</span>
 
                             <button
                                 type="button"
                                 onClick={() => removeLocality(item.placeId)}
+                                className="ml-0.5 hover:text-gray-200 shrink-0"
                             >
                                 ×
                             </button>
@@ -199,7 +200,7 @@ function LocalitySearch({ selected, setSelected, singleSelect = false }) {
                             if (suggestions.length) setShowDropdown(true);
                         }}
                         placeholder="Search locality, landmark, or sector (e.g. Koramangala, Whitefield)..."
-                        className="min-w-[200px] flex-1 py-2 text-base sm:text-sm text-gray-700 outline-none"
+                        className="min-w-[120px] flex-1 py-2 text-base sm:text-sm text-gray-700 outline-none"
                     />
                 </div>
             )}
