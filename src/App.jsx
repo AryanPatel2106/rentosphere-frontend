@@ -4,7 +4,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import WebAppSplashAnimation from "./components/WebAppSplashAnimation";
+import MobileAppSplash from "./components/MobileAppSplash";
 
 // Route-based code splitting with React.lazy
 const SearchResults = lazy(() => import("./pages/SearchResults"));
@@ -33,9 +33,9 @@ const PageLoadingFallback = () => (
 function App() {
   return (
     <>
-      <WebAppSplashAnimation />
+      <MobileAppSplash />
       <Suspense fallback={<PageLoadingFallback />}>
-      <Routes>
+        <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/search" element={<SearchResults />} />
