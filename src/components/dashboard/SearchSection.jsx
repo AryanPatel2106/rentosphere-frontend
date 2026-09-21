@@ -205,9 +205,9 @@ function SearchSection() {
           </div>
 
           {/* Budget Presets & Custom Rent */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full min-w-0">
             {/* Quick Budget Chips */}
-            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none flex-1">
+            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 scrollbar-none w-full sm:flex-1 min-w-0">
               <span className="text-xs font-semibold text-gray-600 mr-1 shrink-0">
                 Budget:
               </span>
@@ -232,23 +232,29 @@ function SearchSection() {
             </div>
 
             {/* Custom Min / Max Rent Inputs */}
-            <div className="flex items-center gap-1.5 text-xs shrink-0 pt-1 sm:pt-0 sm:border-l sm:border-gray-200 sm:pl-3">
-              <span className="text-xs text-gray-500 font-medium sm:hidden">Custom:</span>
-              <input
-                type="number"
-                placeholder="Min ₹"
-                value={minRent}
-                onChange={(e) => setMinRent(e.target.value)}
-                className="flex-1 sm:w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
-              />
-              <span className="text-gray-400 font-bold">-</span>
-              <input
-                type="number"
-                placeholder="Max ₹"
-                value={maxRent}
-                onChange={(e) => setMaxRent(e.target.value)}
-                className="flex-1 sm:w-24 border border-gray-300 bg-white px-2.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587]"
-              />
+            <div className="flex items-center gap-1.5 text-xs w-full min-w-0 pt-1 sm:pt-0 sm:w-auto sm:shrink-0 sm:border-l sm:border-gray-200 sm:pl-3">
+              <span className="text-xs text-gray-500 font-medium shrink-0 sm:hidden">Custom:</span>
+              <div className="relative flex-1 min-w-0 sm:w-24 sm:flex-initial">
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">₹</span>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minRent}
+                  onChange={(e) => setMinRent(e.target.value)}
+                  className="w-full min-w-0 border border-gray-300 bg-white pl-5 pr-1.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+              <span className="text-gray-400 font-bold shrink-0">-</span>
+              <div className="relative flex-1 min-w-0 sm:w-24 sm:flex-initial">
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">₹</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxRent}
+                  onChange={(e) => setMaxRent(e.target.value)}
+                  className="w-full min-w-0 border border-gray-300 bg-white pl-5 pr-1.5 py-1.5 outline-none text-base sm:text-xs text-gray-800 focus:border-[#009587] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
             </div>
           </div>
         </div>
