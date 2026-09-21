@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaHouse, FaLocationDot, FaShieldHalved } from "react-icons/fa6";
+import { FaHouse } from "react-icons/fa6";
 
 const SPLASH_SESSION_KEY = "rentosphere_mobile_webapp_splash_shown";
 
@@ -41,9 +41,7 @@ function checkIsMobileWebApp() {
 
 export default function MobileAppSplash() {
   const [shouldRender, setShouldRender] = useState(false);
-  const [phase, setPhase] = useState("enter"); // "enter" | "active" | "exit" | "done"
-  const [progress, setProgress] = useState(15);
-  const [statusMessage, setStatusMessage] = useState("Initializing Zero Brokerage Platform...");
+  const [stage, setStage] = useState("bouncing"); // "bouncing" | "name_reveal" | "ready" | "exit" | "done"
 
   useEffect(() => {
     const isWebApp = checkIsMobileWebApp();
@@ -62,196 +60,185 @@ export default function MobileAppSplash() {
     sessionStorage.setItem(SPLASH_SESSION_KEY, "true");
     setShouldRender(true);
 
-    // Choreographed animation timeline (~1.9 seconds total)
-    const t1 = setTimeout(() => {
-      setPhase("active");
-      setProgress(60);
-      setStatusMessage("Connecting to Verified Listings...");
-    }, 450);
+    // Timeline:
+    // 0ms -> 700ms: Logo drops from top and bounces into frame
+    // 700ms -> 1300ms: Logo settles, app name & tagline animate in
+    // 1600ms -> 1950ms: Smooth fade-out transition, opening the webapp
+    const tName = setTimeout(() => {
+      setStage("name_reveal");
+    }, 700);
 
-    const t2 = setTimeout(() => {
-      setProgress(100);
-      setStatusMessage("Welcome to Rentosphere");
-    }, 1250);
+    const tReady = setTimeout(() => {
+      setStage("ready");
+    }, 1300);
 
-    const t3 = setTimeout(() => {
-      setPhase("exit");
-    }, 1650);
+    const tExit = setTimeout(() => {
+      setStage("exit");
+    }, 1750);
 
-    const t4 = setTimeout(() => {
-      setPhase("done");
+    const tDone = setTimeout(() => {
+      setStage("done");
       setShouldRender(false);
     }, 2100);
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
+      clearTimeout(tName);
+      clearTimeout(tReady);
+      clearTimeout(tExit);
+      clearTimeout(tDone);
     };
   }, []);
 
   // Allow user to tap/click to dismiss splash instantly if desired
   const handleFastForward = () => {
-    setPhase("exit");
+    setStage("exit");
     setTimeout(() => {
-      setPhase("done");
+      setStage("done");
       setShouldRender(false);
     }, 250);
   };
 
-  if (!shouldRender || phase === "done") {
+  if (!shouldRender || stage === "done") {
     return null;
   }
 
-  const isExiting = phase === "exit";
+  const isExiting = stage === "exit";
 
   return (
-    <div
-      onClick={handleFastForward}
-      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-[#003830] via-[#004d40] to-[#002620] px-6 py-12 select-none transition-all duration-500 ease-out cursor-pointer ${
-        isExiting ? "opacity-0 scale-105 pointer-events-none" : "opacity-100 scale-100"
-      }`}
-      style={{
-        paddingTop: "max(3rem, env(safe-area-inset-top))",
-        paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))",
-      }}
-      role="dialog"
-      aria-label="Rentosphere Starting Screen"
-    >
-      {/* Background Architectural Grid Lines */}
-      <div className="pointer-events-none absolute inset-0 opacity-15">
-        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#009587" strokeWidth="0.8" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-        </svg>
-      </div>
+    <>
+      <style>{`
+        @keyframes rentosphereBounceIn {
+          0% {
+            opacity: 0;
+            transform: translateY(-240px) scale(0.6);
+          }
+          45% {
+            opacity: 1;
+            transform: translateY(0) scale(1.18, 0.82);
+          }
+          60% {
+            transform: translateY(-38px) scale(0.92, 1.08);
+          }
+          75% {
+            transform: translateY(0) scale(1.08, 0.94);
+          }
+          88% {
+            transform: translateY(-12px) scale(0.98, 1.02);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1, 1);
+          }
+        }
 
-      {/* Subtle Radial Atmosphere Light */}
-      <div
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[380px] w-[380px] rounded-full blur-3xl"
-        style={{
-          background: "radial-gradient(circle, rgba(0, 210, 190, 0.22) 0%, rgba(0, 77, 64, 0.05) 70%, transparent 100%)",
-        }}
-      />
+        @keyframes rentosphereShadowPulse {
+          0% {
+            opacity: 0;
+            transform: scale(0.2);
+          }
+          45% {
+            opacity: 0.6;
+            transform: scale(1.15);
+          }
+          60% {
+            opacity: 0.25;
+            transform: scale(0.7);
+          }
+          75% {
+            opacity: 0.5;
+            transform: scale(1.05);
+          }
+          88% {
+            opacity: 0.35;
+            transform: scale(0.9);
+          }
+          100% {
+            opacity: 0.4;
+            transform: scale(1);
+          }
+        }
 
-      {/* Top Header Pill */}
+        @keyframes rentosphereFadeSlideUp {
+          0% {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-logo-bounce {
+          animation: rentosphereBounceIn 0.75s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
+        }
+
+        .animate-shadow-bounce {
+          animation: rentosphereShadowPulse 0.75s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
+        }
+
+        .animate-name-reveal {
+          animation: rentosphereFadeSlideUp 0.5s ease-out forwards;
+        }
+      `}</style>
+
       <div
-        className={`flex items-center gap-2 border border-teal-500/30 bg-teal-950/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-teal-300 backdrop-blur-md transition-all duration-700 ${
-          phase === "enter" ? "translate-y-[-10px] opacity-0" : "translate-y-0 opacity-100"
+        onClick={handleFastForward}
+        className={`fixed inset-0 z-[99999] flex flex-col items-center justify-between bg-white text-gray-900 select-none cursor-pointer transition-opacity duration-350 ease-out ${
+          isExiting ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
+        style={{
+          paddingTop: "max(3rem, env(safe-area-inset-top))",
+          paddingBottom: "max(2rem, env(safe-area-inset-bottom))",
+        }}
+        role="dialog"
+        aria-label="Rentosphere Webapp Starting Screen"
       >
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00d2be]"></span>
-        </span>
-        <span>Mobile App Edition</span>
-      </div>
+        {/* Top subtle bar to match original webpage */}
+        <div className="w-full flex justify-center pt-2">
+          <div className="h-1 w-12 bg-gray-200" />
+        </div>
 
-      {/* Center Hero: Animated Emblem + Brand Title */}
-      <div className="relative flex flex-col items-center justify-center my-auto">
-        {/* Animated Radar Pulse Rings */}
-        <div className="relative flex items-center justify-center">
-          <div
-            className={`absolute h-36 w-36 rounded-none border border-[#009587]/30 transition-all duration-1000 ${
-              phase === "enter" ? "scale-50 opacity-0" : "scale-100 opacity-100"
-            }`}
-          />
-          <div
-            className={`absolute h-48 w-48 rounded-none border border-teal-500/20 transition-all duration-1000 delay-150 ${
-              phase === "enter" ? "scale-75 opacity-0" : "scale-100 opacity-100"
-            }`}
-          />
+        {/* Center: Bouncing Logo and Name Reveal */}
+        <div className="flex flex-col items-center justify-center my-auto px-4">
+          {/* Logo & Drop Shadow Container */}
+          <div className="relative flex flex-col items-center">
+            {/* The Original Rentosphere Teal Square Logo */}
+            <div className="animate-logo-bounce flex h-20 w-20 items-center justify-center bg-[#009587] text-white shadow-xl shadow-[#009587]/25">
+              <FaHouse className="text-3xl text-white drop-shadow-sm" />
+            </div>
 
-          {/* Core Brand Square Emblem */}
-          <div
-            className={`relative flex h-20 w-20 items-center justify-center border-2 border-teal-400/80 bg-gradient-to-br from-[#009587] to-[#00695c] text-white shadow-2xl shadow-teal-900/60 transition-all duration-700 ease-out ${
-              phase === "enter" ? "scale-75 opacity-0 rotate-[-8deg]" : "scale-100 opacity-100 rotate-0"
-            }`}
-          >
-            {/* Animated SVG Home Roof and Structure */}
-            <svg
-              viewBox="0 0 48 48"
-              className="h-11 w-11 fill-none stroke-white"
-              strokeWidth="3.2"
-              strokeLinecap="square"
-              strokeLinejoin="miter"
-            >
-              {/* Roof Triangle */}
-              <path
-                d="M 6 23 L 24 7 L 42 23"
-                className={`transition-all duration-700 delay-200 ${
-                  phase === "enter" ? "stroke-dasharray-[100] stroke-dashoffset-[100]" : "stroke-dashoffset-0"
-                }`}
-              />
-              {/* Body Box */}
-              <path d="M 12 21 L 12 39 L 36 39 L 36 21" />
-              {/* Door */}
-              <path d="M 20 39 L 20 27 L 28 27 L 28 39" fill="rgba(255,255,255,0.25)" />
-              {/* Chimney */}
-              <path d="M 33 14 L 33 11 L 37 11 L 37 18" />
-            </svg>
+            {/* Dynamic Ground Shadow that reacts to the bounce */}
+            <div className="animate-shadow-bounce mt-3 h-2.5 w-16 rounded-full bg-gray-400/30 blur-[2px]" />
+          </div>
+
+          {/* App Name & Tagline: Reveals right after logo bounces in */}
+          <div className="mt-6 flex flex-col items-center text-center min-h-[70px]">
+            {stage !== "bouncing" && (
+              <div className="animate-name-reveal flex flex-col items-center">
+                <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 leading-none">
+                  Rentosphere
+                </h1>
+                <p className="text-xs uppercase tracking-widest text-[#009587] font-bold mt-1.5">
+                  Zero Brokerage Rentals
+                </p>
+
+                {/* Subtle loading indicator line */}
+                <div className="mt-4 flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#009587] animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#009587] animate-pulse [animation-delay:150ms]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#009587] animate-pulse [animation-delay:300ms]" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Brand Name with Reveal Animation */}
-        <div
-          className={`mt-6 text-center transition-all duration-700 delay-200 ${
-            phase === "enter" ? "translate-y-4 opacity-0" : "translate-y-0 opacity-100"
-          }`}
-        >
-          <h1 className="text-3xl font-black uppercase tracking-[0.2em] text-white drop-shadow-md">
-            Rentosphere
-          </h1>
-          <div className="mt-1 flex items-center justify-center gap-2">
-            <span className="h-[1px] w-6 bg-teal-400/40"></span>
-            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-teal-300/90">
-              Zero Brokerage Rentals
-            </p>
-            <span className="h-[1px] w-6 bg-teal-400/40"></span>
-          </div>
-        </div>
-
-        {/* Trust Badges Minimal Row */}
-        <div
-          className={`mt-5 flex items-center gap-4 text-[10px] text-teal-200/80 transition-all duration-700 delay-300 ${
-            phase === "enter" ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          <span className="flex items-center gap-1">
-            <FaShieldHalved className="text-teal-400 text-xs" /> 100% Direct Owners
-          </span>
-          <span className="text-teal-600">•</span>
-          <span className="flex items-center gap-1">
-            <FaLocationDot className="text-teal-400 text-xs" /> Verified Locations
-          </span>
+        {/* Bottom indicator matching the webpage design */}
+        <div className="flex flex-col items-center pb-2 text-[11px] text-gray-400 tracking-wider uppercase font-medium">
+          <span>Direct Owner Rentals</span>
         </div>
       </div>
-
-      {/* Bottom Progress Bar & Loading Status */}
-      <div className="w-full max-w-[260px] flex flex-col items-center gap-2.5 z-10">
-        {/* Sleek Progress Track */}
-        <div className="h-1 w-full overflow-hidden bg-teal-950/70 border border-teal-500/20">
-          <div
-            className="h-full bg-gradient-to-r from-teal-400 via-[#00d2be] to-emerald-300 transition-all duration-700 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-
-        {/* Live Status Message */}
-        <div className="flex items-center justify-between w-full text-[10px] text-teal-300/80 font-mono tracking-wider">
-          <span className="truncate">{statusMessage}</span>
-          <span className="text-teal-400 font-bold ml-2">{progress}%</span>
-        </div>
-
-        <p className="text-[9px] text-teal-400/50 mt-1 uppercase tracking-widest">
-          Tap anywhere to continue
-        </p>
-      </div>
-    </div>
+    </>
   );
 }

@@ -4,7 +4,7 @@
   "description": "Zero Brokerage Real Estate & Rental Platform across India",
   "start_url": "/?mode=standalone",
   "display": "standalone",
-  "background_color": "#004d40",
+  "background_color": "#ffffff",
   "theme_color": "#009587",
   "orientation": "portrait-primary",
   "icons": [
