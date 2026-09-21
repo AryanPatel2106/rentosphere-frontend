@@ -1,0 +1,18 @@
+{
+  "name": "Rentosphere - Zero Brokerage Rentals",
+  "short_name": "Rentosphere",
+  "description": "Zero Brokerage Real Estate & Rental Platform across India",
+  "start_url": "/?mode=standalone",
+  "display": "standalone",
+  "background_color": "#004d40",
+  "theme_color": "#009587",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
