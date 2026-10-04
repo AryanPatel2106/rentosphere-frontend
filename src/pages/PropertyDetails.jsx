@@ -27,6 +27,7 @@ import {
   FaLayerGroup,
   FaHouse,
   FaUserGroup,
+  FaWandMagicSparkles,
 } from "react-icons/fa6";
 import { getErrorMessage } from "../utils/errorHandler";
 
@@ -292,6 +293,15 @@ export default function PropertyDetails() {
                 </span>
                 <span className="text-xs text-gray-500 font-medium"> / month</span>
               </div>
+              {property.deal && (
+                <div
+                  className={`mt-1 inline-flex items-center gap-1.5 border px-2.5 py-1 text-xs font-semibold shadow-2xs ${property.deal.badgeClass}`}
+                  title={property.deal.summary}
+                >
+                  <span>{property.deal.dealType === "Great Deal" ? "🟢" : property.deal.dealType === "Premium" ? "🟡" : "🔵"}</span>
+                  <span>{property.deal.label}</span>
+                </div>
+              )}
               {property.deposit > 0 && (
                 <span className="text-xs text-gray-500">
                   Security Deposit: ₹{property.deposit.toLocaleString("en-IN")}
@@ -556,6 +566,50 @@ export default function PropertyDetails() {
                   <FaShieldHalved className="text-xs" /> Verified Contact Information
                 </p>
               </div>
+
+              {/* AI Valuation & Deal Score Card */}
+              {property.deal && (
+                <div className="border border-teal-200 bg-gradient-to-b from-teal-50/70 to-emerald-50/30 p-4 mb-4 shadow-2xs">
+                  <div className="flex items-center justify-between pb-2 border-b border-teal-200/60">
+                    <span className="text-xs font-bold uppercase tracking-wider text-teal-900 flex items-center gap-1.5">
+                      <FaWandMagicSparkles className="text-[#009587] text-xs" />
+                      Deal Valuation
+                    </span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 border ${property.deal.badgeClass}`}>
+                      {property.deal.label}
+                    </span>
+                  </div>
+
+                  <div className="mt-3 space-y-2 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Hedonic Market Value:</span>
+                      <span className="font-semibold text-gray-700">
+                        ₹{property.deal.marketRent?.toLocaleString("en-IN")}/mo
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Listed Rent:</span>
+                      <span className="font-bold text-[#009587]">
+                        ₹{property.rent?.toLocaleString("en-IN")}/mo
+                      </span>
+                    </div>
+
+                    {property.deal.savingsAmount > 0 && (
+                      <div className="flex justify-between items-center pt-1 border-t border-teal-100 text-emerald-800 font-semibold">
+                        <span>Monthly Savings:</span>
+                        <span className="font-bold">
+                          ₹{property.deal.savingsAmount.toLocaleString("en-IN")}/mo ({property.deal.discountPercent}% OFF)
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="mt-2.5 text-[11px] text-gray-600 leading-relaxed bg-white/80 p-2 border border-teal-100">
+                    💡 {property.deal.summary}
+                  </p>
+                </div>
+              )}
 
               {/* Price summary */}
               <div className="border border-gray-200 bg-gray-50 p-4 mb-5 text-xs space-y-2">

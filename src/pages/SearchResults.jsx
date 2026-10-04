@@ -23,6 +23,8 @@ import {
   FaSliders,
   FaCircleCheck,
   FaCircleExclamation,
+  FaWandMagicSparkles,
+  FaLightbulb
 } from "react-icons/fa6";
 import { getErrorMessage } from "../utils/errorHandler";
 
@@ -123,6 +125,14 @@ function SearchResults() {
     searchParams.get("petFriendly") === "true" || Boolean(state?.petFriendly)
   );
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "nearest");
+
+  // AI Search state
+  const [aiPrompt, setAiPrompt] = useState(searchParams.get("aiPrompt") || "");
+  const [aiSummary, setAiSummary] = useState(state?.aiSummary || "");
+  const [aiTags, setAiTags] = useState(state?.aiTags || []);
+  const [inlineAiInput, setInlineAiInput] = useState("");
+  const [isAiInlineLoading, setIsAiInlineLoading] = useState(false);
+  const [showAiInput, setShowAiInput] = useState(Boolean(searchParams.get("aiPrompt")));
 
   // UI state
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
@@ -296,6 +306,9 @@ function SearchResults() {
       const currentSort = overrides.sortBy !== undefined ? overrides.sortBy : sortBy;
       if (currentSort && currentSort !== "nearest") params.sortBy = currentSort;
 
+      const currentAi = overrides.aiPrompt !== undefined ? overrides.aiPrompt : aiPrompt;
+      if (currentAi && currentAi.trim()) params.aiPrompt = currentAi.trim();
+
       setSearchParams(params, { replace: true });
     },
     [
@@ -311,9 +324,28 @@ function SearchResults() {
       parking,
       petFriendly,
       sortBy,
+      aiPrompt,
       setSearchParams,
     ]
   );
+
+  // Sync AI tags and summary if arriving directly via URL with aiPrompt
+  useEffect(() => {
+    const urlAiPrompt = searchParams.get("aiPrompt");
+    if (urlAiPrompt && (!aiSummary || aiTags.length === 0)) {
+      api
+        .post("/property/ai-parse", { query: urlAiPrompt })
+        .then((res) => {
+          if (res.data?.data) {
+            setAiSummary(res.data.data.summary || "");
+            setAiTags(res.data.data.tags || []);
+          }
+        })
+        .catch((err) => {
+          console.warn("Could not parse AI prompt from URL:", err.message);
+        });
+    }
+  }, [searchParams]);
 
   // Fetch properties from backend with all filters
   const fetchProperties = useCallback(
@@ -567,6 +599,9 @@ function SearchResults() {
     setParking(false);
     setPetFriendly(false);
     setSortBy("nearest");
+    setAiPrompt("");
+    setAiSummary("");
+    setAiTags([]);
     updateUrlParams({
       keyword: "",
       bhkType: "All",
@@ -579,7 +614,50 @@ function SearchResults() {
       parking: false,
       petFriendly: false,
       sortBy: "nearest",
+      aiPrompt: "",
     });
+  };
+
+  // Submit AI Natural Language query directly from Search Results page
+  const handleInlineAiSubmit = async (e) => {
+    if (e) e.preventDefault();
+    const raw = inlineAiInput.trim();
+    if (!raw) return;
+    setIsAiInlineLoading(true);
+    try {
+      const res = await api.post("/property/ai-parse", { query: raw });
+      const parsed = res.data?.data;
+      if (parsed) {
+        setAiPrompt(raw);
+        setAiSummary(parsed.summary || "");
+        setAiTags(parsed.tags || []);
+        const f = parsed.filters || {};
+
+        if (f.bhkType) setBhkType(f.bhkType);
+        if (f.minRent !== undefined) setMinRent(f.minRent ? String(f.minRent) : "");
+        if (f.maxRent !== undefined) setMaxRent(f.maxRent ? String(f.maxRent) : "");
+        if (f.propertyType) setPropertyType(f.propertyType);
+        if (f.furnishing) setFurnishing(f.furnishing);
+        if (f.preferredTenant) setTenantType(f.preferredTenant);
+        if (f.parking !== undefined) setParking(Boolean(f.parking));
+        if (f.petFriendly !== undefined) setPetFriendly(Boolean(f.petFriendly));
+        if (f.keyword) setKeyword(f.keyword);
+        if (f.city) {
+          setSelectedLocalities([{ label: f.city, text: f.city, city: f.city }]);
+        } else if (f.locality) {
+          setSelectedLocalities([{ label: f.locality, text: f.locality }]);
+        }
+        setInlineAiInput("");
+        setPage(1);
+      }
+    } catch (err) {
+      console.error("AI Parse error:", err);
+      setAiPrompt(raw);
+      setKeyword(raw);
+      setPage(1);
+    } finally {
+      setIsAiInlineLoading(false);
+    }
   };
 
   // Render unified filter controls for both Desktop Left Sidebar and Mobile Slide-over Drawer
@@ -1010,6 +1088,128 @@ function SearchResults() {
 
           {/* ── RIGHT LISTINGS & CONTENT AREA ─────────────────────────────── */}
           <div className="flex-1 min-w-0">
+            {/* AI Semantic Search Banner & Refinement Input */}
+            {aiPrompt || showAiInput ? (
+              <div className="mb-3 border border-teal-200 bg-gradient-to-r from-teal-50/90 via-emerald-50/40 to-white p-3 sm:p-4 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <div className="flex items-start sm:items-center gap-2.5">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#009587] text-white shadow-xs">
+                      <FaWandMagicSparkles className="text-sm" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-teal-900">
+                          AI Semantic Search
+                        </span>
+                        <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 border border-emerald-300">
+                          Active
+                        </span>
+                      </div>
+                      {aiPrompt && (
+                        <p className="text-xs sm:text-sm text-gray-800 font-semibold mt-0.5">
+                          "{aiPrompt}"
+                        </p>
+                      )}
+                      {aiSummary && (
+                        <p className="text-[11px] text-gray-600 mt-0.5">
+                          {aiSummary}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setShowAiInput((v) => !v)}
+                      className="border border-[#009587] bg-white text-[#009587] hover:bg-teal-50 px-2.5 py-1 text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs"
+                    >
+                      <FaWandMagicSparkles className="text-xs" />
+                      <span>{showAiInput ? "Hide Input" : "Refine Search"}</span>
+                    </button>
+                    {aiPrompt && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAiPrompt("");
+                          setAiSummary("");
+                          setAiTags([]);
+                          updateUrlParams({ aiPrompt: "" });
+                        }}
+                        className="text-xs text-red-500 hover:text-red-700 px-1 py-1 font-medium hover:underline"
+                        title="Clear AI search prompt"
+                      >
+                        Reset AI
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* AI Extracted Tags */}
+                {aiTags && aiTags.length > 0 && (
+                  <div className="mt-2.5 pt-2 border-t border-teal-100 flex flex-wrap items-center gap-1.5">
+                    <span className="text-[11px] font-semibold text-gray-500 mr-1">Extracted:</span>
+                    {aiTags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="bg-white border border-teal-300 text-teal-800 text-[11px] font-medium px-2 py-0.5 shadow-2xs"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Inline AI Query Box */}
+                {showAiInput && (
+                  <form onSubmit={handleInlineAiSubmit} className="mt-3 pt-2.5 border-t border-teal-100 flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <FaWandMagicSparkles className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-600 text-xs" />
+                      <input
+                        type="text"
+                        placeholder="Refine search with AI: e.g. Show only furnished 2BHK in Adyar under 30k with power backup..."
+                        value={inlineAiInput}
+                        onChange={(e) => setInlineAiInput(e.target.value)}
+                        className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-300 bg-white text-gray-800 placeholder-gray-400 outline-none focus:border-[#009587]"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isAiInlineLoading || !inlineAiInput.trim()}
+                      className="bg-[#009587] hover:bg-[#007d70] disabled:opacity-50 text-white text-xs font-semibold px-3 py-1.5 flex items-center gap-1.5 shrink-0"
+                    >
+                      {isAiInlineLoading ? (
+                        <>
+                          <FaSpinner className="animate-spin text-xs" />
+                          <span>Searching...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaWandMagicSparkles className="text-xs" />
+                          <span>Ask AI</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+              </div>
+            ) : (
+              <div className="mb-3 flex items-center justify-between border border-teal-100 bg-teal-50/40 px-3 py-2 text-xs">
+                <span className="flex items-center gap-2 text-gray-600">
+                  <FaLightbulb className="text-amber-500" />
+                  <span>Looking for something specific? Search naturally with AI.</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowAiInput(true)}
+                  className="inline-flex items-center gap-1.5 font-semibold text-[#009587] hover:underline shrink-0"
+                >
+                  <FaWandMagicSparkles className="text-xs text-emerald-600" />
+                  <span>Try AI Search</span>
+                </button>
+              </div>
+            )}
+
             {/* Active Filter Chips Strip */}
             {activeFilterCount > 0 && (
               <div className="mb-3 flex flex-wrap items-center gap-1.5 bg-white border border-gray-200 p-2.5 text-xs shadow-2xs">
@@ -1247,13 +1447,31 @@ function SearchResults() {
                     </div>
 
                     {/* Rent & Distance Block */}
-                    <div className="flex sm:flex-col items-baseline sm:items-end justify-between gap-2 shrink-0">
+                    <div className="flex sm:flex-col items-baseline sm:items-end justify-between gap-1.5 shrink-0">
                       <div>
                         <span className="text-xl sm:text-2xl font-bold text-[#009587]">
                           {formatRent(property.rent)}
                         </span>
                         <span className="text-xs text-gray-500"> / month</span>
                       </div>
+
+                      {/* Deal Score Badge */}
+                      {property.deal && (
+                        <div
+                          className={`mt-0.5 inline-flex items-center gap-1.5 border px-2 py-0.5 text-[11px] font-semibold shadow-2xs ${property.deal.badgeClass}`}
+                          title={property.deal.summary}
+                        >
+                          <span>{property.deal.dealType === "Great Deal" ? "🟢" : property.deal.dealType === "Premium" ? "🟡" : "🔵"}</span>
+                          <span>{property.deal.label}</span>
+                        </div>
+                      )}
+
+                      {property.deal?.savingsAmount > 0 && (
+                        <span className="text-[10px] font-semibold text-emerald-700">
+                          Save ~₹{property.deal.savingsAmount.toLocaleString("en-IN")}/mo
+                        </span>
+                      )}
+
                       {property.deposit > 0 && (
                         <p className="text-[11px] text-gray-500">
                           Deposit: ₹{property.deposit.toLocaleString("en-IN")}
@@ -1315,6 +1533,16 @@ function SearchResults() {
                     <div className="flex flex-col gap-4 sm:flex-row">
                       {/* Photo */}
                       <div className="relative h-40 w-full sm:h-36 sm:w-52 shrink-0 overflow-hidden border border-gray-200 bg-gray-100">
+                        {property.deal && property.deal.dealType === "Great Deal" && (
+                          <div className="absolute top-2 left-2 z-10 bg-emerald-700 text-white font-bold text-[10px] px-2 py-0.5 shadow-sm flex items-center gap-1">
+                            <span>🔥</span> Great Deal ({property.deal.discountPercent}% OFF)
+                          </div>
+                        )}
+                        {property.deal && property.deal.dealType === "Premium" && (
+                          <div className="absolute top-2 left-2 z-10 bg-amber-600 text-white font-bold text-[10px] px-2 py-0.5 shadow-sm flex items-center gap-1">
+                            <span>✨</span> Premium Spec
+                          </div>
+                        )}
                         <img
                           src={photoSrc}
                           alt={property.title}

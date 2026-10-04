@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 import LocalitySearch from "./LocalitySearch";
 import {
   FaMagnifyingGlass,
@@ -8,7 +9,10 @@ import {
   FaPaw,
   FaBuilding,
   FaBed,
-  FaRotateLeft
+  FaRotateLeft,
+  FaWandMagicSparkles,
+  FaLightbulb,
+  FaSpinner
 } from "react-icons/fa6";
 
 const BHK_OPTIONS = ["All", "1RK", "1BHK", "2BHK", "3BHK", "4BHK"];
@@ -47,8 +51,20 @@ const AVAILABILITY_OPTIONS = [
   "Within 30 Days",
 ];
 
+const AI_SAMPLE_PROMPTS = [
+  "🐾 Pet-friendly 2 BHK in Chennai under ₹25k with parking",
+  "🏢 Fully furnished 3 BHK in Coimbatore with Gym & Pool",
+  "⚡ 1 RK bachelor flat in Madurai under ₹10,000",
+  "🏡 Independent house near OMR with power backup"
+];
+
 function SearchSection() {
   const navigate = useNavigate();
+
+  // Search mode: 'standard' or 'ai'
+  const [searchMode, setSearchMode] = useState("standard");
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isAiParsing, setIsAiParsing] = useState(false);
 
   const [localities, setLocalities] = useState([]);
   const [keyword, setKeyword] = useState("");
@@ -62,6 +78,51 @@ function SearchSection() {
   const [parking, setParking] = useState(false);
   const [petFriendly, setPetFriendly] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const handleAiSearch = async (promptToUse) => {
+    const raw = promptToUse || aiPrompt;
+    if (!raw.trim()) return;
+
+    setIsAiParsing(true);
+
+    try {
+      const res = await api.post("/property/ai-parse", { prompt: raw });
+      const parsed = res.data?.data;
+      if (parsed?.filters) {
+        const params = new URLSearchParams();
+        const f = parsed.filters;
+
+        if (f.city) params.set("city", f.city);
+        if (f.locality) params.set("locality", f.locality);
+        if (f.bhkType) params.set("bhkType", f.bhkType);
+        if (f.minRent) params.set("minRent", f.minRent);
+        if (f.maxRent) params.set("maxRent", f.maxRent);
+        if (f.propertyType) params.set("propertyType", f.propertyType);
+        if (f.furnishing) params.set("furnishing", f.furnishing);
+        if (f.preferredTenant) params.set("tenantType", f.preferredTenant);
+        if (f.parking) params.set("parking", "true");
+        if (f.petFriendly) params.set("petFriendly", "true");
+        if (f.keyword) params.set("keyword", f.keyword);
+        if (f.amenities && f.amenities.length > 0) {
+          f.amenities.forEach(a => params.append("amenities", a));
+        }
+
+        params.set("aiPrompt", raw);
+        navigate(`/search?${params.toString()}`, {
+          state: {
+            aiParsed: parsed,
+            aiSummary: parsed.summary,
+            aiTags: parsed.tags
+          }
+        });
+      }
+    } catch (err) {
+      console.error("AI Search Parse error:", err);
+      navigate(`/search?search=${encodeURIComponent(raw)}&keyword=${encodeURIComponent(raw)}&aiPrompt=${encodeURIComponent(raw)}`);
+    } finally {
+      setIsAiParsing(false);
+    }
+  };
 
   const handleBudgetPreset = (preset) => {
     setMinRent(preset.min);
@@ -147,15 +208,105 @@ function SearchSection() {
   return (
     <section className="mt-6 flex justify-center px-4">
       <div className="w-full max-w-5xl border border-gray-300 bg-white shadow-md">
-        {/* Top Search Inputs Row */}
-        <div className="flex flex-col border-b border-gray-200 md:flex-row">
-          {/* Locality Autocomplete Search */}
-          <div className="flex-1 border-b border-gray-200 md:border-b-0 md:border-r">
-            <LocalitySearch
-              selected={localities}
-              setSelected={setLocalities}
-            />
+        {/* Search Mode Tabs */}
+        <div className="flex border-b border-gray-200 bg-gray-50/90 text-xs font-bold uppercase tracking-wider">
+          <button
+            type="button"
+            onClick={() => setSearchMode("standard")}
+            className={`flex items-center gap-2 px-5 py-3 border-r border-gray-200 transition ${
+              searchMode === "standard"
+                ? "bg-white text-[#009587] border-b-2 border-b-[#009587]"
+                : "text-gray-500 hover:text-gray-800"
+            }`}
+          >
+            <FaMagnifyingGlass className="text-xs" />
+            <span>Standard Filters</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setSearchMode("ai")}
+            className={`flex items-center gap-2 px-5 py-3 transition ${
+              searchMode === "ai"
+                ? "bg-white text-[#009587] border-b-2 border-b-[#009587]"
+                : "text-gray-500 hover:text-gray-800"
+            }`}
+          >
+            <FaWandMagicSparkles className="text-xs text-emerald-600" />
+            <span>AI Smart Search</span>
+            <span className="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 font-bold">
+              AI
+            </span>
+          </button>
+        </div>
+
+        {searchMode === "ai" ? (
+          <div className="p-4 sm:p-6 bg-gradient-to-b from-emerald-50/40 via-teal-50/20 to-white">
+            <div className="flex flex-col md:flex-row gap-3">
+              <div className="relative flex-1">
+                <FaWandMagicSparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-600 text-sm" />
+                <input
+                  type="text"
+                  placeholder="e.g. Pet-friendly 2 BHK in Chennai under 25k with car parking and power backup..."
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAiSearch()}
+                  className="w-full pl-10 pr-4 py-3.5 border border-gray-300 bg-white text-base sm:text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-[#009587] shadow-xs"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleAiSearch()}
+                disabled={isAiParsing}
+                className="flex items-center justify-center gap-2 bg-[#009587] py-3.5 px-8 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-[#007d70] disabled:opacity-50 shrink-0"
+              >
+                {isAiParsing ? (
+                  <>
+                    <FaSpinner className="animate-spin text-xs" />
+                    <span>Analyzing...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaWandMagicSparkles className="text-xs" />
+                    <span>Search with AI</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Quick Prompt Suggestions */}
+            <div className="mt-4 pt-3 border-t border-gray-200/80">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-1.5">
+                <FaLightbulb className="text-amber-500" />
+                Try Asking:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {AI_SAMPLE_PROMPTS.map((promptText, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => {
+                      setAiPrompt(promptText);
+                      handleAiSearch(promptText);
+                    }}
+                    className="border border-gray-300 bg-white hover:border-[#009587] hover:text-[#009587] px-3 py-1 text-xs text-gray-700 transition"
+                  >
+                    {promptText}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
+        ) : (
+          <>
+            {/* Top Search Inputs Row */}
+            <div className="flex flex-col border-b border-gray-200 md:flex-row">
+              {/* Locality Autocomplete Search */}
+              <div className="flex-1 border-b border-gray-200 md:border-b-0 md:border-r">
+                <LocalitySearch
+                  selected={localities}
+                  setSelected={setLocalities}
+                />
+              </div>
 
           {/* Keyword Search Input */}
           <div className="relative flex flex-1 items-center px-4 py-2.5 border-b border-gray-200 md:border-b-0 md:border-r">
@@ -370,6 +521,8 @@ function SearchSection() {
             </button>
           </div>
         </div>
+        </>
+        )}
       </div>
     </section>
   );

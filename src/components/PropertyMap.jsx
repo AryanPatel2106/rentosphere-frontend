@@ -280,9 +280,19 @@ function PropertyMap({
         const photoHtml = property.photos && property.photos.length > 0
           ? `<img src="${property.photos[0]}" alt="${property.title}" style="width:100%;height:100px;object-fit:cover;margin-bottom:6px" />`
           : "";
+        const dealHtml = property.deal
+          ? `<div style="display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;margin-bottom:6px;border:1px solid ${
+              property.deal.dealType === 'Great Deal' ? '#86efac' : property.deal.dealType === 'Premium' ? '#fde047' : '#93c5fd'
+            };background:${
+              property.deal.dealType === 'Great Deal' ? '#f0fdf4' : property.deal.dealType === 'Premium' ? '#fefce8' : '#eff6ff'
+            };color:${
+              property.deal.dealType === 'Great Deal' ? '#166534' : property.deal.dealType === 'Premium' ? '#854d0e' : '#1e40af'
+            }">${property.deal.dealType === 'Great Deal' ? '🟢' : property.deal.dealType === 'Premium' ? '🟡' : '🔵'} ${property.deal.label}</div>`
+          : "";
         googleInfoWindowRef.current.setContent(`
           <div onclick="window.__openPropertyDetails && window.__openPropertyDetails('${property._id}')" style="padding:4px;font-family:inherit;max-width:250px;cursor:pointer;user-select:none" title="Click to view property details">
             ${photoHtml}
+            ${dealHtml}
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
               <span style="font-size:14px;font-weight:700;color:#009587">${rentText}</span>
               <span style="font-size:10px;font-weight:600;background:#e6f4f1;color:#009587;padding:1px 6px">${property.BHKType || "Apartment"}</span>
@@ -446,6 +456,15 @@ function PropertyMap({
       const photoHtml = property.photos && property.photos.length > 0
         ? `<img src="${property.photos[0]}" alt="${property.title}" style="width:100%;height:100px;object-fit:cover;margin-bottom:6px" />`
         : "";
+      const dealHtml = property.deal
+        ? `<div style="display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;margin-bottom:6px;border:1px solid ${
+            property.deal.dealType === 'Great Deal' ? '#86efac' : property.deal.dealType === 'Premium' ? '#fde047' : '#93c5fd'
+          };background:${
+            property.deal.dealType === 'Great Deal' ? '#f0fdf4' : property.deal.dealType === 'Premium' ? '#fefce8' : '#eff6ff'
+          };color:${
+            property.deal.dealType === 'Great Deal' ? '#166534' : property.deal.dealType === 'Premium' ? '#854d0e' : '#1e40af'
+          }">${property.deal.dealType === 'Great Deal' ? '🟢' : property.deal.dealType === 'Premium' ? '🟡' : '🔵'} ${property.deal.label}</div>`
+        : "";
 
       const icon = L.divIcon({
         className: "",
@@ -462,6 +481,7 @@ function PropertyMap({
       m.bindPopup(`
         <div onclick="window.__openPropertyDetails && window.__openPropertyDetails('${property._id}')" style="padding:4px;max-width:250px;cursor:pointer;user-select:none" title="Click to view property details">
           ${photoHtml}
+          ${dealHtml}
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
             <span style="font-size:14px;font-weight:700;color:#009587">${rentFull}</span>
             <span style="font-size:10px;font-weight:600;background:#e6f4f1;color:#009587;padding:1px 6px">${property.BHKType || "Apartment"}</span>
