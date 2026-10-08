@@ -93,8 +93,12 @@ function SearchSection() {
         const f = parsed.filters;
 
         if (f.city) params.set("city", f.city);
-        if (f.locality) params.set("locality", f.locality);
-        if (f.bhkType) params.set("bhkType", f.bhkType);
+        if (f.locality) {
+          params.set("locality", f.locality);
+          params.set("q", f.locality);
+        }
+        const cleanBhk = f.bhkType ? f.bhkType.replace(/\s+/g, "").toUpperCase() : "";
+        if (cleanBhk) params.set("bhkType", cleanBhk);
         if (f.minRent) params.set("minRent", f.minRent);
         if (f.maxRent) params.set("maxRent", f.maxRent);
         if (f.propertyType) params.set("propertyType", f.propertyType);
@@ -102,14 +106,37 @@ function SearchSection() {
         if (f.preferredTenant) params.set("tenantType", f.preferredTenant);
         if (f.parking) params.set("parking", "true");
         if (f.petFriendly) params.set("petFriendly", "true");
-        if (f.keyword) params.set("keyword", f.keyword);
+        if (f.sortBy) params.set("sortBy", f.sortBy);
+        if (f.keyword) {
+          params.set("keyword", f.keyword);
+          params.set("search", f.keyword);
+        }
         if (f.amenities && f.amenities.length > 0) {
           f.amenities.forEach(a => params.append("amenities", a));
+        }
+
+        const initialLocs = [];
+        if (f.locality) {
+          initialLocs.push({ label: f.locality, text: f.locality, city: f.city || "" });
+        } else if (f.city) {
+          initialLocs.push({ label: f.city, text: f.city, city: f.city });
         }
 
         params.set("aiPrompt", raw);
         navigate(`/search?${params.toString()}`, {
           state: {
+            localities: initialLocs,
+            keyword: f.keyword || "",
+            bhkType: cleanBhk || "All",
+            minRent: f.minRent || "",
+            maxRent: f.maxRent || "",
+            propertyType: f.propertyType || "All",
+            furnishing: f.furnishing || "All",
+            tenantType: f.preferredTenant || "All",
+            parking: Boolean(f.parking),
+            petFriendly: Boolean(f.petFriendly),
+            amenities: f.amenities || [],
+            sortBy: f.sortBy || "nearest",
             aiParsed: parsed,
             aiSummary: parsed.summary,
             aiTags: parsed.tags

@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 import MobileBottomNav from "../components/MobileBottomNav";
+import Chatbot from "../components/Chatbot";
 
 function MainLayout() {
   const [showSignup, setShowSignup] = useState(false);
@@ -36,6 +37,9 @@ function MainLayout() {
 
       {/* App-like Bottom Navigation for Mobile */}
       <MobileBottomNav setShowLogin={setShowLogin} />
+
+      {/* AI Assistant Chatbot */}
+      <Chatbot />
 
       {/* Modals — rendered at the layout level so they work on every page */}
       <Login

@@ -78,12 +78,26 @@ const AVAILABILITY_OPTIONS = [
   "Within 30 Days",
 ];
 
+const AVAILABLE_AMENITIES = [
+  "Lift",
+  "Power Backup",
+  "Gym",
+  "Swimming Pool",
+  "Gated Security",
+  "Clubhouse",
+  "Park",
+  "Gas Pipeline",
+  "Wi-Fi",
+];
+
 function SearchResults() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Locality setup
+  const localityParam = searchParams.get("locality") || searchParams.get("q") || searchParams.get("label");
+  const cityParam = searchParams.get("city");
   const initialLocality =
     state?.localities && state.localities.length > 0
       ? state.localities
@@ -95,14 +109,33 @@ function SearchResults() {
             text: searchParams.get("text") || "",
           },
         ]
+      : localityParam
+      ? [
+          {
+            label: localityParam,
+            text: localityParam,
+            city: cityParam || "",
+          },
+        ]
+      : cityParam
+      ? [
+          {
+            label: cityParam,
+            text: cityParam,
+            city: cityParam,
+          },
+        ]
       : [];
 
   const [selectedLocalities, setSelectedLocalities] = useState(initialLocality);
 
   // Filter states (initialized from URL params or state passed from dashboard)
-  const [keyword, setKeyword] = useState(searchParams.get("search") || "");
+  const [keyword, setKeyword] = useState(
+    searchParams.get("search") || searchParams.get("keyword") || ""
+  );
+  const rawBhk = searchParams.get("bhkType") || state?.bhkType || "All";
   const [bhkType, setBhkType] = useState(
-    searchParams.get("bhkType") || state?.bhkType || "All"
+    rawBhk && rawBhk !== "All" ? rawBhk.replace(/\s+/g, "").toUpperCase() : "All"
   );
   const [minRent, setMinRent] = useState(searchParams.get("minRent") || "");
   const [maxRent, setMaxRent] = useState(searchParams.get("maxRent") || "");
@@ -125,6 +158,18 @@ function SearchResults() {
     searchParams.get("petFriendly") === "true" || Boolean(state?.petFriendly)
   );
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "nearest");
+
+  // Amenities state (initialized from URL params or dashboard state)
+  const initialAmenities = (() => {
+    const list = searchParams.getAll("amenities");
+    if (list && list.length > 0) return list;
+    const single = searchParams.get("amenities");
+    if (single) return single.split(",").map((a) => a.trim()).filter(Boolean);
+    if (state?.amenities && Array.isArray(state.amenities)) return state.amenities;
+    if (state?.aiParsed?.filters?.amenities) return state.aiParsed.filters.amenities;
+    return [];
+  })();
+  const [selectedAmenities, setSelectedAmenities] = useState(initialAmenities);
 
   // AI Search state
   const [aiPrompt, setAiPrompt] = useState(searchParams.get("aiPrompt") || "");
@@ -262,6 +307,7 @@ function SearchResults() {
     availability !== "All" && availability !== "",
     parking,
     petFriendly,
+    selectedAmenities.length > 0,
     sortBy !== "nearest",
   ].filter(Boolean).length;
 
@@ -271,7 +317,12 @@ function SearchResults() {
       const params = {};
       const activeLoc = selectedLocalities[0];
       if (activeLoc?.placeId) params.placeId = activeLoc.placeId;
-      if (activeLoc?.label) params.label = activeLoc.label;
+      if (activeLoc?.label) {
+        params.label = activeLoc.label;
+        if (!activeLoc?.placeId) params.locality = activeLoc.label;
+      }
+      if (activeLoc?.text) params.text = activeLoc.text;
+      if (activeLoc?.city) params.city = activeLoc.city;
 
       const currentKeyword = overrides.keyword !== undefined ? overrides.keyword : keyword;
       if (currentKeyword.trim()) params.search = currentKeyword.trim();
@@ -303,6 +354,9 @@ function SearchResults() {
       const currentPet = overrides.petFriendly !== undefined ? overrides.petFriendly : petFriendly;
       if (currentPet) params.petFriendly = "true";
 
+      const currentAmenities = overrides.amenities !== undefined ? overrides.amenities : selectedAmenities;
+      if (currentAmenities && currentAmenities.length > 0) params.amenities = currentAmenities.join(",");
+
       const currentSort = overrides.sortBy !== undefined ? overrides.sortBy : sortBy;
       if (currentSort && currentSort !== "nearest") params.sortBy = currentSort;
 
@@ -323,6 +377,7 @@ function SearchResults() {
       availability,
       parking,
       petFriendly,
+      selectedAmenities,
       sortBy,
       aiPrompt,
       setSearchParams,
@@ -363,8 +418,10 @@ function SearchResults() {
         params.placeId = activeLocality.placeId;
       } else if (activeLocality?.label || activeLocality?.text) {
         params.q = activeLocality.label || activeLocality.text;
-      } else if (searchParams.get("q")) {
-        params.q = searchParams.get("q");
+        params.locality = activeLocality.label || activeLocality.text;
+      } else if (searchParams.get("q") || searchParams.get("locality")) {
+        params.q = searchParams.get("q") || searchParams.get("locality");
+        params.locality = searchParams.get("locality") || searchParams.get("q");
       }
 
       if (activeLocality?.city) {
@@ -391,6 +448,7 @@ function SearchResults() {
       if (availability && availability !== "All") params.availability = availability;
       if (parking) params.parking = "true";
       if (petFriendly) params.petFriendly = "true";
+      if (selectedAmenities && selectedAmenities.length > 0) params.amenities = selectedAmenities.join(",");
       if (sortBy) params.sortBy = sortBy;
 
       try {
@@ -453,6 +511,7 @@ function SearchResults() {
       availability,
       parking,
       petFriendly,
+      selectedAmenities,
       sortBy,
       searchParams,
     ]
@@ -476,6 +535,7 @@ function SearchResults() {
     availability,
     parking,
     petFriendly,
+    selectedAmenities,
     sortBy,
   ]);
 
@@ -598,6 +658,7 @@ function SearchResults() {
     setAvailability("All");
     setParking(false);
     setPetFriendly(false);
+    setSelectedAmenities([]);
     setSortBy("nearest");
     setAiPrompt("");
     setAiSummary("");
@@ -613,6 +674,7 @@ function SearchResults() {
       availability: "All",
       parking: false,
       petFriendly: false,
+      amenities: [],
       sortBy: "nearest",
       aiPrompt: "",
     });
@@ -633,7 +695,7 @@ function SearchResults() {
         setAiTags(parsed.tags || []);
         const f = parsed.filters || {};
 
-        if (f.bhkType) setBhkType(f.bhkType);
+        if (f.bhkType) setBhkType(f.bhkType.replace(/\s+/g, "").toUpperCase());
         if (f.minRent !== undefined) setMinRent(f.minRent ? String(f.minRent) : "");
         if (f.maxRent !== undefined) setMaxRent(f.maxRent ? String(f.maxRent) : "");
         if (f.propertyType) setPropertyType(f.propertyType);
@@ -641,11 +703,13 @@ function SearchResults() {
         if (f.preferredTenant) setTenantType(f.preferredTenant);
         if (f.parking !== undefined) setParking(Boolean(f.parking));
         if (f.petFriendly !== undefined) setPetFriendly(Boolean(f.petFriendly));
+        if (f.amenities && Array.isArray(f.amenities)) setSelectedAmenities(f.amenities);
+        if (f.sortBy) setSortBy(f.sortBy);
         if (f.keyword) setKeyword(f.keyword);
-        if (f.city) {
+        if (f.locality) {
+          setSelectedLocalities([{ label: f.locality, text: f.locality, city: f.city || "" }]);
+        } else if (f.city) {
           setSelectedLocalities([{ label: f.city, text: f.city, city: f.city }]);
-        } else if (f.locality) {
-          setSelectedLocalities([{ label: f.locality, text: f.locality }]);
         }
         setInlineAiInput("");
         setPage(1);
@@ -882,6 +946,38 @@ function SearchResults() {
             <FaPaw className="text-gray-500 text-xs" />
             <span>Pet Friendly</span>
           </label>
+        </div>
+
+        {/* Specific Amenities */}
+        <div className="mt-2.5 pt-2 border-t border-gray-100">
+          <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+            Key Amenities
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {AVAILABLE_AMENITIES.map((amenity) => {
+              const isChecked = selectedAmenities.includes(amenity);
+              return (
+                <button
+                  key={amenity}
+                  type="button"
+                  onClick={() => {
+                    setSelectedAmenities((prev) =>
+                      prev.includes(amenity)
+                        ? prev.filter((a) => a !== amenity)
+                        : [...prev, amenity]
+                    );
+                  }}
+                  className={`px-2 py-1 text-[11px] font-medium border transition ${
+                    isChecked
+                      ? "border-[#009587] bg-teal-50 text-[#009587] font-semibold"
+                      : "border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300"
+                  }`}
+                >
+                  {isChecked ? "✓ " : ""}{amenity}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -1332,6 +1428,23 @@ function SearchResults() {
                     </button>
                   </span>
                 )}
+                {selectedAmenities.map((am) => (
+                  <span
+                    key={am}
+                    className="inline-flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-0.5 text-[#009587] text-[11px]"
+                  >
+                    <span>{am}</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedAmenities((prev) => prev.filter((a) => a !== am))
+                      }
+                      className="hover:text-red-500"
+                    >
+                      <FaXmark className="text-[10px]" />
+                    </button>
+                  </span>
+                ))}
                 <button
                   type="button"
                   onClick={handleResetFilters}
