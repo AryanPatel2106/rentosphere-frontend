@@ -10,6 +10,9 @@ import {
   FaSpinner,
   FaRobot,
   FaMagnifyingGlass,
+  FaVolumeHigh,
+  FaMicrophone,
+  FaMicrophoneSlash,
 } from "react-icons/fa6";
 import api from "../services/api";
 
@@ -123,30 +126,147 @@ export default function Chatbot() {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const currentAudioRef = useRef(null);
 
-  // Save to sessionStorage
+  // AWS Polly TTS & Voice input states
+  const [playingMessageId, setPlayingMessageId] = useState(null);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
+
+  // Cleanup speech/audio on unmount
   useEffect(() => {
+    return () => {
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+      }
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  // Initialize SpeechRecognition if supported by browser
+  const startListening = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Voice search is not supported by your current browser. Please try Chrome or Edge.");
+      return;
+    }
+
+    if (isListening) {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
     try {
-      sessionStorage.setItem("rentosphere_chat_history", JSON.stringify(messages));
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (e) => {
+        console.warn("Speech recognition error:", e);
+        setIsListening(false);
+      };
+
+      recognition.onresult = (e) => {
+        const transcript = e.results[0]?.[0]?.transcript || "";
+        if (transcript.trim()) {
+          setInput(transcript);
+          // Auto-send voice input for a hands-free conversational experience
+          handleSendMessage(transcript);
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
     } catch (err) {
-      console.warn("Could not persist chat history:", err);
+      console.warn("Speech recognition could not start:", err);
+      setIsListening(false);
     }
-  }, [messages]);
+  };
 
-  // Scroll to bottom on new messages
-  useEffect(() => {
-    if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, isOpen, isLoading]);
+  // Play audio for a bot response using AWS Polly (with Web Speech fallback)
+  const handlePlaySpeech = async (msg) => {
+    if (!msg || !msg.content) return;
 
-  // Focus input when opened
-  useEffect(() => {
-    if (isOpen) {
-      setHasUnread(false);
-      setTimeout(() => inputRef.current?.focus(), 150);
+    // If already playing this message, pause/stop it
+    if (playingMessageId === msg.id) {
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+      }
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      setPlayingMessageId(null);
+      return;
     }
-  }, [isOpen]);
+
+    // Stop existing playback
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+    }
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    setPlayingMessageId(msg.id);
+    setIsSynthesizing(true);
+
+    try {
+      const res = await api.post("/chatbot/speak", { text: msg.content });
+      const data = res.data?.data;
+
+      if (data?.audioBase64) {
+        const audioSrc = `data:${data.contentType || "audio/mp3"};base64,${data.audioBase64}`;
+        const audio = new Audio(audioSrc);
+        currentAudioRef.current = audio;
+
+        audio.onended = () => setPlayingMessageId(null);
+        audio.onerror = () => {
+          console.warn("AWS Polly audio playback failed, falling back to Web Speech");
+          fallbackWebSpeech(msg.content);
+        };
+
+        await audio.play();
+      } else {
+        // Fallback to browser Web Speech API
+        fallbackWebSpeech(msg.content);
+      }
+    } catch (err) {
+      console.warn("AWS Polly speech error, using Web Speech fallback:", err);
+      fallbackWebSpeech(msg.content);
+    } finally {
+      setIsSynthesizing(false);
+    }
+  };
+
+  const fallbackWebSpeech = (text) => {
+    if (!window.speechSynthesis) {
+      setPlayingMessageId(null);
+      return;
+    }
+    const clean = text
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1")
+      .replace(/https?:\/\/\S+/g, "")
+      .replace(/[#*_~`•]/g, "")
+      .slice(0, 300);
+
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = "en-IN";
+    utterance.onend = () => setPlayingMessageId(null);
+    utterance.onerror = () => setPlayingMessageId(null);
+    window.speechSynthesis.speak(utterance);
+  };
 
   const handleSendMessage = async (textToSend) => {
     const raw = (textToSend || input).trim();
@@ -387,6 +507,33 @@ export default function Chatbot() {
                         ))}
                       </div>
                     )}
+
+                    {/* Bot Message Actions Toolbar (AWS Polly TTS Speaker) */}
+                    {!isUser && (
+                      <div className="mt-2 pt-1 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
+                        <button
+                          type="button"
+                          onClick={() => handlePlaySpeech(msg)}
+                          disabled={isSynthesizing && playingMessageId === msg.id}
+                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded transition ${
+                            playingMessageId === msg.id
+                              ? "bg-teal-100 text-[#009587] font-semibold animate-pulse"
+                              : "text-gray-500 hover:text-[#009587] hover:bg-teal-50"
+                          }`}
+                          title="Listen with AWS Polly AI Voice"
+                        >
+                          {isSynthesizing && playingMessageId === msg.id ? (
+                            <FaSpinner className="animate-spin text-[10px]" />
+                          ) : (
+                            <FaVolumeHigh className="text-[10px]" />
+                          )}
+                          <span>
+                            {playingMessageId === msg.id ? "Playing Voice…" : "Listen"}
+                          </span>
+                        </button>
+                        <span className="text-[9px] text-gray-400">AWS Polly</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Follow-up Quick Replies under Bot message */}
@@ -427,17 +574,39 @@ export default function Chatbot() {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="p-2.5 bg-white border-t border-gray-200 flex items-center gap-2"
+            className="p-2.5 bg-white border-t border-gray-200 flex items-center gap-1.5"
           >
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything about homes, rent, or policies..."
+              placeholder={isListening ? "Listening... Speak now..." : "Ask anything about homes, rent, or policies..."}
               disabled={isLoading}
-              className="flex-1 border border-gray-300 bg-gray-50 px-3 py-2 text-xs text-gray-800 placeholder-gray-400 outline-none focus:border-[#009587] focus:bg-white transition disabled:opacity-60"
+              className={`flex-1 border px-3 py-2 text-xs text-gray-800 placeholder-gray-400 outline-none transition disabled:opacity-60 ${
+                isListening
+                  ? "border-red-400 bg-red-50/50 ring-1 ring-red-400 animate-pulse"
+                  : "border-gray-300 bg-gray-50 focus:border-[#009587] focus:bg-white"
+              }`}
             />
+            {/* Microphone Button for Voice Search */}
+            <button
+              type="button"
+              onClick={startListening}
+              disabled={isLoading}
+              className={`p-2 text-xs font-semibold flex items-center justify-center transition shrink-0 border ${
+                isListening
+                  ? "bg-red-600 text-white border-red-700 animate-bounce"
+                  : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-teal-50 hover:text-[#009587] hover:border-[#009587]"
+              }`}
+              title={isListening ? "Listening (click to stop)" : "Speak your message"}
+            >
+              {isListening ? (
+                <FaMicrophoneSlash className="text-xs" />
+              ) : (
+                <FaMicrophone className="text-xs" />
+              )}
+            </button>
             <button
               type="submit"
               disabled={!input.trim() || isLoading}

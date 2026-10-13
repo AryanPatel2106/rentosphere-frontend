@@ -12,7 +12,9 @@ import {
   FaRotateLeft,
   FaWandMagicSparkles,
   FaLightbulb,
-  FaSpinner
+  FaSpinner,
+  FaMicrophone,
+  FaMicrophoneSlash
 } from "react-icons/fa6";
 
 const BHK_OPTIONS = ["All", "1RK", "1BHK", "2BHK", "3BHK", "4BHK"];
@@ -65,6 +67,42 @@ function SearchSection() {
   const [searchMode, setSearchMode] = useState("standard");
   const [aiPrompt, setAiPrompt] = useState("");
   const [isAiParsing, setIsAiParsing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+
+  const startVoiceSearch = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Voice search is not supported by your current browser. Please use Chrome or Edge.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = () => setIsListening(false);
+
+      recognition.onresult = (e) => {
+        const transcript = e.results[0]?.[0]?.transcript || "";
+        if (transcript.trim()) {
+          setAiPrompt(transcript);
+          setSearchMode("ai");
+          handleAiSearch(transcript);
+        }
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.warn("Speech recognition error:", err);
+      setIsListening(false);
+    }
+  };
 
   const [localities, setLocalities] = useState([]);
   const [keyword, setKeyword] = useState("");
@@ -275,12 +313,32 @@ function SearchSection() {
                 <FaWandMagicSparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-600 text-sm" />
                 <input
                   type="text"
-                  placeholder="e.g. Pet-friendly 2 BHK in Chennai under 25k with car parking and power backup..."
+                  placeholder={isListening ? "Listening... Speak your dream rental home requirement..." : "e.g. Pet-friendly 2 BHK in Chennai under 25k with car parking and power backup..."}
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAiSearch()}
-                  className="w-full pl-10 pr-4 py-3.5 border border-gray-300 bg-white text-base sm:text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-[#009587] shadow-xs"
+                  className={`w-full pl-10 pr-12 py-3.5 border bg-white text-base sm:text-sm text-gray-800 placeholder-gray-400 outline-none transition shadow-xs ${
+                    isListening
+                      ? "border-red-400 bg-red-50/40 ring-2 ring-red-400/30"
+                      : "border-gray-300 focus:border-[#009587]"
+                  }`}
                 />
+                <button
+                  type="button"
+                  onClick={startVoiceSearch}
+                  className={`absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full transition ${
+                    isListening
+                      ? "bg-red-600 text-white animate-bounce shadow-md"
+                      : "text-gray-400 hover:text-[#009587] hover:bg-teal-50"
+                  }`}
+                  title={isListening ? "Listening (click to stop)" : "Voice Search (Click and speak)"}
+                >
+                  {isListening ? (
+                    <FaMicrophoneSlash className="text-sm" />
+                  ) : (
+                    <FaMicrophone className="text-sm" />
+                  )}
+                </button>
               </div>
               <button
                 type="button"

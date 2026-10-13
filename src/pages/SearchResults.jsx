@@ -24,7 +24,9 @@ import {
   FaCircleCheck,
   FaCircleExclamation,
   FaWandMagicSparkles,
-  FaLightbulb
+  FaLightbulb,
+  FaMicrophone,
+  FaMicrophoneSlash
 } from "react-icons/fa6";
 import { getErrorMessage } from "../utils/errorHandler";
 
@@ -185,6 +187,43 @@ function SearchResults() {
   const [inlineAiInput, setInlineAiInput] = useState("");
   const [isAiInlineLoading, setIsAiInlineLoading] = useState(false);
   const [showAiInput, setShowAiInput] = useState(Boolean(searchParams.get("aiPrompt")));
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
+
+  const startVoiceSearch = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Voice search is not supported by your current browser. Please use Chrome or Edge.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-IN";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => setIsVoiceListening(true);
+      recognition.onend = () => setIsVoiceListening(false);
+      recognition.onerror = () => setIsVoiceListening(false);
+
+      recognition.onresult = (e) => {
+        const transcript = e.results[0]?.[0]?.transcript || "";
+        if (transcript.trim()) {
+          setInlineAiInput(transcript);
+          setShowAiInput(true);
+          // Auto-trigger inline AI query with voice transcript
+          handleInlineAiSubmit(null, transcript);
+        }
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.warn("Speech recognition error:", err);
+      setIsVoiceListening(false);
+    }
+  };
 
   // UI state
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
@@ -774,9 +813,9 @@ function SearchResults() {
   };
 
   // Submit AI Natural Language query directly from Search Results page
-  const handleInlineAiSubmit = async (e) => {
+  const handleInlineAiSubmit = async (e, textOverride) => {
     if (e) e.preventDefault();
-    const raw = inlineAiInput.trim();
+    const raw = (textOverride || inlineAiInput).trim();
     if (!raw) return;
     setIsAiInlineLoading(true);
     try {
@@ -1352,16 +1391,36 @@ function SearchResults() {
 
                 {/* Inline AI Query Box */}
                 {showAiInput && (
-                  <form onSubmit={handleInlineAiSubmit} className="mt-3 pt-2.5 border-t border-teal-100 flex items-center gap-2">
+                  <form onSubmit={handleInlineAiSubmit} className="mt-3 pt-2.5 border-t border-teal-100 flex items-center gap-1.5">
                     <div className="relative flex-1">
                       <FaWandMagicSparkles className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-600 text-xs" />
                       <input
                         type="text"
-                        placeholder="Refine search with AI: e.g. Show only furnished 2BHK in Adyar under 30k with power backup..."
+                        placeholder={isVoiceListening ? "Listening... Speak your requirement..." : "Refine search with AI: e.g. Show only furnished 2BHK in Adyar under 30k..."}
                         value={inlineAiInput}
                         onChange={(e) => setInlineAiInput(e.target.value)}
-                        className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-300 bg-white text-gray-800 placeholder-gray-400 outline-none focus:border-[#009587]"
+                        className={`w-full pl-8 pr-8 py-1.5 text-xs border bg-white text-gray-800 placeholder-gray-400 outline-none transition ${
+                          isVoiceListening
+                            ? "border-red-400 bg-red-50/40 ring-1 ring-red-400"
+                            : "border-gray-300 focus:border-[#009587]"
+                        }`}
                       />
+                      <button
+                        type="button"
+                        onClick={startVoiceSearch}
+                        className={`absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-full transition ${
+                          isVoiceListening
+                            ? "bg-red-600 text-white animate-bounce"
+                            : "text-gray-400 hover:text-[#009587]"
+                        }`}
+                        title={isVoiceListening ? "Listening (click to stop)" : "Voice Search"}
+                      >
+                        {isVoiceListening ? (
+                          <FaMicrophoneSlash className="text-[11px]" />
+                        ) : (
+                          <FaMicrophone className="text-[11px]" />
+                        )}
+                      </button>
                     </div>
                     <button
                       type="submit"
@@ -1389,14 +1448,29 @@ function SearchResults() {
                   <FaLightbulb className="text-amber-500" />
                   <span>Looking for something specific? Search naturally with AI.</span>
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setShowAiInput(true)}
-                  className="inline-flex items-center gap-1.5 font-semibold text-[#009587] hover:underline shrink-0"
-                >
-                  <FaWandMagicSparkles className="text-xs text-emerald-600" />
-                  <span>Try AI Search</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={startVoiceSearch}
+                    className={`inline-flex items-center gap-1 font-semibold text-xs px-2 py-0.5 border transition ${
+                      isVoiceListening
+                        ? "bg-red-600 text-white border-red-600 animate-bounce"
+                        : "bg-white text-gray-700 border-gray-300 hover:border-[#009587] hover:text-[#009587]"
+                    }`}
+                    title="Speak your search requirement"
+                  >
+                    <FaMicrophone className="text-[10px]" />
+                    <span>Voice Search</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAiInput(true)}
+                    className="inline-flex items-center gap-1.5 font-semibold text-[#009587] hover:underline shrink-0"
+                  >
+                    <FaWandMagicSparkles className="text-xs text-emerald-600" />
+                    <span>Try AI Search</span>
+                  </button>
+                </div>
               </div>
             )}
 

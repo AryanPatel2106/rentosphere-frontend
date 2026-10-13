@@ -98,6 +98,29 @@ function PostProperty() {
   const [rentEstimateError, setRentEstimateError] = useState(null);
   const [showComps, setShowComps] = useState(false);
 
+  // AWS Rekognition Image Analysis States (Room tags & amenity suggestions)
+  const [photoAnalysis, setPhotoAnalysis] = useState({}); // { [url]: { roomType, confidence, suggestedAmenities, isSafe } }
+  const [analyzingPhotos, setAnalyzingPhotos] = useState({}); // { [url]: boolean }
+
+  const triggerPhotoAnalysis = async (fileUrl) => {
+    if (!fileUrl || photoAnalysis[fileUrl]) return;
+    setAnalyzingPhotos((prev) => ({ ...prev, [fileUrl]: true }));
+    try {
+      const res = await api.post("/property/analyze-photo", { photoUrl: fileUrl });
+      const analysis = res.data?.data;
+      if (analysis) {
+        setPhotoAnalysis((prev) => ({
+          ...prev,
+          [fileUrl]: analysis,
+        }));
+      }
+    } catch (err) {
+      console.warn("AI Photo analysis skipped or failed:", err);
+    } finally {
+      setAnalyzingPhotos((prev) => ({ ...prev, [fileUrl]: false }));
+    }
+  };
+
   const [propertyDetails, setPropertyDetails] = useState({
     title: "",
     Locality: {},
@@ -182,6 +205,9 @@ function PostProperty() {
           ...prev,
           photos: [...prev.photos, fileUrl],
         }));
+
+        // 4. Trigger AWS Rekognition automatic room & amenity recognition
+        triggerPhotoAnalysis(fileUrl);
       } catch (presignedErr) {
         console.warn(
           "Direct S3 presigned upload failed, falling back to backend direct upload:",
@@ -198,6 +224,9 @@ function PostProperty() {
             ...prev,
             photos: [...prev.photos, fileUrl],
           }));
+
+          // Trigger AWS Rekognition automatic room & amenity recognition
+          triggerPhotoAnalysis(fileUrl);
         } catch (fallbackErr) {
           console.error("Failed to upload image:", fallbackErr);
           setError(
@@ -1097,41 +1126,97 @@ function PostProperty() {
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                    {propertyDetails.photos.map((url, i) => (
-                      <div
-                        key={i}
-                        className="group relative border border-gray-300 bg-white overflow-hidden shadow-xs"
-                      >
-                        <div className="aspect-4/3 w-full overflow-hidden bg-gray-100">
-                          <img
-                            src={url}
-                            alt={`Property photo ${i + 1}`}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                        {i === 0 ? (
-                          <span className="absolute top-1 left-1 bg-[#009587] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
-                            Cover Photo
-                          </span>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => handleMakeCoverPhoto(i)}
-                            className="absolute top-1 left-1 flex items-center gap-1 bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-[#009587] shadow-xs"
-                          >
-                            <FaStar className="text-[9px]" /> Make Cover
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => handleRemovePhoto(i)}
-                          title="Remove photo"
-                          className="absolute top-1 right-1 bg-black/70 p-1 text-xs text-white transition hover:bg-red-600"
+                    {propertyDetails.photos.map((url, i) => {
+                      const analysis = photoAnalysis[url];
+                      const isAnalyzing = analyzingPhotos[url];
+
+                      return (
+                        <div
+                          key={i}
+                          className="group relative border border-gray-300 bg-white overflow-hidden shadow-xs flex flex-col justify-between"
                         >
-                          <FaTrash className="text-[10px]" />
-                        </button>
-                      </div>
-                    ))}
+                          <div className="relative aspect-4/3 w-full overflow-hidden bg-gray-100">
+                            <img
+                              src={url}
+                              alt={`Property photo ${i + 1}`}
+                              className="h-full w-full object-cover"
+                            />
+
+                            {/* AI Room Badge (AWS Rekognition) */}
+                            {isAnalyzing ? (
+                              <span className="absolute bottom-1 left-1 flex items-center gap-1 bg-black/75 px-1.5 py-0.5 text-[9px] font-semibold text-teal-300">
+                                <FaSpinner className="animate-spin text-[8px]" />
+                                AI Scanning…
+                              </span>
+                            ) : analysis?.roomType ? (
+                              <span className="absolute bottom-1 left-1 flex items-center gap-1 bg-black/80 px-1.5 py-0.5 text-[9px] font-semibold text-white backdrop-blur-xs">
+                                <FaWandMagicSparkles className="text-[8px] text-teal-400" />
+                                {analysis.roomType}
+                              </span>
+                            ) : null}
+
+                            {i === 0 ? (
+                              <span className="absolute top-1 left-1 bg-[#009587] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
+                                Cover Photo
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleMakeCoverPhoto(i)}
+                                className="absolute top-1 left-1 flex items-center gap-1 bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-[#009587] shadow-xs"
+                              >
+                                <FaStar className="text-[9px]" /> Make Cover
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePhoto(i)}
+                              title="Remove photo"
+                              className="absolute top-1 right-1 bg-black/70 p-1 text-xs text-white transition hover:bg-red-600"
+                            >
+                              <FaTrash className="text-[10px]" />
+                            </button>
+                          </div>
+
+                          {/* Detected Amenities One-Click Add */}
+                          {analysis?.suggestedAmenities?.length > 0 && (
+                            <div className="p-1.5 bg-teal-50/70 border-t border-teal-100 text-[10px]">
+                              <p className="text-gray-600 font-medium mb-1 flex items-center gap-1">
+                                <FaWandMagicSparkles className="text-[8px] text-[#009587]" />
+                                AI detected:
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {analysis.suggestedAmenities.map((amenity, aIdx) => {
+                                  const alreadyAdded = propertyDetails.amenities.includes(amenity);
+                                  return (
+                                    <button
+                                      key={aIdx}
+                                      type="button"
+                                      onClick={() => {
+                                        if (!alreadyAdded) {
+                                          setPropertyDetails((prev) => ({
+                                            ...prev,
+                                            amenities: [...prev.amenities, amenity],
+                                          }));
+                                        }
+                                      }}
+                                      className={`px-1.5 py-0.5 text-[9px] font-semibold border transition ${
+                                        alreadyAdded
+                                          ? "bg-emerald-100 border-emerald-300 text-emerald-800"
+                                          : "bg-white border-[#009587] text-[#009587] hover:bg-[#009587] hover:text-white"
+                                      }`}
+                                    >
+                                      {alreadyAdded ? `✓ ${amenity}` : `+ ${amenity}`}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
