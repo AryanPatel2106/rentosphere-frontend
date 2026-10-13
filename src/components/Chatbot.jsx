@@ -93,7 +93,11 @@ function renderFormattedMessage(text) {
 function formatInline(str) {
   return str
     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
+    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+    .replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" data-bot-link="true" class="text-[#009587] font-semibold underline underline-offset-2 hover:text-[#007f73] cursor-pointer inline-flex items-center gap-0.5">$1</a>'
+    );
 }
 
 export default function Chatbot() {
@@ -208,8 +212,34 @@ export default function Chatbot() {
   };
 
   const handleActionClick = (url) => {
-    if (url) {
-      navigate(url);
+    if (!url) return;
+
+    let targetUrl = url.trim();
+
+    // If LLM output an absolute URL pointing to localhost or the client origin, convert to relative SPA path
+    try {
+      if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+        const parsed = new URL(targetUrl);
+        if (
+          parsed.hostname === "localhost" ||
+          parsed.hostname === "127.0.0.1" ||
+          parsed.origin === window.location.origin
+        ) {
+          targetUrl = parsed.pathname + parsed.search + parsed.hash;
+        }
+      }
+    } catch {
+      // ignore URL parsing error
+    }
+
+    if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+      window.open(targetUrl, "_blank", "noopener,noreferrer");
+    } else {
+      navigate(targetUrl);
+      // Auto-minimize on mobile so user sees the newly opened search page immediately
+      if (window.innerWidth < 640) {
+        setIsOpen(false);
+      }
     }
   };
 
@@ -309,7 +339,17 @@ export default function Chatbot() {
           </div>
 
           {/* Messages Thread */}
-          <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 bg-slate-50/40">
+          <div
+            className="flex-1 overflow-y-auto p-3.5 space-y-3.5 bg-slate-50/40"
+            onClick={(e) => {
+              const link = e.target.closest("a[data-bot-link]");
+              if (link) {
+                e.preventDefault();
+                const href = link.getAttribute("href");
+                handleActionClick(href);
+              }
+            }}
+          >
             {messages.map((msg) => {
               const isUser = msg.role === "user";
               return (

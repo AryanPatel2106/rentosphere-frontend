@@ -104,6 +104,7 @@ function SearchSection() {
         if (f.propertyType) params.set("propertyType", f.propertyType);
         if (f.furnishing) params.set("furnishing", f.furnishing);
         if (f.preferredTenant) params.set("tenantType", f.preferredTenant);
+        if (f.availability) params.set("availability", f.availability);
         if (f.parking) params.set("parking", "true");
         if (f.petFriendly) params.set("petFriendly", "true");
         if (f.sortBy) params.set("sortBy", f.sortBy);
@@ -133,6 +134,7 @@ function SearchSection() {
             propertyType: f.propertyType || "All",
             furnishing: f.furnishing || "All",
             tenantType: f.preferredTenant || "All",
+            availability: f.availability || "All",
             parking: Boolean(f.parking),
             petFriendly: Boolean(f.petFriendly),
             amenities: f.amenities || [],

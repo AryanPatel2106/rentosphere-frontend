@@ -92,8 +92,10 @@ const AVAILABLE_AMENITIES = [
 
 function SearchResults() {
   const navigate = useNavigate();
-  const { state } = useLocation();
+  const location = useLocation();
+  const { state } = location;
   const [searchParams, setSearchParams] = useSearchParams();
+  const lastSyncedSearchRef = useRef(location.search);
 
   // Locality setup
   const localityParam = searchParams.get("locality") || searchParams.get("q") || searchParams.get("label");
@@ -152,10 +154,15 @@ function SearchResults() {
     searchParams.get("availability") || state?.availability || "All"
   );
   const [parking, setParking] = useState(
-    searchParams.get("parking") === "true" || Boolean(state?.parking)
+    searchParams.get("parking") === "true" ||
+      searchParams.get("isParking") === "true" ||
+      Boolean(state?.parking)
   );
   const [petFriendly, setPetFriendly] = useState(
-    searchParams.get("petFriendly") === "true" || Boolean(state?.petFriendly)
+    searchParams.get("petFriendly") === "true" ||
+      searchParams.get("isPetFriendly") === "true" ||
+      searchParams.get("PetFriendly") === "true" ||
+      Boolean(state?.petFriendly)
   );
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "nearest");
 
@@ -189,7 +196,13 @@ function SearchResults() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [searchLocation, setSearchLocation] = useState(null);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState(
+    searchParams.get("view") === "map" ||
+      searchParams.get("viewMode") === "map" ||
+      state?.viewMode === "map"
+      ? "map"
+      : "list"
+  );
   const [selectedProperty, setSelectedProperty] = useState(null);
 
   // Owner details modal
@@ -363,6 +376,9 @@ function SearchResults() {
       const currentAi = overrides.aiPrompt !== undefined ? overrides.aiPrompt : aiPrompt;
       if (currentAi && currentAi.trim()) params.aiPrompt = currentAi.trim();
 
+      const searchObj = new URLSearchParams(params);
+      const newQuery = searchObj.toString() ? `?${searchObj.toString()}` : "";
+      lastSyncedSearchRef.current = newQuery;
       setSearchParams(params, { replace: true });
     },
     [
@@ -383,6 +399,83 @@ function SearchResults() {
       setSearchParams,
     ]
   );
+
+  // Synchronize state when URL query changes externally (e.g. Chatbot link click or browser back/forward)
+  useEffect(() => {
+    if (location.search === lastSyncedSearchRef.current) return;
+    lastSyncedSearchRef.current = location.search;
+
+    const newParams = new URLSearchParams(location.search);
+    const newLocalityParam = newParams.get("locality") || newParams.get("q") || newParams.get("label");
+    const newCityParam = newParams.get("city");
+    const newPlaceId = newParams.get("placeId");
+
+    let nextLocalities = [];
+    if (newPlaceId) {
+      nextLocalities = [
+        {
+          placeId: newPlaceId,
+          label: newParams.get("label") || "Selected Place",
+          text: newParams.get("text") || "",
+        },
+      ];
+    } else if (newLocalityParam) {
+      nextLocalities = [
+        {
+          label: newLocalityParam,
+          text: newLocalityParam,
+          city: newCityParam || "",
+        },
+      ];
+    } else if (newCityParam) {
+      nextLocalities = [
+        {
+          label: newCityParam,
+          text: newCityParam,
+          city: newCityParam,
+        },
+      ];
+    }
+    setSelectedLocalities(nextLocalities);
+
+    const rawNewBhk = newParams.get("bhkType") || "All";
+    setBhkType(rawNewBhk && rawNewBhk !== "All" ? rawNewBhk.replace(/\s+/g, "").toUpperCase() : "All");
+
+    setMinRent(newParams.get("minRent") || "");
+    setMaxRent(newParams.get("maxRent") || "");
+    setPropertyType(newParams.get("propertyType") || "All");
+    setFurnishing(newParams.get("furnishing") || "All");
+    setTenantType(newParams.get("tenantType") || "All");
+    setAvailability(newParams.get("availability") || "All");
+    setParking(newParams.get("parking") === "true" || newParams.get("isParking") === "true");
+    setPetFriendly(
+      newParams.get("petFriendly") === "true" ||
+        newParams.get("isPetFriendly") === "true" ||
+        newParams.get("PetFriendly") === "true"
+    );
+
+    const newAmenityList = newParams.getAll("amenities");
+    const singleAmenity = newParams.get("amenities");
+    if (newAmenityList && newAmenityList.length > 0) {
+      setSelectedAmenities(newAmenityList);
+    } else if (singleAmenity) {
+      setSelectedAmenities(singleAmenity.split(",").map((a) => a.trim()).filter(Boolean));
+    } else {
+      setSelectedAmenities([]);
+    }
+
+    setSortBy(newParams.get("sortBy") || "nearest");
+    setKeyword(newParams.get("search") || newParams.get("keyword") || "");
+
+    const newView = newParams.get("view") || newParams.get("viewMode");
+    if (newView === "map" || newView === "list") {
+      setViewMode(newView);
+    }
+
+    const newAi = newParams.get("aiPrompt") || "";
+    setAiPrompt(newAi);
+    if (newAi) setShowAiInput(true);
+  }, [location.search]);
 
   // Sync AI tags and summary if arriving directly via URL with aiPrompt
   useEffect(() => {
@@ -701,6 +794,7 @@ function SearchResults() {
         if (f.propertyType) setPropertyType(f.propertyType);
         if (f.furnishing) setFurnishing(f.furnishing);
         if (f.preferredTenant) setTenantType(f.preferredTenant);
+        if (f.availability) setAvailability(f.availability);
         if (f.parking !== undefined) setParking(Boolean(f.parking));
         if (f.petFriendly !== undefined) setPetFriendly(Boolean(f.petFriendly));
         if (f.amenities && Array.isArray(f.amenities)) setSelectedAmenities(f.amenities);
